@@ -4,9 +4,9 @@ import React from 'react';
 import { cn } from '../../../shared/utils/classNames';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
-  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-  isLoading?: boolean;
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | undefined;
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | undefined;
+  isLoading?: boolean | undefined;
   children: React.ReactNode;
 }
 

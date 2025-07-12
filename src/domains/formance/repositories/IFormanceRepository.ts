@@ -15,7 +15,7 @@ export interface IFormanceAccountRepository {
   // Account Management
   createAccount(request: CreateAccountRequest): Promise<FormanceAccount>;
   getAccount(address: string): Promise<FormanceAccount | null>;
-  listAccounts(filter?: AccountFilter): Promise<FormanceAccount[]>;
+  listAccounts(filter?: AccountFilter | undefined): Promise<FormanceAccount[]>;
   updateAccountMetadata(address: string, metadata: Record<string, any>): Promise<void>;
   deleteAccount(address: string): Promise<void>;
   
@@ -34,16 +34,16 @@ export interface IFormanceTransactionRepository {
   createTransaction(request: TransactionRequest): Promise<FormanceTransaction>;
   getTransaction(id: bigint): Promise<FormanceTransaction | null>;
   getTransactionByReference(reference: string): Promise<FormanceTransaction | null>;
-  listTransactions(filter?: TransactionFilter): Promise<FormanceTransaction[]>;
+  listTransactions(filter?: TransactionFilter | undefined): Promise<FormanceTransaction[]>;
   
   // Transaction Operations
   revertTransaction(id: bigint): Promise<FormanceTransaction>;
-  dryRunTransaction(request: TransactionRequest): Promise<{valid: boolean; errors?: string[]}>;
+  dryRunTransaction(request: TransactionRequest): Promise<{valid: boolean; errors?: string[] | undefined}>;
   
   // Transaction Queries
-  getTransactionsForAccount(address: string, filter?: TransactionFilter): Promise<FormanceTransaction[]>;
+  getTransactionsForAccount(address: string, filter?: TransactionFilter | undefined): Promise<FormanceTransaction[]>;
   getTransactionsByMetadata(metadata: Record<string, any>): Promise<FormanceTransaction[]>;
-  getTransactionVolumes(address: string, asset?: string): Promise<{input: bigint; output: bigint}>;
+  getTransactionVolumes(address: string, asset?: string | undefined): Promise<{input: bigint; output: bigint}>;
   
   // Transaction Validation
   validateTransaction(request: TransactionRequest): Promise<{valid: boolean; errors: string[]}>;
@@ -51,7 +51,7 @@ export interface IFormanceTransactionRepository {
 
 export interface IFormanceLedgerRepository {
   // Ledger Management
-  createLedger(name: string, metadata?: Record<string, any>): Promise<void>;
+  createLedger(name: string, metadata?: Record<string, any> | undefined): Promise<void>;
   getLedgerInfo(ledger: string): Promise<{name: string; metadata: Record<string, any>}>;
   listLedgers(): Promise<string[]>;
   deleteLedger(name: string): Promise<void>;
@@ -74,9 +74,9 @@ export interface FormanceConfig {
   clientId: string;
   clientSecret: string;
   defaultLedger: string;
-  timeout?: number;
-  retryAttempts?: number;
-  retryDelayMs?: number;
+  timeout?: number | undefined;
+  retryAttempts?: number | undefined;
+  retryDelayMs?: number | undefined;
 }
 
 export interface IFormanceClientRepository {
@@ -98,17 +98,17 @@ export interface IFormanceClientRepository {
 export interface FormanceError {
   code: string;
   message: string;
-  details?: Record<string, any>;
+  details?: Record<string, any> | undefined;
   retryable: boolean;
 }
 
 export interface FormanceOperationResult<T> {
   success: boolean;
-  data?: T;
-  error?: FormanceError;
+  data?: T | undefined;
+  error?: FormanceError | undefined;
   metadata?: {
     request_id: string;
     duration_ms: number;
-    retry_count?: number;
-  };
+    retry_count?: number | undefined;
+  } | undefined;
 }

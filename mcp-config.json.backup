@@ -2,9 +2,7 @@
   "mcpServers": {
     "formance-context": {
       "command": "node",
-      "args": [
-        "./mcp-servers/formance-context/index.js"
-      ],
+      "args": ["./mcp-servers/formance-context/index.js"],
       "description": "Formance Stack domain context and knowledge base",
       "env": {
         "FORMANCE_API_URL": "http://localhost:8080",
@@ -13,9 +11,7 @@
     },
     "sequential-analysis": {
       "command": "node",
-      "args": [
-        "./mcp-servers/sequential/index.js"
-      ],
+      "args": ["./mcp-servers/sequential/index.js"], 
       "description": "Multi-step financial workflow analysis",
       "env": {
         "LOG_LEVEL": "info"
@@ -23,9 +19,7 @@
     },
     "performance-intelligence": {
       "command": "node",
-      "args": [
-        "./mcp-servers/performance/index.js"
-      ],
+      "args": ["./mcp-servers/performance/index.js"],
       "description": "Intelligent performance monitoring and optimization",
       "env": {
         "LOG_LEVEL": "info"
@@ -33,9 +27,7 @@
     },
     "task-master": {
       "command": "node",
-      "args": [
-        "../Dway/tooling/claude-task-master/mcp-server/src/index.js"
-      ],
+      "args": ["../Dway/tooling/claude-task-master/mcp-server/src/index.js"],
       "description": "Task Master AI for automated project management",
       "env": {
         "TASK_CONFIG_PATH": "./tasks.yml",
@@ -44,9 +36,7 @@
     },
     "context7": {
       "command": "npx",
-      "args": [
-        "@context7/mcp-server"
-      ],
+      "args": ["@context7/mcp-server"],
       "description": "Context7: Access to library documentation",
       "env": {
         "CONTEXT7_MODE": "financial",
@@ -56,9 +46,7 @@
     },
     "sequential": {
       "command": "npx",
-      "args": [
-        "@sequential/mcp-server"
-      ],
+      "args": ["@sequential/mcp-server"],
       "description": "Sequential: Multi-step reasoning capabilities",
       "env": {
         "SEQUENTIAL_MODE": "financial-workflow",
@@ -68,9 +56,7 @@
     },
     "magic": {
       "command": "npx",
-      "args": [
-        "@magic/mcp-server"
-      ],
+      "args": ["@magic/mcp-server"],
       "description": "Magic: AI-generated UI components",
       "env": {
         "MAGIC_FRAMEWORK": "react",
@@ -80,30 +66,13 @@
     },
     "puppeteer": {
       "command": "npx",
-      "args": [
-        "@puppeteer/mcp-server"
-      ],
+      "args": ["@puppeteer/mcp-server"],
       "description": "Puppeteer: Browser testing and automation",
       "env": {
         "PUPPETEER_HEADLESS": "true",
         "PUPPETEER_TIMEOUT": "30000"
       },
       "optional": true
-    },
-    "github-official": {
-      "command": "npx",
-      "args": [
-        "@github/github-mcp-server"
-      ],
-      "description": "Official GitHub MCP server for repository management",
-      "env": {
-        "GITHUB_TOKEN": "${GITHUB_TOKEN}",
-        "GITHUB_REPOSITORY": "johnnydxm/bank",
-        "GITHUB_OWNER": "johnnydxm"
-      },
-      "optional": false,
-      "timeout": 30000,
-      "retryAttempts": 3
     }
   },
   "clientConfig": {
@@ -135,10 +104,7 @@
   },
   "security": {
     "validateOrigin": true,
-    "allowedOrigins": [
-      "localhost",
-      "127.0.0.1"
-    ],
+    "allowedOrigins": ["localhost", "127.0.0.1"],
     "rateLimiting": {
       "enabled": true,
       "requestsPerMinute": 100

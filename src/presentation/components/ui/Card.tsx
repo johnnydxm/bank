@@ -4,8 +4,8 @@ import React from 'react';
 import { cn } from '../../../shared/utils/classNames';
 
 interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
-  variant?: 'default' | 'elevated' | 'outlined';
-  padding?: 'none' | 'sm' | 'md' | 'lg';
+  variant?: 'default' | 'elevated' | 'outlined' | undefined;
+  padding?: 'none' | 'sm' | 'md' | 'lg' | undefined;
   children: React.ReactNode;
 }
 

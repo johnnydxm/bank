@@ -19,7 +19,7 @@ export interface MultiCurrencyBalance {
   currency: string;
   balance: bigint;
   formattedBalance: string;
-  usdEquivalent?: bigint;
+  usdEquivalent?: bigint | undefined;
   lastUpdated: Date;
 }
 
@@ -28,8 +28,8 @@ export interface CurrencyConversionRequest {
   fromCurrency: string;
   toCurrency: string;
   amount: bigint;
-  maxSlippage?: number; // percentage, e.g., 0.5 for 0.5%
-  useSpread?: boolean;
+  maxSlippage?: number | undefined; // percentage, e.g., 0.5 for 0.5%
+  useSpread?: boolean | undefined;
 }
 
 export interface CurrencyConversionResult {
@@ -66,7 +66,7 @@ export class MultiCurrencyAccountService {
   public async createMultiCurrencyWallet(
     userId: string,
     currencies: string[],
-    initialMetadata?: Record<string, any>
+    initialMetadata?: Record<string, any> | undefined
   ): Promise<{ accounts: string[]; currencies: string[] }> {
     this.logger.info('Creating multi-currency wallet', {
       userId,
@@ -103,13 +103,11 @@ export class MultiCurrencyAccountService {
         const metadata: FormanceAccountMetadata = {
           user_id: userId,
           account_type: 'multi_currency_wallet',
-          currency: currency,
           created_at: new Date().toISOString(),
           kyc_status: 'pending',
           compliance_level: 'basic',
-          is_multi_currency: 'true',
           ...initialMetadata
-        };
+        } as FormanceAccountMetadata;
 
         const createRequest: CreateAccountRequest = {
           address: accountAddress,
@@ -139,7 +137,7 @@ export class MultiCurrencyAccountService {
   public async addCurrencyToWallet(
     userId: string,
     currency: string,
-    initialMetadata?: Record<string, any>
+    initialMetadata?: Record<string, any> | undefined
   ): Promise<string> {
     this.logger.info('Adding currency to wallet', { userId, currency });
 
@@ -160,13 +158,11 @@ export class MultiCurrencyAccountService {
     const metadata: FormanceAccountMetadata = {
       user_id: userId,
       account_type: 'multi_currency_wallet',
-      currency: currency,
       created_at: new Date().toISOString(),
       kyc_status: 'pending',
       compliance_level: 'basic',
-      is_multi_currency: 'true',
       ...initialMetadata
-    };
+    } as FormanceAccountMetadata;
 
     const createRequest: CreateAccountRequest = {
       address: accountAddress,

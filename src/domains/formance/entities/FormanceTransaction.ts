@@ -7,15 +7,15 @@ export interface FormancePosting {
 
 export interface FormanceTransactionMetadata {
   type: 'p2p_transfer' | 'crypto_purchase' | 'card_payment' | 'deposit' | 'withdrawal' | 'fee_collection';
-  user_id?: string;
-  business_id?: string;
-  reference_id?: string;
-  description?: string;
-  created_by?: string;
-  risk_score?: number;
-  compliance_checked?: boolean;
-  external_reference?: string;
-  trace_id?: string;
+  user_id?: string | undefined;
+  business_id?: string | undefined;
+  reference_id?: string | undefined;
+  description?: string | undefined;
+  created_by?: string | undefined;
+  risk_score?: number | undefined;
+  compliance_checked?: boolean | undefined;
+  external_reference?: string | undefined;
+  trace_id?: string | undefined;
   [key: string]: any;
 }
 
@@ -24,43 +24,43 @@ export interface FormanceTransaction {
   txid: bigint;
   timestamp: string;
   postings: FormancePosting[];
-  reference?: string;
+  reference: string;
   metadata: FormanceTransactionMetadata;
-  reverted?: boolean;
-  pre_commit_volumes?: Record<string, Record<string, bigint>>;
-  post_commit_volumes?: Record<string, Record<string, bigint>>;
+  reverted?: boolean | undefined;
+  pre_commit_volumes?: Record<string, Record<string, bigint>> | undefined;
+  post_commit_volumes?: Record<string, Record<string, bigint>> | undefined;
 }
 
 export interface TransactionRequest {
   postings: FormancePosting[];
-  reference?: string;
+  reference?: string | undefined;
   metadata: FormanceTransactionMetadata;
-  dry_run?: boolean;
+  dry_run?: boolean | undefined;
 }
 
 export interface TransactionFilter {
-  reference?: string;
-  account?: string;
-  source?: string;
-  destination?: string;
-  start_time?: string;
-  end_time?: string;
-  metadata_filter?: Record<string, any>;
-  limit?: number;
-  offset?: number;
+  reference?: string | undefined;
+  account?: string | undefined;
+  source?: string | undefined;
+  destination?: string | undefined;
+  start_time?: string | undefined;
+  end_time?: string | undefined;
+  metadata_filter?: Record<string, any> | undefined;
+  limit?: number | undefined;
+  offset?: number | undefined;
 }
 
 export class FormanceTransactionEntity implements FormanceTransaction {
   constructor(
     public postings: FormancePosting[],
     public metadata: FormanceTransactionMetadata,
-    public reference?: string,
+    public reference?: string | undefined,
     public id: bigint = BigInt(0),
     public txid: bigint = BigInt(0),
     public timestamp: string = new Date().toISOString(),
     public reverted: boolean = false,
-    public pre_commit_volumes?: Record<string, Record<string, bigint>>,
-    public post_commit_volumes?: Record<string, Record<string, bigint>>
+    public pre_commit_volumes?: Record<string, Record<string, bigint>> | undefined,
+    public post_commit_volumes?: Record<string, Record<string, bigint>> | undefined
   ) {}
 
   public getTotalAmount(): bigint {

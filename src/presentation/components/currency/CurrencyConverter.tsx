@@ -10,8 +10,8 @@ import { ArrowUpDown, TrendingUp, AlertTriangle } from 'lucide-react';
 
 interface CurrencyConverterProps {
   userId: string;
-  onConvert?: (conversion: CurrencyConversionResult) => void;
-  className?: string;
+  onConvert?: ((conversion: CurrencyConversionResult) => void) | undefined;
+  className?: string | undefined;
 }
 
 interface CurrencyConversionResult {

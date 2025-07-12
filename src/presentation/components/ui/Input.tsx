@@ -4,9 +4,9 @@ import React from 'react';
 import { cn } from '../../../shared/utils/classNames';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  error?: string;
-  label?: string;
-  helperText?: string;
+  error?: string | undefined;
+  label?: string | undefined;
+  helperText?: string | undefined;
 }
 
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(

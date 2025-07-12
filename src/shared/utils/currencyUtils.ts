@@ -5,11 +5,11 @@ import { SupportedCurrencies, SupportedCurrencyCode } from '../../domains/curren
  */
 
 export interface CurrencyFormatOptions {
-  showSymbol?: boolean;
-  showCode?: boolean;
-  minimumFractionDigits?: number;
-  maximumFractionDigits?: number;
-  locale?: string;
+  showSymbol?: boolean | undefined;
+  showCode?: boolean | undefined;
+  minimumFractionDigits?: number | undefined;
+  maximumFractionDigits?: number | undefined;
+  locale?: string | undefined;
 }
 
 export class CurrencyFormatter {
@@ -119,7 +119,7 @@ export class CurrencyFormatter {
     symbol: string;
     type: 'fiat' | 'crypto';
     decimalPlaces: number;
-    isStableCoin?: boolean;
+    isStableCoin?: boolean | undefined;
   } | null {
     const currencyEntity = SupportedCurrencies[currency as SupportedCurrencyCode];
     if (!currencyEntity) {
@@ -240,7 +240,7 @@ export class PortfolioCalculator {
    * Calculate total portfolio value in target currency
    */
   public static calculateTotalValue(
-    balances: Array<{ currency: string; amount: bigint; usdEquivalent?: bigint }>,
+    balances: Array<{ currency: string; amount: bigint; usdEquivalent?: bigint | undefined }>,
     targetCurrency: string = 'USD'
   ): bigint {
     if (targetCurrency === 'USD') {
@@ -258,7 +258,7 @@ export class PortfolioCalculator {
    * Calculate portfolio diversification score (0-100)
    */
   public static calculateDiversificationScore(
-    balances: Array<{ currency: string; amount: bigint; usdEquivalent?: bigint }>
+    balances: Array<{ currency: string; amount: bigint; usdEquivalent?: bigint | undefined }>
   ): number {
     if (balances.length === 0) return 0;
     if (balances.length === 1) return 20; // Single asset is not diversified
@@ -285,7 +285,7 @@ export class PortfolioCalculator {
    * Calculate portfolio risk score based on asset types
    */
   public static calculateRiskScore(
-    balances: Array<{ currency: string; amount: bigint; usdEquivalent?: bigint }>
+    balances: Array<{ currency: string; amount: bigint; usdEquivalent?: bigint | undefined }>
   ): number {
     const totalValue = this.calculateTotalValue(balances);
     if (totalValue === BigInt(0)) return 0;
@@ -322,7 +322,7 @@ export class PortfolioCalculator {
    * Get largest holdings
    */
   public static getLargestHoldings(
-    balances: Array<{ currency: string; amount: bigint; usdEquivalent?: bigint }>,
+    balances: Array<{ currency: string; amount: bigint; usdEquivalent?: bigint | undefined }>,
     count: number = 5
   ): Array<{ currency: string; amount: bigint; usdEquivalent: bigint; percentage: number }> {
     const totalValue = this.calculateTotalValue(balances);

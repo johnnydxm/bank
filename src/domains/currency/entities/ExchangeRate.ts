@@ -1,13 +1,13 @@
 export interface ExchangeRateData {
   pair: string; // e.g., "USD/EUR"
   rate: number;
-  bid?: number; // Buy price
-  ask?: number; // Sell price
+  bid?: number | undefined; // Buy price
+  ask?: number | undefined; // Sell price
   timestamp: Date;
   source: string;
-  volume_24h?: number;
-  change_24h?: number;
-  change_percentage_24h?: number;
+  volume_24h?: number | undefined;
+  change_24h?: number | undefined;
+  change_percentage_24h?: number | undefined;
 }
 
 export interface ExchangeRateProvider {
@@ -47,11 +47,11 @@ export class ExchangeRateEntity implements ExchangeRateData {
   }
 
   public getBaseCurrency(): string {
-    return this.pair.split('/')[0];
+    return this.pair.split('/')[0] || '';
   }
 
   public getQuoteCurrency(): string {
-    return this.pair.split('/')[1];
+    return this.pair.split('/')[1] || '';
   }
 
   public isStale(maxAgeMinutes: number = 30): boolean {
@@ -133,13 +133,13 @@ export class ExchangeRateEntity implements ExchangeRateData {
     return {
       pair: this.pair,
       rate: this.rate,
-      bid: this.bid,
-      ask: this.ask,
+      bid: this.bid || undefined,
+      ask: this.ask || undefined,
       timestamp: this.timestamp,
       source: this.source,
-      volume_24h: this.volume_24h,
-      change_24h: this.change_24h,
-      change_percentage_24h: this.change_percentage_24h
+      volume_24h: this.volume_24h || undefined,
+      change_24h: this.change_24h || undefined,
+      change_percentage_24h: this.change_percentage_24h || undefined
     };
   }
 

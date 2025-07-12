@@ -1,21 +1,21 @@
 export interface FormanceAccountMetadata {
-  user_id?: string;
-  business_id?: string;
+  user_id?: string | undefined;
+  business_id?: string | undefined;
   account_type: string;
   created_at: string;
-  kyc_status?: 'pending' | 'verified' | 'rejected';
-  compliance_level?: 'basic' | 'enhanced' | 'premium';
-  risk_score?: number;
-  last_activity?: string;
-  tags?: string[];
+  kyc_status?: 'pending' | 'verified' | 'rejected' | undefined;
+  compliance_level?: 'basic' | 'enhanced' | 'premium' | undefined;
+  risk_score?: number | undefined;
+  last_activity?: string | undefined;
+  tags?: string[] | undefined;
 }
 
 export interface FormanceAccount {
   address: string;
   type: 'user' | 'business' | 'system' | 'external';
   metadata: FormanceAccountMetadata;
-  effective_volumes?: Record<string, bigint>;
-  balances?: Record<string, bigint>;
+  effective_volumes?: Record<string, bigint> | undefined;
+  balances?: Record<string, bigint> | undefined;
 }
 
 export interface CreateAccountRequest {
@@ -25,11 +25,11 @@ export interface CreateAccountRequest {
 }
 
 export interface AccountFilter {
-  address_pattern?: string;
-  account_type?: string;
-  metadata_filter?: Record<string, any>;
-  limit?: number;
-  offset?: number;
+  address_pattern?: string | undefined;
+  account_type?: string | undefined;
+  metadata_filter?: Record<string, any> | undefined;
+  limit?: number | undefined;
+  offset?: number | undefined;
 }
 
 export class FormanceAccountEntity implements FormanceAccount {

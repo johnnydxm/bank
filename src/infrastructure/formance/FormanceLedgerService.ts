@@ -317,7 +317,7 @@ export class FormanceLedgerService implements
 
       const transactionData = response.data.data;
       
-      return new FormanceTransaction(
+      return new FormanceTransactionEntity(
         request.postings,
         request.metadata,
         request.reference,
@@ -354,7 +354,7 @@ export class FormanceLedgerService implements
 
         const tx = response.data.data;
         
-        return new FormanceTransaction(
+        return new FormanceTransactionEntity(
           tx.postings || [],
           tx.metadata || {},
           tx.reference,
@@ -407,7 +407,7 @@ export class FormanceLedgerService implements
       
       if (response.data?.cursor?.data) {
         for (const tx of response.data.cursor.data) {
-          transactions.push(new FormanceTransaction(
+          transactions.push(new FormanceTransactionEntity(
             tx.postings || [],
             tx.metadata || {},
             tx.reference,
@@ -447,7 +447,7 @@ export class FormanceLedgerService implements
 
       const tx = response.data.data;
       
-      return new FormanceTransaction(
+      return new FormanceTransactionEntity(
         tx.postings || [],
         tx.metadata || {},
         tx.reference,

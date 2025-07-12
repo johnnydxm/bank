@@ -8,8 +8,8 @@ interface CreateTransferRequest {
   toUserId: string;
   amount: number;
   currency: string;
-  description?: string;
-  urgency?: 'standard' | 'priority' | 'instant';
+  description?: string | undefined;
+  urgency?: 'standard' | 'priority' | 'instant' | undefined;
 }
 
 interface Transfer {
@@ -19,10 +19,10 @@ interface Transfer {
   amount: number;
   currency: string;
   status: 'pending' | 'processing' | 'completed' | 'failed';
-  description?: string;
+  description?: string | undefined;
   urgency: 'standard' | 'priority' | 'instant';
   createdAt: Date;
-  estimatedCompletion?: Date;
+  estimatedCompletion?: Date | undefined;
 }
 
 export const useTransfer = () => {
@@ -101,7 +101,7 @@ export const useTransfer = () => {
     }
   }, []);
 
-  const getTransfers = useCallback(async (accountId?: string): Promise<Transfer[]> => {
+  const getTransfers = useCallback(async (accountId?: string | undefined): Promise<Transfer[]> => {
     setIsLoading(true);
     setError(null);
 
