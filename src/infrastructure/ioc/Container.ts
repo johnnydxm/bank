@@ -6,6 +6,7 @@ import { IAccountRepository } from '../../domains/banking/repositories/IAccountR
 import { ITransactionRepository } from '../../domains/banking/repositories/ITransactionRepository';
 import { AccountService } from '../../domains/banking/services/AccountService';
 import { ConfigManager } from '../config/AppConfig';
+import { ConsoleLogger } from '../logging/ConsoleLogger';
 import { MCPIntegrationService } from '../mcp/MCPIntegrationService';
 import { SuperClaudeCommands } from '../superclaude/SuperClaudeCommands';
 import { FormanceClientService } from '../formance/FormanceClientService';
@@ -14,6 +15,7 @@ import { FormanceBankingService } from '../../domains/banking/services/FormanceB
 import { ExchangeRateService } from '../currency/ExchangeRateService';
 import { CurrencyValidationService } from '../currency/CurrencyValidationService';
 import { MultiCurrencyAccountService } from '../../domains/currency/services/MultiCurrencyAccountService';
+import { ConsoleLogger } from '../logging/ConsoleLogger';
 
 export class DIContainer {
   private static instance: DIContainer;
@@ -40,7 +42,8 @@ export class DIContainer {
   }
 
   private registerDependencies(): void {
-    // Configuration
+    // Core Infrastructure
+    this.container.bind<ILogger>(TYPES.Logger).to(ConsoleLogger).inSingletonScope();
     this.container.bind(TYPES.ConfigManager).toConstantValue(ConfigManager.getInstance());
 
     // SuperClaude MCP Integration
@@ -57,8 +60,10 @@ export class DIContainer {
     this.container.bind<CurrencyValidationService>(TYPES.CurrencyValidationService).to(CurrencyValidationService).inSingletonScope();
     this.container.bind<MultiCurrencyAccountService>(TYPES.MultiCurrencyAccountService).to(MultiCurrencyAccountService).inSingletonScope();
 
+    // Logger implementation
+    this.container.bind<ILogger>(TYPES.Logger).to(ConsoleLogger).inSingletonScope();
+
     // Services will be registered here as they're implemented
-    // this.container.bind<ILogger>(TYPES.Logger).to(ConsoleLogger);
     // this.container.bind<IEventBus>(TYPES.EventBus).to(NATSEventBus);
     // this.container.bind<IAccountRepository>(TYPES.AccountRepository).to(PostgreSQLAccountRepository);
     // this.container.bind<ITransactionRepository>(TYPES.TransactionRepository).to(PostgreSQLTransactionRepository);

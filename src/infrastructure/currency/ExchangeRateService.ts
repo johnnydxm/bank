@@ -336,19 +336,19 @@ export class ExchangeRateService implements ICurrencyConversionService {
 
       switch (provider.name) {
         case 'Coinbase':
-          rate = await this.fetchFromCoinbase(base, quote);
+          if (base && quote) rate = await this.fetchFromCoinbase(base, quote);
           break;
         case 'Binance':
-          rate = await this.fetchFromBinance(base, quote);
+          if (base && quote) rate = await this.fetchFromBinance(base, quote);
           break;
         case 'Fixer.io':
-          rate = await this.fetchFromFixer(base, quote);
+          if (base && quote) rate = await this.fetchFromFixer(base, quote);
           break;
         case 'ExchangeRate-API':
-          rate = await this.fetchFromExchangeRateAPI(base, quote);
+          if (base && quote) rate = await this.fetchFromExchangeRateAPI(base, quote);
           break;
         case 'CoinGecko':
-          rate = await this.fetchFromCoinGecko(base, quote);
+          if (base && quote) rate = await this.fetchFromCoinGecko(base, quote);
           break;
         default:
           throw new Error(`Unknown provider: ${provider.name}`);
@@ -360,7 +360,7 @@ export class ExchangeRateService implements ICurrencyConversionService {
     } catch (error) {
       this.logger.error(`Error fetching from ${provider.name}`, {
         pair,
-        error: (error as Error).message
+        message: (error as Error).message
       });
       throw error;
     }

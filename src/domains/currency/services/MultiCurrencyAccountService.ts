@@ -123,7 +123,7 @@ export class MultiCurrencyAccountService {
         
       } catch (error) {
         this.logger.error(`Failed to create ${currency} account for user ${userId}`, {
-          error: (error as Error).message
+          message: (error as Error).message
         });
       }
     }
@@ -289,7 +289,7 @@ export class MultiCurrencyAccountService {
       request.fromCurrency,
       request.toCurrency,
       {
-        useSpread: request.useSpread,
+        useSpread: request.useSpread || false,
         maxRateAge: 5 // 5 minutes for conversions
       }
     );
@@ -374,7 +374,7 @@ export class MultiCurrencyAccountService {
         conversions.push(conversion);
       } catch (error) {
         this.logger.error(`Failed to convert ${balance.currency} to ${targetCurrency}`, {
-          error: (error as Error).message
+          message: (error as Error).message
         });
       }
     }
@@ -432,7 +432,7 @@ export class MultiCurrencyAccountService {
         asset: currency
       }],
       metadata: {
-        type: 'multi_currency_transfer',
+        type: 'multi_currency_transfer' as const,
         description,
         from_user_id: fromUserId,
         to_user_id: toUserId,
@@ -453,7 +453,7 @@ export class MultiCurrencyAccountService {
     return portfolio.balances.map(b => b.currency);
   }
 
-  public async getCurrencyAccountAddress(userId: string, currency: string): string {
+  public getCurrencyAccountAddress(userId: string, currency: string): string {
     // Use specific currency account structure
     return `users:${userId}:wallet:${currency.toLowerCase()}`;
   }
@@ -581,7 +581,7 @@ export class MultiCurrencyAccountService {
     return {
       postings,
       metadata: {
-        type: 'currency_conversion',
+        type: 'currency_conversion' as const,
         user_id: userId,
         from_currency: fromCurrency,
         to_currency: toCurrency,

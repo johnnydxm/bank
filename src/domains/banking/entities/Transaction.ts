@@ -29,6 +29,8 @@ export enum TransactionStatus {
 }
 
 export class TransactionEntity implements Transaction {
+  public completedAt: Date;
+
   constructor(
     public readonly id: string,
     public readonly fromAccountId: string,
@@ -40,8 +42,10 @@ export class TransactionEntity implements Transaction {
     public readonly description: string = '',
     public readonly metadata: Record<string, any> = {},
     public readonly createdAt: Date = new Date(),
-    public completedAt: Date = new Date()
-  ) {}
+    completedAt: Date = new Date()
+  ) {
+    this.completedAt = completedAt;
+  }
 
   public complete(): void {
     this.status = TransactionStatus.COMPLETED;

@@ -6,7 +6,7 @@ export interface FormancePosting {
 }
 
 export interface FormanceTransactionMetadata {
-  type: 'p2p_transfer' | 'crypto_purchase' | 'card_payment' | 'deposit' | 'withdrawal' | 'fee_collection';
+  type: 'p2p_transfer' | 'crypto_purchase' | 'card_payment' | 'deposit' | 'withdrawal' | 'fee_collection' | 'multi_currency_transfer' | 'currency_conversion';
   user_id?: string | undefined;
   business_id?: string | undefined;
   reference_id?: string | undefined;
@@ -54,7 +54,7 @@ export class FormanceTransactionEntity implements FormanceTransaction {
   constructor(
     public postings: FormancePosting[],
     public metadata: FormanceTransactionMetadata,
-    public reference?: string | undefined,
+    public reference: string,
     public id: bigint = BigInt(0),
     public txid: bigint = BigInt(0),
     public timestamp: string = new Date().toISOString(),

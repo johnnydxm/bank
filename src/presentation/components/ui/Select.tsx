@@ -7,7 +7,7 @@ interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   error?: string | undefined;
   label?: string | undefined;
   helperText?: string | undefined;
-  children: React.ReactNode;
+  children?: React.ReactNode | undefined;
   value?: string | undefined;
   onValueChange?: ((value: string) => void) | undefined;
   options?: Array<{value: string; label: string}> | undefined;

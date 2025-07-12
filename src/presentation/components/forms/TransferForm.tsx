@@ -124,7 +124,7 @@ export const TransferForm: React.FC<TransferFormProps> = ({
           <Select
             {...register('sourceAccountId')}
             value={selectedAccount}
-            onChange={(value) => {
+            onValueChange={(value) => {
               setSelectedAccount(value);
               register('sourceAccountId').onChange({ target: { value } });
             }}
