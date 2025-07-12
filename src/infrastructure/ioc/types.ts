@@ -35,6 +35,13 @@ export const TYPES = {
   CardService: Symbol.for('CardService'),
   TokenizationService: Symbol.for('TokenizationService'),
 
+  // Currency Domain
+  CurrencyRepository: Symbol.for('CurrencyRepository'),
+  ExchangeRateRepository: Symbol.for('ExchangeRateRepository'),
+  CurrencyConversionService: Symbol.for('CurrencyConversionService'),
+  CurrencyValidationService: Symbol.for('CurrencyValidationService'),
+  MultiCurrencyAccountService: Symbol.for('MultiCurrencyAccountService'),
+
   // External Services
   FormanceClient: Symbol.for('FormanceClient'),
   NotificationService: Symbol.for('NotificationService'),

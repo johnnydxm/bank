@@ -11,6 +11,9 @@ import { SuperClaudeCommands } from '../superclaude/SuperClaudeCommands';
 import { FormanceClientService } from '../formance/FormanceClientService';
 import { FormanceLedgerService } from '../formance/FormanceLedgerService';
 import { FormanceBankingService } from '../../domains/banking/services/FormanceBankingService';
+import { ExchangeRateService } from '../currency/ExchangeRateService';
+import { CurrencyValidationService } from '../currency/CurrencyValidationService';
+import { MultiCurrencyAccountService } from '../../domains/currency/services/MultiCurrencyAccountService';
 
 export class DIContainer {
   private static instance: DIContainer;
@@ -48,6 +51,11 @@ export class DIContainer {
     this.container.bind<FormanceClientService>(TYPES.FormanceClientService).to(FormanceClientService).inSingletonScope();
     this.container.bind<FormanceLedgerService>(TYPES.FormanceLedgerService).to(FormanceLedgerService).inSingletonScope();
     this.container.bind<FormanceBankingService>(TYPES.FormanceBankingService).to(FormanceBankingService).inSingletonScope();
+
+    // Currency Domain Services
+    this.container.bind<ExchangeRateService>(TYPES.ExchangeRateService).to(ExchangeRateService).inSingletonScope();
+    this.container.bind<CurrencyValidationService>(TYPES.CurrencyValidationService).to(CurrencyValidationService).inSingletonScope();
+    this.container.bind<MultiCurrencyAccountService>(TYPES.MultiCurrencyAccountService).to(MultiCurrencyAccountService).inSingletonScope();
 
     // Services will be registered here as they're implemented
     // this.container.bind<ILogger>(TYPES.Logger).to(ConsoleLogger);
