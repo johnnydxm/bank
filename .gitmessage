@@ -1,0 +1,34 @@
+# <type>[optional scope]: <description>
+#
+# [optional body]
+#
+# [optional footer(s)]
+#
+# --- COMMIT END ---
+# Type can be:
+#   feat     (new feature)
+#   fix      (bug fix)
+#   docs     (documentation)
+#   style    (formatting, missing semi colons, etc)
+#   refactor (refactoring production code)
+#   test     (adding tests, refactoring test)
+#   chore    (updating build tasks, package manager configs, etc)
+#   perf     (performance improvements)
+#   ci       (CI/CD pipeline changes)
+#   build    (build system changes)
+#   revert   (reverting previous commit)
+#
+# Scope examples:
+#   feat(ledger): add new transaction validation
+#   fix(payments): resolve connector timeout issue
+#   docs(api): update endpoint documentation
+#   refactor(auth): simplify authentication logic
+#
+# Breaking changes should include BREAKING CHANGE: in the footer
+# Issues should be referenced in the footer: Closes #123
+#
+# Examples:
+#   feat: add user registration endpoint
+#   fix(payments): resolve stripe webhook validation
+#   docs: update installation instructions
+#   BREAKING CHANGE: remove deprecated v1 API endpoints
