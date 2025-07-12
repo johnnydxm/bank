@@ -90,15 +90,15 @@
       },
       "optional": true
     },
-    "github-official": {
-      "command": "npx",
+    "github-automation": {
+      "command": "node",
       "args": [
-        "@github/github-mcp-server"
+        "./scripts/github-automation.js"
       ],
-      "description": "Official GitHub MCP server for repository management",
+      "description": "Custom GitHub automation for repository management",
       "env": {
         "GITHUB_TOKEN": "${GITHUB_TOKEN}",
-        "GITHUB_REPOSITORY": "johnnydxm/bank",
+        "GITHUB_REPOSITORY": "bank",
         "GITHUB_OWNER": "johnnydxm"
       },
       "optional": false,
