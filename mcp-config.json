@@ -1,0 +1,113 @@
+{
+  "mcpServers": {
+    "formance-context": {
+      "command": "node",
+      "args": ["./mcp-servers/formance-context/index.js"],
+      "description": "Formance Stack domain context and knowledge base",
+      "env": {
+        "FORMANCE_API_URL": "http://localhost:8080",
+        "LOG_LEVEL": "info"
+      }
+    },
+    "sequential-analysis": {
+      "command": "node",
+      "args": ["./mcp-servers/sequential/index.js"], 
+      "description": "Multi-step financial workflow analysis",
+      "env": {
+        "LOG_LEVEL": "info"
+      }
+    },
+    "performance-intelligence": {
+      "command": "node",
+      "args": ["./mcp-servers/performance/index.js"],
+      "description": "Intelligent performance monitoring and optimization",
+      "env": {
+        "LOG_LEVEL": "info"
+      }
+    },
+    "task-master": {
+      "command": "node",
+      "args": ["../Dway/tooling/claude-task-master/mcp-server/src/index.js"],
+      "description": "Task Master AI for automated project management",
+      "env": {
+        "TASK_CONFIG_PATH": "./tasks.yml",
+        "LOG_LEVEL": "info"
+      }
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["@context7/mcp-server"],
+      "description": "Context7: Access to library documentation",
+      "env": {
+        "CONTEXT7_MODE": "financial",
+        "CONTEXT7_DEPTH": "deep"
+      },
+      "optional": true
+    },
+    "sequential": {
+      "command": "npx",
+      "args": ["@sequential/mcp-server"],
+      "description": "Sequential: Multi-step reasoning capabilities",
+      "env": {
+        "SEQUENTIAL_MODE": "financial-workflow",
+        "MAX_STEPS": "10"
+      },
+      "optional": true
+    },
+    "magic": {
+      "command": "npx",
+      "args": ["@magic/mcp-server"],
+      "description": "Magic: AI-generated UI components",
+      "env": {
+        "MAGIC_FRAMEWORK": "react",
+        "MAGIC_DESIGN_SYSTEM": "tailwind"
+      },
+      "optional": true
+    },
+    "puppeteer": {
+      "command": "npx",
+      "args": ["@puppeteer/mcp-server"],
+      "description": "Puppeteer: Browser testing and automation",
+      "env": {
+        "PUPPETEER_HEADLESS": "true",
+        "PUPPETEER_TIMEOUT": "30000"
+      },
+      "optional": true
+    }
+  },
+  "clientConfig": {
+    "initializationTimeout": 30000,
+    "requestTimeout": 60000,
+    "capabilities": {
+      "resources": true,
+      "tools": true,
+      "prompts": true,
+      "sampling": true
+    },
+    "retryAttempts": 3,
+    "retryDelay": 1000
+  },
+  "logging": {
+    "level": "info",
+    "file": "./logs/mcp.log",
+    "console": true,
+    "timestamp": true
+  },
+  "monitoring": {
+    "enabled": true,
+    "metricsEndpoint": "/metrics",
+    "healthCheck": {
+      "enabled": true,
+      "interval": 30000,
+      "timeout": 5000
+    }
+  },
+  "security": {
+    "validateOrigin": true,
+    "allowedOrigins": ["localhost", "127.0.0.1"],
+    "rateLimiting": {
+      "enabled": true,
+      "requestsPerMinute": 100
+    }
+  }
+}

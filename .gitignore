@@ -1,43 +1,32 @@
-.idea
-openapi/build/generate.json-e
-openapi/build/generate.json.bak
-coverage.out
-dist
-vendor
-.gitpod/_output
-.garden
-go.work
-go.work.sum
-worktrees
+# Dependencies
+node_modules/
+npm-debug.log*
 
-**/*.out
-**/*.out
-**/*.test
-**/*.stats
-.direnv
+# Production builds
+dist/
+build/
 
-# moon
-.moon/cache
-.moon/docker
-.moon/bin
-.moon/go
-
-.devbox
-.cache
+# Environment variables
 .env
+.env.local
 
+# IDE files
+.vscode/
+.idea/
 
-# Earthly
-.tmp-earthly-out
+# OS files
 .DS_Store
-openapi/node_modules
+Thumbs.db
 
+# Logs
+logs/
+*.log
 
-.kubeconfig
+# Coverage
+coverage/
 
-.aws
+# TypeScript
+*.tsbuildinfo
 
-.kube
-
-# Helm
-*.tgz
+# MCP logs
+logs/mcp.log

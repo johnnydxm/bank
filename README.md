@@ -1,86 +1,163 @@
-[Formance Stack](https://formance.com) • [![Ledger Stars](https://img.shields.io/github/stars/formancehq/ledger?label=Ledger%20stars)](https://github.com/formancehq/ledger/stargazers) [![License MIT](https://img.shields.io/badge/license-mit-purple)](https://github.com/formancehq/ledger/blob/main/LICENSE) [![YCombinator](https://img.shields.io/badge/Backed%20by-Y%20Combinator-%23f26625)](https://www.ycombinator.com/companies/formance-fka-numary) [![slack](https://img.shields.io/badge/slack-formance-brightgreen.svg?logo=slack)](https://bit.ly/formance-slack)
+# 🌟 DWAY Financial Freedom Platform
 
-Formance is a highly modular developer platform to build and operate complex money flows of any size and shapes. It comes with several components, that can be used as a whole as the Formance Stack or separately as standalone micro-services and libraries:
+**Revolutionary financial platform bridging traditional banking and DeFi with enterprise-grade compliance and management features.**
 
-- **Formance Ledger** - Programmable double-entry, immutable source of truth to record internal financial transactions and money movements
-- **Formance Payments** - Unified API and data layer for payments processing
-- **Formance Numscript** - DSL and virtual machine monetary computations and transactions modeling
+## 🏗️ Architecture Overview
 
-## ⚡️ Getting started with Formance Cloud Sandbox
-
-### Install Formance CLI
-
-```SHELL
-# macOS
-brew tap formancehq/tap
-brew install fctl
-```
-
-###
-```SHELL
-# login to formance cloud
-fctl login
-
-# create a sandbox stack deployment
-# please note: sandbox are made available for testing and not made for production usage
-# read more in the docs [1]
-fctl stack create foobar
-
-# commit your first ledger transaction
-fctl ledger send world foo 100 EUR/2 --ledger=demo
-
-# checkout the control dashboard
-fctl ui
-```
-
-[1] https://docs.formance.com/guides/newSandbox
-
-## 💻 Getting started locally
-
-### Requirements
-1. Make sure docker is installed on your machine.
-2. Ensure your docker daemon has at least 5GB uf usable RAM available. Otherwise you will run into random crashes.
-3. Make sure Docker Compose is installed and available (it should be the case if you have chosen to install Docker via Docker Desktop); and
-4. Make sure Git is also installed on your machine.
-
-
-### Run the app
-To start using Formance Stack, run the following commands in a shell:
+The DWAY platform is built using **Clean Architecture** principles with **Domain-Driven Design (DDD)** patterns, ensuring maintainability, testability, and scalability.
 
 ```
-# Get the code
-git clone https://github.com/formancehq/stack.git
-
-# Go to the cloned stack directory
-cd stack
-
-# Start the stack containers
-docker compose up
+src/
+├── domains/                 # Domain Layer (Business Logic)
+│   ├── banking/            # Banking Domain
+│   │   ├── entities/       # Domain Entities
+│   │   ├── repositories/   # Repository Interfaces
+│   │   └── services/       # Domain Services
+│   ├── blockchain/         # Blockchain Domain
+│   ├── compliance/         # Compliance Domain
+│   └── cards/             # Card Management Domain
+├── infrastructure/         # Infrastructure Layer
+│   ├── config/            # Configuration Management
+│   ├── database/          # Database Implementations
+│   ├── external/          # External Service Clients
+│   └── ioc/              # Dependency Injection
+├── application/           # Application Layer
+│   ├── usecases/         # Use Cases (Application Services)
+│   ├── dtos/             # Data Transfer Objects
+│   └── handlers/         # Command/Query Handlers
+├── presentation/          # Presentation Layer
+│   ├── api/              # REST API Controllers
+│   ├── graphql/          # GraphQL Resolvers
+│   └── websocket/        # WebSocket Handlers
+└── shared/               # Shared Kernel
+    ├── interfaces/       # Common Interfaces
+    ├── utils/           # Utility Functions
+    └── types/           # Shared Types
 ```
 
-The Stack's API is exposed at http://localhost/api.
+## 🚀 Key Features
 
-You can run :
-````
-curl http://localhost/api/ledger/_info
-````
+### 👤 Individual Users
+- **Card Integration**: Direct bank API + Apple Pay/Google Pay tokenization
+- **P2P Transfers**: ID-based transfers with accept/decline workflow
+- **Multi-Currency Wallet**: Fiat, stablecoins, crypto with auto-conversion
+- **Investment Platform**: Savings accounts, crypto investments, yield farming
 
-## ☁️ Cloud Native Deployment
+### 🏢 Business Users
+- **Multi-Account Management**: Main account + unlimited sub-accounts
+- **Virtual Cards**: Instant issuance with configurable limits and controls
+- **Compliance Dashboard**: Real-time monitoring, reporting, audit trails
 
-The Formance Stack is distributed as a collection of binaries, with optional packaging as Docker images and configuration support through command line options and environment variables. The recommended, standard way to deploy the collection of services is to a Kubernetes cluster through our Formance official Helm charts, which repository is available at [helm.formance.com](https://helm.formance.com/).
+## 🛠️ Tech Stack
 
-## 📚 Documentation
+- **Runtime**: Node.js 18+ with TypeScript
+- **Framework**: Express.js with Clean Architecture
+- **Database**: PostgreSQL with Redis caching
+- **Financial Engine**: Formance Stack integration
+- **Blockchain**: Ethereum, Polygon (Layer 2)
+- **Testing**: Jest with 80%+ coverage requirement
+- **DevOps**: Docker, Kubernetes, GitHub Actions
 
-The full documentation for the formance stack can be found at [docs.formance.com](https://docs.formance.com)
+## 🏁 Quick Start
 
-## 💽 Codebase
+### Prerequisites
+- Node.js 18+
+- Docker & Docker Compose
+- PostgreSQL 15+
+- Redis 7+
 
-Formance is transitioning to a unified public facing monorepo (this one) that imports versioned services submodules and provides a common infrastructure layer. As we are finalizing this transition, this monorepo is structured as below
+### Installation
 
-### Technologies
+1. **Clone and setup**:
+```bash
+git clone https://github.com/johnnydxm/bank.git
+cd bank/my-formance-stack
+cp .env.example .env
+```
 
-The Formance Stack is built on open-source, battle tested technologies including:
+2. **Install dependencies**:
+```bash
+npm install
+```
 
-- **PostgreSQL** - Main storage backend
-- **Kafka/NATS** - Cross-services async communication
-- **Traefik** - Main HTTP gateway
+3. **Start Formance Stack**:
+```bash
+docker compose up -d
+```
+
+4. **Run development server**:
+```bash
+npm run dev
+```
+
+## 📋 Development Commands
+
+```bash
+# Development
+npm run dev              # Start development server
+npm run build            # Build for production
+npm run start            # Start production server
+
+# Testing
+npm run test             # Run tests
+npm run test:watch       # Run tests in watch mode
+npm run test:coverage    # Run tests with coverage
+
+# Code Quality
+npm run lint             # Check code style
+npm run lint:fix         # Fix code style issues
+npm run typecheck        # Check TypeScript types
+
+# Docker
+npm run docker:build     # Build Docker image
+npm run docker:run       # Run Docker container
+```
+
+## 🎯 Current Phase: Foundation (F001)
+
+**Task**: Initialize Project Architecture ✅ **IN PROGRESS**
+
+- [x] Clean architecture folder structure implemented
+- [x] Domain-driven design patterns established
+- [x] Dependency injection container configured
+- [x] Environment configuration system in place
+
+**Next Steps**:
+- F002: Integrate Existing Dway Components
+- F003: SuperClaude MCP Integration
+- F004: GitHub Automation & CI/CD
+
+## 🔄 CI/CD Pipeline
+
+Automated GitHub Actions workflow includes:
+- 🧠 SuperClaude code analysis
+- 🎯 Task Master orchestration
+- 🛡️ Security scanning (Trivy)
+- 💰 Financial layer testing (Formance)
+- 🌐 Blockchain integration testing
+- 📱 Frontend component testing
+- 🚀 Automated deployment
+
+## 📊 Project Status
+
+- **Development Phase**: Foundation & Architecture (Week 1/24)
+- **Team Setup**: Core architecture established
+- **Funding**: $5.1M-$6.7M first year investment planned
+- **Target**: 50K users by Year 1, $1M revenue
+
+## 🤝 Contributing
+
+1. Follow clean architecture principles
+2. Maintain 80%+ test coverage
+3. Use conventional commits
+4. All code must pass CI/CD pipeline
+
+## 📄 License
+
+MIT License - see [LICENSE](LICENSE) file for details.
+
+---
+
+**🚀 Built with SuperClaude AI Development Framework**
+
+*Revolutionizing financial freedom through intelligent platform development*
