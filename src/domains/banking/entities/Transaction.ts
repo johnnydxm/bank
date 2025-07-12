@@ -9,7 +9,7 @@ export interface Transaction {
   description: string;
   metadata: Record<string, any>;
   createdAt: Date;
-  completedAt?: Date;
+  completedAt: Date;
 }
 
 export enum TransactionType {
@@ -40,7 +40,7 @@ export class TransactionEntity implements Transaction {
     public readonly description: string = '',
     public readonly metadata: Record<string, any> = {},
     public readonly createdAt: Date = new Date(),
-    public completedAt?: Date
+    public completedAt: Date = new Date()
   ) {}
 
   public complete(): void {

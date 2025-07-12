@@ -10,11 +10,16 @@ export const TYPES = {
   MCPManager: Symbol.for('MCPManager'),
   SuperClaudeCommands: Symbol.for('SuperClaudeCommands'),
 
+  // Formance Integration
+  FormanceClientService: Symbol.for('FormanceClientService'),
+  FormanceLedgerService: Symbol.for('FormanceLedgerService'),
+
   // Banking Domain
   AccountRepository: Symbol.for('AccountRepository'),
   TransactionRepository: Symbol.for('TransactionRepository'),
   AccountService: Symbol.for('AccountService'),
   TransactionService: Symbol.for('TransactionService'),
+  FormanceBankingService: Symbol.for('FormanceBankingService'),
 
   // Blockchain Domain
   BlockchainService: Symbol.for('BlockchainService'),

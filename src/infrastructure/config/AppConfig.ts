@@ -25,8 +25,9 @@ export interface DatabaseConfig {
 
 export interface FormanceConfig {
   apiUrl: string;
-  apiKey: string;
-  ledgerName: string;
+  clientId: string;
+  clientSecret: string;
+  defaultLedger: string;
 }
 
 export interface BlockchainConfig {
@@ -96,8 +97,9 @@ export class ConfigManager {
       },
       formance: {
         apiUrl: process.env.FORMANCE_API_URL || 'http://localhost:8080',
-        apiKey: process.env.FORMANCE_API_KEY || '',
-        ledgerName: process.env.FORMANCE_LEDGER_NAME || 'dway-ledger'
+        clientId: process.env.FORMANCE_CLIENT_ID || '',
+        clientSecret: process.env.FORMANCE_CLIENT_SECRET || '',
+        defaultLedger: process.env.FORMANCE_LEDGER_NAME || 'dway-ledger'
       },
       blockchain: {
         ethereum: {

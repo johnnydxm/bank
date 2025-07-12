@@ -12,6 +12,7 @@ export interface Account {
 export enum AccountType {
   PERSONAL = 'personal',
   BUSINESS = 'business',
+  SAVINGS = 'savings',
   SUB_ACCOUNT = 'sub_account'
 }
 

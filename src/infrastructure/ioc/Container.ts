@@ -8,6 +8,9 @@ import { AccountService } from '../../domains/banking/services/AccountService';
 import { ConfigManager } from '../config/AppConfig';
 import { MCPIntegrationService } from '../mcp/MCPIntegrationService';
 import { SuperClaudeCommands } from '../superclaude/SuperClaudeCommands';
+import { FormanceClientService } from '../formance/FormanceClientService';
+import { FormanceLedgerService } from '../formance/FormanceLedgerService';
+import { FormanceBankingService } from '../../domains/banking/services/FormanceBankingService';
 
 export class DIContainer {
   private static instance: DIContainer;
@@ -40,6 +43,11 @@ export class DIContainer {
     // SuperClaude MCP Integration
     this.container.bind<MCPIntegrationService>(TYPES.MCPIntegrationService).to(MCPIntegrationService).inSingletonScope();
     this.container.bind<SuperClaudeCommands>(TYPES.SuperClaudeCommands).to(SuperClaudeCommands).inSingletonScope();
+
+    // Formance Integration
+    this.container.bind<FormanceClientService>(TYPES.FormanceClientService).to(FormanceClientService).inSingletonScope();
+    this.container.bind<FormanceLedgerService>(TYPES.FormanceLedgerService).to(FormanceLedgerService).inSingletonScope();
+    this.container.bind<FormanceBankingService>(TYPES.FormanceBankingService).to(FormanceBankingService).inSingletonScope();
 
     // Services will be registered here as they're implemented
     // this.container.bind<ILogger>(TYPES.Logger).to(ConsoleLogger);

@@ -9,10 +9,10 @@ export interface BlockchainTransaction {
   status: BlockchainTransactionStatus;
   gasUsed: string;
   gasPrice: string;
-  blockNumber?: number;
+  blockNumber: number;
   confirmations: number;
   createdAt: Date;
-  confirmedAt?: Date;
+  confirmedAt: Date;
 }
 
 export enum BlockchainNetwork {
@@ -42,9 +42,9 @@ export class BlockchainTransactionEntity implements BlockchainTransaction {
     public confirmations: number = 0,
     public readonly gasUsed: string = '0',
     public readonly gasPrice: string = '0',
-    public readonly blockNumber?: number,
+    public readonly blockNumber: number = 0,
     public readonly createdAt: Date = new Date(),
-    public confirmedAt?: Date
+    public confirmedAt: Date = new Date()
   ) {}
 
   public updateConfirmations(confirmations: number): void {
