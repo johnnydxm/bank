@@ -47,6 +47,14 @@ export const TYPES = {
   WebSocketService: Symbol.for('WebSocketService'),
   RealtimeEventService: Symbol.for('RealtimeEventService'),
 
+  // Banking Integration
+  BankingIntegrationService: Symbol.for('BankingIntegrationService'),
+  PlaidBankingProvider: Symbol.for('PlaidBankingProvider'),
+  DepositWithdrawalService: Symbol.for('DepositWithdrawalService'),
+
+  // Compliance Domain
+  ComplianceValidationService: Symbol.for('ComplianceValidationService'),
+
   // External Services
   FormanceClient: Symbol.for('FormanceClient'),
   NotificationService: Symbol.for('NotificationService'),

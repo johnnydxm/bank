@@ -18,6 +18,10 @@ import { MultiCurrencyAccountService } from '../../domains/currency/services/Mul
 import { TransactionQueueService } from '../../domains/realtime/services/TransactionQueueService';
 import { WebSocketService } from '../../domains/realtime/services/WebSocketService';
 import { RealtimeEventService } from '../../domains/realtime/services/RealtimeEventService';
+import { BankingIntegrationService } from '../../domains/banking/services/BankingIntegrationService';
+import { PlaidBankingProvider } from '../banking/PlaidBankingProvider';
+import { DepositWithdrawalService } from '../../domains/banking/services/DepositWithdrawalService';
+import { ComplianceValidationService } from '../../domains/compliance/services/ComplianceValidationService';
 import { ConsoleLogger } from '../logging/ConsoleLogger';
 
 export class DIContainer {
@@ -67,6 +71,14 @@ export class DIContainer {
     this.container.bind<TransactionQueueService>(TYPES.TransactionQueueService).to(TransactionQueueService).inSingletonScope();
     this.container.bind<WebSocketService>(TYPES.WebSocketService).to(WebSocketService).inSingletonScope();
     this.container.bind<RealtimeEventService>(TYPES.RealtimeEventService).to(RealtimeEventService).inSingletonScope();
+
+    // Banking Integration Services
+    this.container.bind<BankingIntegrationService>(TYPES.BankingIntegrationService).to(BankingIntegrationService).inSingletonScope();
+    this.container.bind<PlaidBankingProvider>(TYPES.PlaidBankingProvider).to(PlaidBankingProvider).inSingletonScope();
+    this.container.bind<DepositWithdrawalService>(TYPES.DepositWithdrawalService).to(DepositWithdrawalService).inSingletonScope();
+
+    // Compliance Services
+    this.container.bind<ComplianceValidationService>(TYPES.ComplianceValidationService).to(ComplianceValidationService).inSingletonScope();
 
     // Services will be registered here as they're implemented
     // this.container.bind<IEventBus>(TYPES.EventBus).to(NATSEventBus);
