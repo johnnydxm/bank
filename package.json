@@ -4,9 +4,11 @@
   "description": "Revolutionary financial platform bridging traditional banking and DeFi",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "cross-env NODE_OPTIONS='--max-old-space-size=8192' tsc",
+    "build:safe": "cross-env NODE_OPTIONS='--max-old-space-size=4096' tsc",
     "start": "node dist/index.js",
-    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "dev": "cross-env NODE_OPTIONS='--max-old-space-size=8192' UV_THREADPOOL_SIZE=16 ts-node-dev --respawn --transpile-only src/index.ts",
+    "dev:safe": "cross-env NODE_OPTIONS='--max-old-space-size=4096 --max-semi-space-size=256' UV_THREADPOOL_SIZE=8 ts-node-dev --respawn --transpile-only src/index.ts",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
@@ -59,6 +61,7 @@
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.1",
+    "cross-env": "^7.0.3",
     "@types/cors": "^2.8.16",
     "@types/express": "^4.17.20",
     "@types/jest": "^29.5.7",

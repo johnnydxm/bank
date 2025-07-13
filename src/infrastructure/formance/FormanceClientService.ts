@@ -90,7 +90,7 @@ export class FormanceClientService implements IFormanceClientRepository {
       return {
         status: 'healthy',
         details: {
-          ledgers_count: ledgersResponse.cursor?.data?.length || 0,
+          ledgers_count: ledgersResponse.v2LedgersCursorResponse?.cursor?.data?.length || 0,
           api_url: this.config?.apiUrl,
           default_ledger: this.config?.defaultLedger,
           last_check: new Date().toISOString()

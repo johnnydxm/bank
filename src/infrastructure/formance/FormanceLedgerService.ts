@@ -54,7 +54,7 @@ export class FormanceLedgerService implements
             ...request.metadata,
             explicitly_created: 'true',
             created_at: new Date().toISOString()
-          }
+          } as Record<string, any>
         }
       });
 
@@ -80,11 +80,11 @@ export class FormanceLedgerService implements
           address
         });
 
-        if (!response.data) {
+        if (!response.v2AccountResponse?.data) {
           return null;
         }
 
-        const accountData = response.data;
+        const accountData = response.v2AccountResponse.data;
         
         // Determine account type from address structure
         const accountType = this.determineAccountType(address);
@@ -126,8 +126,8 @@ export class FormanceLedgerService implements
 
       const accounts: FormanceAccount[] = [];
       
-      if (response.cursor?.data) {
-        for (const accountData of response.cursor.data) {
+      if (response.v2AccountsCursorResponse?.cursor?.data) {
+        for (const accountData of response.v2AccountsCursorResponse.cursor.data) {
           const accountType = this.determineAccountType(accountData.address);
           
           accounts.push(new FormanceAccountEntity(
@@ -184,15 +184,14 @@ export class FormanceLedgerService implements
       const sdk = this.clientService.getSDK();
       const config = this.clientService.getConfig();
 
-      const response = await sdk.ledger.v2.getBalances({
-        ledger: config.defaultLedger,
-        address
+      const response = await sdk.ledger.v2.getBalancesAggregated({
+        ledger: config.defaultLedger
       });
 
       const balances: Balance[] = [];
       
-      if (response.data?.balances) {
-        for (const [asset, amount] of Object.entries(response.data.balances)) {
+      if (response.v2AggregateBalancesResponse?.data) {
+        for (const [asset, amount] of Object.entries(response.v2AggregateBalancesResponse.data)) {
           balances.push({
             asset,
             amount: BigInt(amount as string)
@@ -222,27 +221,25 @@ export class FormanceLedgerService implements
       const config = this.clientService.getConfig();
 
       const response = await sdk.ledger.v2.getBalancesAggregated({
-        ledger: config.defaultLedger,
-        address: addressPattern
+        ledger: config.defaultLedger
       });
 
       const aggregatedBalances: Record<string, bigint> = {};
       let totalAccounts = 0;
 
-      if (response.data?.balances) {
-        for (const [asset, amount] of Object.entries(response.data.balances)) {
-          aggregatedBalances[asset] = BigInt(amount as string);
+      if (response.v2AggregateBalancesResponse?.data) {
+        for (const [asset, amount] of Object.entries(response.v2AggregateBalancesResponse.data)) {
+          aggregatedBalances[asset] = BigInt(amount);
         }
       }
 
       // Get account count by listing accounts with pattern
       const accountsResponse = await sdk.ledger.v2.listAccounts({
         ledger: config.defaultLedger,
-        address: addressPattern,
         pageSize: 1000 // Large number to get count
       });
 
-      totalAccounts = accountsResponse.cursor?.data?.length || 0;
+      totalAccounts = accountsResponse.v2AccountsCursorResponse?.cursor?.data?.length || 0;
 
       return {
         balances: aggregatedBalances,
@@ -313,11 +310,11 @@ export class FormanceLedgerService implements
         dryRun: request.dry_run
       });
 
-      if (!response.data?.data) {
+      if (!response.v2CreateTransactionResponse?.data) {
         throw new Error('No transaction data returned from Formance');
       }
 
-      const transactionData = response.data.data;
+      const transactionData = response.v2CreateTransactionResponse.data;
       
       return new FormanceTransactionEntity(
         request.postings,
@@ -350,11 +347,11 @@ export class FormanceLedgerService implements
           id
         });
 
-        if (!response.data?.data) {
+        if (!response.v2GetTransactionResponse?.data) {
           return null;
         }
 
-        const tx = response.data.data;
+        const tx = response.v2GetTransactionResponse.data;
         
         return new FormanceTransactionEntity(
           tx.postings || [],
@@ -394,7 +391,6 @@ export class FormanceLedgerService implements
 
       const response = await sdk.ledger.v2.listTransactions({
         ledger: config.defaultLedger,
-        reference: filter?.reference,
         account: filter?.account,
         source: filter?.source,
         destination: filter?.destination,
@@ -407,8 +403,8 @@ export class FormanceLedgerService implements
 
       const transactions: FormanceTransaction[] = [];
       
-      if (response.cursor?.data) {
-        for (const tx of response.cursor.data) {
+      if (response.v2ListTransactionsResponse?.data) {
+        for (const tx of response.v2ListTransactionsResponse.data) {
           transactions.push(new FormanceTransactionEntity(
             tx.postings || [],
             tx.metadata || {},
@@ -443,11 +439,11 @@ export class FormanceLedgerService implements
         id
       });
 
-      if (!response.data?.data) {
+      if (!response.v2RevertTransactionResponse?.data) {
         throw new Error('No transaction data returned from revert');
       }
 
-      const tx = response.data.data;
+      const tx = response.v2RevertTransactionResponse.data;
       
       return new FormanceTransactionEntity(
         tx.postings || [],
@@ -596,7 +592,7 @@ export class FormanceLedgerService implements
 
       return {
         name: ledger,
-        metadata: response.data?.data?.metadata || {}
+        metadata: response.v2GetLedgerInfoResponse?.data?.metadata || {}
       };
     }, `getLedgerInfo:${ledger}`);
 
@@ -613,7 +609,7 @@ export class FormanceLedgerService implements
 
       const response = await sdk.ledger.v2.listLedgers({});
       
-      return response.data?.cursor?.data?.map(ledger => ledger.name) || [];
+      return response.v2LedgersCursorResponse?.cursor?.data?.map((ledger: any) => ledger.name) || [];
     }, 'listLedgers');
 
     if (!result.success) {
@@ -641,10 +637,10 @@ export class FormanceLedgerService implements
       const [accountsResponse, transactionsResponse, statsResponse] = await Promise.all([
         sdk.ledger.v2.listAccounts({ ledger, pageSize: 1 }),
         sdk.ledger.v2.listTransactions({ ledger, pageSize: 1 }),
-        sdk.ledger.v2.getStats({ ledger })
+        sdk.ledger.v2.readStats({ ledger })
       ]);
 
-      const stats = statsResponse.data?.data;
+      const stats = statsResponse.v2StatsResponse?.data;
       
       return {
         accounts: Number(stats?.accounts || 0),
