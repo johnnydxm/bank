@@ -15,6 +15,9 @@ import { FormanceBankingService } from '../../domains/banking/services/FormanceB
 import { ExchangeRateService } from '../currency/ExchangeRateService';
 import { CurrencyValidationService } from '../currency/CurrencyValidationService';
 import { MultiCurrencyAccountService } from '../../domains/currency/services/MultiCurrencyAccountService';
+import { TransactionQueueService } from '../../domains/realtime/services/TransactionQueueService';
+import { WebSocketService } from '../../domains/realtime/services/WebSocketService';
+import { RealtimeEventService } from '../../domains/realtime/services/RealtimeEventService';
 import { ConsoleLogger } from '../logging/ConsoleLogger';
 
 export class DIContainer {
@@ -60,8 +63,10 @@ export class DIContainer {
     this.container.bind<CurrencyValidationService>(TYPES.CurrencyValidationService).to(CurrencyValidationService).inSingletonScope();
     this.container.bind<MultiCurrencyAccountService>(TYPES.MultiCurrencyAccountService).to(MultiCurrencyAccountService).inSingletonScope();
 
-    // Logger implementation
-    this.container.bind<ILogger>(TYPES.Logger).to(ConsoleLogger).inSingletonScope();
+    // Real-time Domain Services
+    this.container.bind<TransactionQueueService>(TYPES.TransactionQueueService).to(TransactionQueueService).inSingletonScope();
+    this.container.bind<WebSocketService>(TYPES.WebSocketService).to(WebSocketService).inSingletonScope();
+    this.container.bind<RealtimeEventService>(TYPES.RealtimeEventService).to(RealtimeEventService).inSingletonScope();
 
     // Services will be registered here as they're implemented
     // this.container.bind<IEventBus>(TYPES.EventBus).to(NATSEventBus);

@@ -42,6 +42,11 @@ export const TYPES = {
   CurrencyValidationService: Symbol.for('CurrencyValidationService'),
   MultiCurrencyAccountService: Symbol.for('MultiCurrencyAccountService'),
 
+  // Real-time Domain
+  TransactionQueueService: Symbol.for('TransactionQueueService'),
+  WebSocketService: Symbol.for('WebSocketService'),
+  RealtimeEventService: Symbol.for('RealtimeEventService'),
+
   // External Services
   FormanceClient: Symbol.for('FormanceClient'),
   NotificationService: Symbol.for('NotificationService'),
