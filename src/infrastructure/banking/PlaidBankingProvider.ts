@@ -161,8 +161,7 @@ export class PlaidBankingProvider implements IBankingProvider {
       return connection;
     } catch (error) {
       this.logger.error('Failed to establish Plaid connection', {
-        userId,
-        error: (error as Error).message
+        message: `Failed to establish Plaid connection for user ${userId}: ${(error as Error).message}`
       });
       throw new Error(`Plaid connection failed: ${(error as Error).message}`);
     }
@@ -199,8 +198,7 @@ export class PlaidBankingProvider implements IBankingProvider {
       return connection;
     } catch (error) {
       this.logger.error('Failed to refresh Plaid connection', {
-        connectionId: connection.id,
-        error: (error as Error).message
+        message: `Failed to refresh Plaid connection ${connection.id}: ${(error as Error).message}`
       });
 
       connection.updateStatus('error', {
@@ -228,8 +226,7 @@ export class PlaidBankingProvider implements IBankingProvider {
       );
     } catch (error) {
       this.logger.error('Failed to get Plaid accounts', {
-        connectionId: connection.id,
-        error: (error as Error).message
+        message: `Failed to get Plaid accounts for connection ${connection.id}: ${(error as Error).message}`
       });
       throw error;
     }
@@ -259,8 +256,7 @@ export class PlaidBankingProvider implements IBankingProvider {
       }));
     } catch (error) {
       this.logger.error('Failed to get Plaid balances', {
-        connectionId: connection.id,
-        error: (error as Error).message
+        message: `Failed to get Plaid balances for connection ${connection.id}: ${(error as Error).message}`
       });
       throw error;
     }
@@ -339,9 +335,9 @@ export class PlaidBankingProvider implements IBankingProvider {
       return transfer;
     } catch (error) {
       this.logger.error('Failed to initiate Plaid transfer', {
-        connectionId: connection.id,
-        request,
-        error: (error as Error).message
+        message: `Failed to initiate Plaid transfer for connection ${connection.id}: ${(error as Error).message}`,
+        transferType: request.transferType,
+        amount: request.amount.toString()
       });
       throw error;
     }
@@ -385,9 +381,7 @@ export class PlaidBankingProvider implements IBankingProvider {
       return transfer;
     } catch (error) {
       this.logger.error('Failed to get Plaid transfer status', {
-        connectionId: connection.id,
-        transferId,
-        error: (error as Error).message
+        message: `Failed to get Plaid transfer status for ${transferId} on connection ${connection.id}: ${(error as Error).message}`
       });
       throw error;
     }
@@ -409,9 +403,7 @@ export class PlaidBankingProvider implements IBankingProvider {
       return true;
     } catch (error) {
       this.logger.error('Failed to cancel Plaid transfer', {
-        connectionId: connection.id,
-        transferId,
-        error: (error as Error).message
+        message: `Failed to cancel Plaid transfer ${transferId} on connection ${connection.id}: ${(error as Error).message}`
       });
       return false;
     }

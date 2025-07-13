@@ -111,7 +111,7 @@ export class RealtimeController {
       res.status(200).json(response);
     } catch (error) {
       this.logger.error('Failed to get health status', {
-        error: (error as Error).message
+        message: `Failed to get health status: ${(error as Error).message}`
       });
       res.status(500).json({ error: 'Internal server error' });
     }
@@ -165,8 +165,9 @@ export class RealtimeController {
       });
     } catch (error) {
       this.logger.error('Failed to emit event', {
-        error: (error as Error).message,
-        body: req.body
+        message: `Failed to emit event: ${(error as Error).message}`,
+        eventType: req.body.type,
+        userId: req.body.userId
       });
       res.status(500).json({ error: 'Failed to emit event' });
     }
@@ -217,8 +218,9 @@ export class RealtimeController {
       });
     } catch (error) {
       this.logger.error('Failed to emit transaction event', {
-        error: (error as Error).message,
-        body: req.body
+        message: `Failed to emit transaction event: ${(error as Error).message}`,
+        eventType: req.body.type,
+        userId: req.body.userId
       });
       res.status(500).json({ error: 'Failed to emit transaction event' });
     }
@@ -253,8 +255,9 @@ export class RealtimeController {
       });
     } catch (error) {
       this.logger.error('Failed to emit system alert', {
-        error: (error as Error).message,
-        body: req.body
+        message: `Failed to emit system alert: ${(error as Error).message}`,
+        alertMessage: req.body.message,
+        severity: req.body.severity
       });
       res.status(500).json({ error: 'Failed to emit system alert' });
     }
@@ -274,7 +277,7 @@ export class RealtimeController {
       });
     } catch (error) {
       this.logger.error('Failed to get queue status', {
-        error: (error as Error).message
+        message: `Failed to get queue status: ${(error as Error).message}`
       });
       res.status(500).json({ error: 'Failed to get queue status' });
     }
@@ -292,7 +295,7 @@ export class RealtimeController {
       });
     } catch (error) {
       this.logger.error('Failed to pause queue', {
-        error: (error as Error).message
+        message: `Failed to pause queue: ${(error as Error).message}`
       });
       res.status(500).json({ error: 'Failed to pause queue' });
     }
@@ -310,7 +313,7 @@ export class RealtimeController {
       });
     } catch (error) {
       this.logger.error('Failed to resume queue', {
-        error: (error as Error).message
+        message: `Failed to resume queue: ${(error as Error).message}`
       });
       res.status(500).json({ error: 'Failed to resume queue' });
     }
@@ -342,8 +345,7 @@ export class RealtimeController {
       });
     } catch (error) {
       this.logger.error('Failed to get transaction', {
-        error: (error as Error).message,
-        transactionId: req.params.transactionId
+        message: `Failed to get transaction ${req.params.transactionId}: ${(error as Error).message}`
       });
       res.status(500).json({ error: 'Failed to get transaction' });
     }
@@ -363,7 +365,7 @@ export class RealtimeController {
       });
     } catch (error) {
       this.logger.error('Failed to get WebSocket status', {
-        error: (error as Error).message
+        message: `Failed to get WebSocket status: ${(error as Error).message}`
       });
       res.status(500).json({ error: 'Failed to get WebSocket status' });
     }
@@ -422,8 +424,8 @@ export class RealtimeController {
       });
     } catch (error) {
       this.logger.error('Failed to get event history', {
-        error: (error as Error).message,
-        query: req.query
+        message: `Failed to get event history: ${(error as Error).message}`,
+        queryParams: Object.keys(req.query).length
       });
       res.status(500).json({ error: 'Failed to get event history' });
     }

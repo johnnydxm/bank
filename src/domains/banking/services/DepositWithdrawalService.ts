@@ -173,8 +173,9 @@ export class DepositWithdrawalService {
       return transaction;
     } catch (error) {
       this.logger.error('Failed to initiate deposit', {
-        userId: request.userId,
-        error: (error as Error).message
+        message: `Failed to initiate deposit for user ${request.userId}: ${(error as Error).message}`,
+        amount: request.amount.toString(),
+        currency: request.currency
       });
 
       await this.eventService.emitTransactionEvent(
@@ -306,8 +307,9 @@ export class DepositWithdrawalService {
       return transaction;
     } catch (error) {
       this.logger.error('Failed to initiate withdrawal', {
-        userId: request.userId,
-        error: (error as Error).message
+        message: `Failed to initiate withdrawal for user ${request.userId}: ${(error as Error).message}`,
+        amount: request.amount.toString(),
+        currency: request.currency
       });
 
       await this.eventService.emitTransactionEvent(
@@ -382,8 +384,7 @@ export class DepositWithdrawalService {
       return cancelled;
     } catch (error) {
       this.logger.error('Failed to cancel transaction', {
-        transactionId,
-        error: (error as Error).message
+        message: `Failed to cancel transaction ${transactionId}: ${(error as Error).message}`
       });
       throw error;
     }
@@ -455,8 +456,7 @@ export class DepositWithdrawalService {
       }
     } catch (error) {
       this.logger.error('Failed to update transaction status', {
-        transactionId: transaction.id,
-        error: (error as Error).message
+        message: `Failed to update transaction status for ${transaction.id}: ${(error as Error).message}`
       });
     }
   }
@@ -612,6 +612,9 @@ export class DepositWithdrawalService {
   private async reverseFormanceTransaction(transaction: FormanceTransaction): Promise<void> {
     // Get the first posting to reverse
     const originalPosting = transaction.postings[0];
+    if (!originalPosting) {
+      throw new Error('Transaction has no postings to reverse');
+    }
     
     await this.formanceService.createTransaction({
       reference: `reverse_${transaction.reference}`,

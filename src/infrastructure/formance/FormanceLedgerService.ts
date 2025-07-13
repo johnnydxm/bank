@@ -49,10 +49,12 @@ export class FormanceLedgerService implements
       await sdk.ledger.v2.addMetadataToAccount({
         ledger: config.defaultLedger,
         address: request.address,
-        metadata: {
-          ...request.metadata,
-          explicitly_created: 'true',
-          created_at: new Date().toISOString()
+        requestBody: {
+          metadata: {
+            ...request.metadata,
+            explicitly_created: 'true',
+            created_at: new Date().toISOString()
+          }
         }
       });
 
@@ -78,11 +80,11 @@ export class FormanceLedgerService implements
           address
         });
 
-        if (!response.data?.data) {
+        if (!response.data) {
           return null;
         }
 
-        const accountData = response.data.data;
+        const accountData = response.data;
         
         // Determine account type from address structure
         const accountType = this.determineAccountType(address);
@@ -118,14 +120,14 @@ export class FormanceLedgerService implements
         ledger: config.defaultLedger,
         address: filter?.address_pattern,
         metadata: filter?.metadata_filter,
-        pageSize: BigInt(filter?.limit || 100),
+        pageSize: Number(filter?.limit || 100),
         after: filter?.offset ? String(filter.offset) : undefined
       });
 
       const accounts: FormanceAccount[] = [];
       
-      if (response.data?.cursor?.data) {
-        for (const accountData of response.data.cursor.data) {
+      if (response.cursor?.data) {
+        for (const accountData of response.cursor.data) {
           const accountType = this.determineAccountType(accountData.address);
           
           accounts.push(new FormanceAccountEntity(
@@ -237,10 +239,10 @@ export class FormanceLedgerService implements
       const accountsResponse = await sdk.ledger.v2.listAccounts({
         ledger: config.defaultLedger,
         address: addressPattern,
-        pageSize: BigInt(1000) // Large number to get count
+        pageSize: 1000 // Large number to get count
       });
 
-      totalAccounts = accountsResponse.data?.cursor?.data?.length || 0;
+      totalAccounts = accountsResponse.cursor?.data?.length || 0;
 
       return {
         balances: aggregatedBalances,
@@ -399,14 +401,14 @@ export class FormanceLedgerService implements
         startTime: filter?.start_time,
         endTime: filter?.end_time,
         metadata: filter?.metadata_filter,
-        pageSize: BigInt(filter?.limit || 100),
+        pageSize: Number(filter?.limit || 100),
         after: filter?.offset ? String(filter.offset) : undefined
       });
 
       const transactions: FormanceTransaction[] = [];
       
-      if (response.data?.cursor?.data) {
-        for (const tx of response.data.cursor.data) {
+      if (response.cursor?.data) {
+        for (const tx of response.cursor.data) {
           transactions.push(new FormanceTransactionEntity(
             tx.postings || [],
             tx.metadata || {},
@@ -637,8 +639,8 @@ export class FormanceLedgerService implements
       const sdk = this.clientService.getSDK();
 
       const [accountsResponse, transactionsResponse, statsResponse] = await Promise.all([
-        sdk.ledger.v2.listAccounts({ ledger, pageSize: BigInt(1) }),
-        sdk.ledger.v2.listTransactions({ ledger, pageSize: BigInt(1) }),
+        sdk.ledger.v2.listAccounts({ ledger, pageSize: 1 }),
+        sdk.ledger.v2.listTransactions({ ledger, pageSize: 1 }),
         sdk.ledger.v2.getStats({ ledger })
       ]);
 

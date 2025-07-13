@@ -155,7 +155,7 @@ export class ComplianceValidationService {
     kycData.verifiedAt = new Date();
     
     if (!approved) {
-      kycData.rejectionReason = rejectionReason;
+      kycData.rejectionReason = rejectionReason || 'Verification failed';
     }
 
     this.logger.info('KYC verification completed', {
@@ -181,7 +181,7 @@ export class ComplianceValidationService {
         kycData.verifiedAt = new Date();
       } else {
         kycData.verificationStatus = 'requires_documents';
-        kycData.rejectionReason = verificationResult.reason;
+        kycData.rejectionReason = verificationResult.reason || 'Automated verification failed';
       }
 
       this.logger.info('Automated KYC verification completed', {
@@ -191,8 +191,7 @@ export class ComplianceValidationService {
       });
     } catch (error) {
       this.logger.error('KYC verification failed', {
-        userId,
-        error: (error as Error).message
+        message: `KYC verification failed for user ${userId}: ${(error as Error).message}`
       });
     }
   }
@@ -273,9 +272,7 @@ export class ComplianceValidationService {
       return result;
     } catch (error) {
       this.logger.error('AML check failed', {
-        userId,
-        checkType,
-        error: (error as Error).message
+        message: `AML check failed for user ${userId} (${checkType}): ${(error as Error).message}`
       });
       throw error;
     }
@@ -433,9 +430,7 @@ export class ComplianceValidationService {
       return assessment;
     } catch (error) {
       this.logger.error('Transaction risk assessment failed', {
-        transactionId,
-        userId,
-        error: (error as Error).message
+        message: `Transaction risk assessment failed for ${transactionId} (user: ${userId}): ${(error as Error).message}`
       });
       throw error;
     }

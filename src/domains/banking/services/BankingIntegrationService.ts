@@ -229,8 +229,7 @@ export class BankingIntegrationService {
       });
     } catch (error) {
       this.logger.error('Failed to disconnect bank connection', {
-        connectionId,
-        error: (error as Error).message
+        message: `Failed to disconnect bank connection ${connectionId}: ${(error as Error).message}`
       });
       throw error;
     }
@@ -264,8 +263,7 @@ export class BankingIntegrationService {
       return accounts;
     } catch (error) {
       this.logger.error('Failed to get bank accounts', {
-        connectionId,
-        error: (error as Error).message
+        message: `Failed to get bank accounts for connection ${connectionId}: ${(error as Error).message}`
       });
       throw error;
     }
@@ -293,8 +291,7 @@ export class BankingIntegrationService {
       return balances;
     } catch (error) {
       this.logger.error('Failed to get bank balances', {
-        connectionId,
-        error: (error as Error).message
+        message: `Failed to get bank balances for connection ${connectionId}: ${(error as Error).message}`
       });
       throw error;
     }
@@ -382,9 +379,9 @@ export class BankingIntegrationService {
       return transfer;
     } catch (error) {
       this.logger.error('Failed to initiate bank transfer', {
-        connectionId,
-        request,
-        error: (error as Error).message
+        message: `Failed to initiate bank transfer for connection ${connectionId}: ${(error as Error).message}`,
+        transferType: request.transferType,
+        amount: request.amount.toString()
       });
       throw error;
     }
@@ -423,8 +420,7 @@ export class BankingIntegrationService {
       return updatedTransfer;
     } catch (error) {
       this.logger.error('Failed to get transfer status', {
-        transferId,
-        error: (error as Error).message
+        message: `Failed to get transfer status for ${transferId}: ${(error as Error).message}`
       });
       throw error;
     }
@@ -461,8 +457,7 @@ export class BankingIntegrationService {
       return cancelled;
     } catch (error) {
       this.logger.error('Failed to cancel transfer', {
-        transferId,
-        error: (error as Error).message
+        message: `Failed to cancel transfer ${transferId}: ${(error as Error).message}`
       });
       throw error;
     }
