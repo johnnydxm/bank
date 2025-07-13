@@ -45,7 +45,7 @@
     "context7": {
       "command": "npx",
       "args": [
-        "@context7/mcp-server"
+        "@upstash/context7-mcp"
       ],
       "description": "Context7: Access to library documentation",
       "env": {
@@ -57,7 +57,7 @@
     "sequential": {
       "command": "npx",
       "args": [
-        "@sequential/mcp-server"
+        "@modelcontextprotocol/server-sequential-thinking"
       ],
       "description": "Sequential: Multi-step reasoning capabilities",
       "env": {
@@ -69,7 +69,7 @@
     "magic": {
       "command": "npx",
       "args": [
-        "@magic/mcp-server"
+        "@21st-dev/magic"
       ],
       "description": "Magic: AI-generated UI components",
       "env": {
@@ -81,7 +81,7 @@
     "puppeteer": {
       "command": "npx",
       "args": [
-        "@puppeteer/mcp-server"
+        "puppeteer-mcp-server"
       ],
       "description": "Puppeteer: Browser testing and automation",
       "env": {
