@@ -145,9 +145,9 @@ export class BankingIntegrationService {
       return connection;
     } catch (error) {
       this.logger.error('Failed to create bank connection', {
+        message: `Failed to create bank connection: ${(error as Error).message}`,
         userId: request.userId,
-        providerId: request.providerId,
-        error: (error as Error).message
+        providerId: request.providerId
       });
       throw error;
     }
@@ -192,8 +192,8 @@ export class BankingIntegrationService {
       return refreshedConnection;
     } catch (error) {
       this.logger.error('Failed to refresh bank connection', {
-        connectionId,
-        error: (error as Error).message
+        message: `Failed to refresh bank connection: ${(error as Error).message}`,
+        connectionId
       });
       
       // Update connection status to error

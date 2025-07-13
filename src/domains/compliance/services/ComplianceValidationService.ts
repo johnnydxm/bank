@@ -154,7 +154,7 @@ export class ComplianceValidationService {
     kycData.verificationStatus = approved ? 'verified' : 'rejected';
     kycData.verifiedAt = new Date();
     
-    if (!approved && rejectionReason) {
+    if (!approved) {
       kycData.rejectionReason = rejectionReason;
     }
 

@@ -146,7 +146,7 @@ export class WebSocketService implements WebSocketServer {
     try {
       // TODO: Implement proper JWT validation
       // For now, accept any non-empty token
-      const isValid = authToken && authToken.length > 0;
+      const isValid = Boolean(authToken && authToken.length > 0);
       
       if (isValid) {
         connection.isAuthenticated = true;

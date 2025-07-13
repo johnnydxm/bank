@@ -22,7 +22,6 @@ import { BankingIntegrationService } from '../../domains/banking/services/Bankin
 import { PlaidBankingProvider } from '../banking/PlaidBankingProvider';
 import { DepositWithdrawalService } from '../../domains/banking/services/DepositWithdrawalService';
 import { ComplianceValidationService } from '../../domains/compliance/services/ComplianceValidationService';
-import { ConsoleLogger } from '../logging/ConsoleLogger';
 
 export class DIContainer {
   private static instance: DIContainer;

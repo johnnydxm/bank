@@ -22,7 +22,7 @@ const transferSchema = z.object({
   currency: z.string().min(1, 'Currency is required'),
   sourceAccountId: z.string().min(1, 'Source account is required'),
   note: z.string().optional(),
-  urgency: z.enum(['standard', 'priority', 'instant']).default('standard')
+  urgency: z.enum(['standard', 'priority', 'instant']).optional()
 });
 
 type TransferFormData = z.infer<typeof transferSchema>;

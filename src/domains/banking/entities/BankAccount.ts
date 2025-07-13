@@ -310,7 +310,7 @@ export class BankConnectionEntity implements BankConnection {
 
   public toSafeJSON(): Omit<BankConnection, 'credentials'> & {
     hasCredentials: boolean;
-    credentialsExpiry?: Date;
+    credentialsExpiry?: Date | undefined;
   } {
     return {
       id: this.id,

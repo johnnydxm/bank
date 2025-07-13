@@ -154,8 +154,17 @@ export class RealtimeEventService implements IRealtimeEventService {
       // User-specific alerts
       const alertPromises = affectedUsers.map(userId => {
         const event = RealtimeEventFactory.createSystemAlert(message, severity, [userId]);
-        event.userId = userId; // Override userId for targeting
-        return this.queueEvent(event);
+        // Create new event entity with correct userId
+        const userTargetedEvent = new RealtimeEventEntity(
+          event.id,
+          event.type,
+          userId,
+          event.data,
+          event.timestamp,
+          event.correlationId,
+          event.metadata
+        );
+        return this.queueEvent(userTargetedEvent);
       });
 
       await Promise.all(alertPromises);
@@ -421,7 +430,7 @@ export class RealtimeEventService implements IRealtimeEventService {
         throughputPerSecond: this.metrics.throughputPerSecond,
         averageProcessingTime: this.metrics.averageProcessingTimeMs,
         queueSize: this.eventQueue.length,
-        processingQueueSize: this.processingQueue.size,
+        processingQueueSize: this.processingQueue.length,
         historySize: this.eventHistory.size
       });
     }

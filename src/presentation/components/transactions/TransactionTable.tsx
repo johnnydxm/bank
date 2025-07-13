@@ -178,7 +178,7 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({
         </div>
         <Select
           value={filterStatus}
-          onChange={(value) => setFilterStatus(value as TransactionStatus | 'all')}
+          onChange={(e) => setFilterStatus((e.target as HTMLSelectElement).value as TransactionStatus | 'all')}
         >
           <option value="all">All Statuses</option>
           {Object.values(TransactionStatus).map(status => (
@@ -189,7 +189,7 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({
         </Select>
         <Select
           value={filterType}
-          onChange={(value) => setFilterType(value as TransactionType | 'all')}
+          onChange={(e) => setFilterType((e.target as HTMLSelectElement).value as TransactionType | 'all')}
         >
           <option value="all">All Types</option>
           {Object.values(TransactionType).map(type => (

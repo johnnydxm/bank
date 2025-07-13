@@ -119,9 +119,9 @@ export class DepositWithdrawalService {
         paymentMethod: request.paymentMethod,
         metadata: {
           description: request.metadata?.description || 'Deposit to DWAY account',
-          reference: request.metadata?.reference,
-          memo: request.metadata?.memo,
-          scheduledAt: request.metadata?.scheduledAt,
+          ...(request.metadata?.reference && { reference: request.metadata.reference }),
+          ...(request.metadata?.memo && { memo: request.metadata.memo }),
+          ...(request.metadata?.scheduledAt && { scheduledAt: request.metadata.scheduledAt }),
           regulatoryInfo: {
             purpose: 'deposit',
             category: 'consumer_deposit'
@@ -250,9 +250,9 @@ export class DepositWithdrawalService {
         paymentMethod: request.paymentMethod,
         metadata: {
           description: request.metadata?.description || 'Withdrawal from DWAY account',
-          reference: request.metadata?.reference,
-          memo: request.metadata?.memo,
-          scheduledAt: request.metadata?.scheduledAt,
+          ...(request.metadata?.reference && { reference: request.metadata.reference }),
+          ...(request.metadata?.memo && { memo: request.metadata.memo }),
+          ...(request.metadata?.scheduledAt && { scheduledAt: request.metadata.scheduledAt }),
           regulatoryInfo: {
             purpose: 'withdrawal',
             category: 'consumer_withdrawal'
@@ -497,7 +497,7 @@ export class DepositWithdrawalService {
         await this.eventService.emitBalanceUpdate(
           transaction.userId,
           {
-            accountId: transaction.formanceTransaction.destinationAccount,
+            accountId: 'user_account',
             currency: transaction.currency,
             change: transaction.type === 'deposit' ? transaction.amount : -transaction.amount,
             newBalance: 'updated' // This should be fetched from Formance
@@ -571,14 +571,14 @@ export class DepositWithdrawalService {
         type: 'deposit',
         source: 'bank_transfer'
       },
-      script: {
-        plain: `
-          send [${currency} ${amount.toString()}] (
-            source = @bank:deposits
-            destination = @${accountId}
-          )
-        `
-      }
+      postings: [
+        {
+          amount,
+          asset: currency,
+          source: '@bank:deposits',
+          destination: accountId
+        }
+      ]
     });
 
     return transaction;
@@ -596,34 +596,37 @@ export class DepositWithdrawalService {
         type: 'withdrawal_reserve',
         source: 'bank_transfer'
       },
-      script: {
-        plain: `
-          send [${currency} ${amount.toString()}] (
-            source = @${accountId}
-            destination = @bank:withdrawals
-          )
-        `
-      }
+      postings: [
+        {
+          amount,
+          asset: currency,
+          source: accountId,
+          destination: '@bank:withdrawals'
+        }
+      ]
     });
 
     return transaction;
   }
 
   private async reverseFormanceTransaction(transaction: FormanceTransaction): Promise<void> {
+    // Get the first posting to reverse
+    const originalPosting = transaction.postings[0];
+    
     await this.formanceService.createTransaction({
       reference: `reverse_${transaction.reference}`,
       metadata: {
         type: 'reversal',
-        originalTransaction: transaction.id
+        originalTransaction: transaction.id.toString()
       },
-      script: {
-        plain: `
-          send [${transaction.script.plain.match(/\[(\w+) (\d+)\]/)?.[1]} ${transaction.script.plain.match(/\[(\w+) (\d+)\]/)?.[2]}] (
-            source = @bank:withdrawals
-            destination = @${transaction.script.plain.match(/@(\w+)/)?.[1]}
-          )
-        `
-      }
+      postings: [
+        {
+          amount: originalPosting.amount,
+          asset: originalPosting.asset,
+          source: originalPosting.destination, // Reverse source and destination
+          destination: originalPosting.source
+        }
+      ]
     });
   }
 

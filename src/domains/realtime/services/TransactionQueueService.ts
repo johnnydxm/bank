@@ -109,6 +109,8 @@ export class TransactionQueueService {
     if (transactions.length === 0) return null;
 
     const transaction = transactions[0];
+    if (!transaction) return null;
+    
     this.queue.delete(transaction.id);
     this.processingQueue.set(transaction.id, transaction);
     this.metrics.totalProcessing++;

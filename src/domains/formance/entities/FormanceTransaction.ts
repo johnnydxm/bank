@@ -6,7 +6,7 @@ export interface FormancePosting {
 }
 
 export interface FormanceTransactionMetadata {
-  type: 'p2p_transfer' | 'crypto_purchase' | 'card_payment' | 'deposit' | 'withdrawal' | 'fee_collection' | 'multi_currency_transfer' | 'currency_conversion';
+  type: 'p2p_transfer' | 'crypto_purchase' | 'card_payment' | 'deposit' | 'withdrawal' | 'fee_collection' | 'multi_currency_transfer' | 'currency_conversion' | 'withdrawal_reserve' | 'reversal';
   user_id?: string | undefined;
   business_id?: string | undefined;
   reference_id?: string | undefined;

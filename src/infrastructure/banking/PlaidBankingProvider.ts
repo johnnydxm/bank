@@ -105,7 +105,7 @@ export class PlaidBankingProvider implements IBankingProvider {
       clientId: process.env.PLAID_CLIENT_ID || 'sandbox_client_id',
       secret: process.env.PLAID_SECRET || 'sandbox_secret',
       environment: (process.env.PLAID_ENV as 'sandbox' | 'development' | 'production') || 'sandbox',
-      webhookUrl: process.env.PLAID_WEBHOOK_URL
+      ...(process.env.PLAID_WEBHOOK_URL && { webhookUrl: process.env.PLAID_WEBHOOK_URL })
     };
   }
 
@@ -293,7 +293,14 @@ export class PlaidBankingProvider implements IBankingProvider {
         metadata: {
           userId: request.userId,
           transferType: request.transferType,
-          ...(request.metadata || {})
+          ...Object.entries(request.metadata || {}).reduce((acc, [key, value]) => {
+            if (typeof value === 'string') {
+              acc[key] = value;
+            } else if (value != null) {
+              acc[key] = String(value);
+            }
+            return acc;
+          }, {} as Record<string, string>)
         }
       };
 
@@ -315,7 +322,10 @@ export class PlaidBankingProvider implements IBankingProvider {
           description: response.transfer.description,
           reference: response.transfer.id,
           expectedSettlementDate: this.calculateSettlementDate(response.transfer.network),
-          regulatoryInfo: request.metadata?.regulatoryInfo
+          regulatoryInfo: request.metadata?.regulatoryInfo ? {
+            ...request.metadata.regulatoryInfo,
+            complianceChecks: []
+          } : undefined
         }
       );
 
@@ -502,7 +512,7 @@ export class PlaidBankingProvider implements IBankingProvider {
         description: request.description,
         direction: request.type === 'debit' ? 'outbound' : 'inbound',
         iso_currency_code: 'USD',
-        metadata: request.metadata,
+        ...(request.metadata && { metadata: request.metadata }),
         network: request.network,
         origination_account_id: request.account_id,
         status: 'pending',
