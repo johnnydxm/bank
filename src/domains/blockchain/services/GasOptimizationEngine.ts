@@ -79,10 +79,8 @@ export class GasOptimizationEngine {
       return optimalRoute;
 
     } catch (error) {
-      this.logger.error('Failed to find optimal transfer route', {
-        message: `Route optimization failed: ${(error as Error).message}`,
-        asset: asset.symbol,
-        error: (error as Error).message
+      this.logger.error('Failed to find optimal transfer route', error as Error, {
+        asset: asset.symbol
       });
       throw error;
     }

@@ -222,10 +222,8 @@ export class AuthController {
       });
 
     } catch (error) {
-      this.logger.error('Authentication error', {
+      this.logger.error('Authentication error', error as Error, {
         requestId,
-        message: (error as Error).message,
-        stack: (error as Error).stack,
         email: req.body.email,
         timestamp: new Date().toISOString()
       });
@@ -356,10 +354,8 @@ export class AuthController {
       });
 
     } catch (error) {
-      this.logger.error('Registration error', {
+      this.logger.error('Registration error', error as Error, {
         requestId,
-        message: (error as Error).message,
-        stack: (error as Error).stack,
         email: req.body.email,
         timestamp: new Date().toISOString()
       });
@@ -404,9 +400,8 @@ export class AuthController {
       });
 
     } catch (error) {
-      this.logger.error('Sign out error', {
+      this.logger.error('Sign out error', error as Error, {
         requestId,
-        message: (error as Error).message,
         timestamp: new Date().toISOString()
       });
 
@@ -464,9 +459,8 @@ export class AuthController {
       });
 
     } catch (error) {
-      this.logger.error('Token refresh error', {
+      this.logger.error('Token refresh error', error as Error, {
         requestId,
-        message: (error as Error).message,
         timestamp: new Date().toISOString()
       });
 

@@ -251,11 +251,9 @@ export class AccountController {
       });
 
     } catch (error) {
-      this.logger.error('Account creation error', {
+      this.logger.error('Account creation error', error as Error, {
         requestId,
         userId,
-        message: (error as Error).message,
-        stack: (error as Error).stack,
         timestamp: new Date().toISOString()
       });
 
@@ -357,11 +355,9 @@ export class AccountController {
       });
 
     } catch (error) {
-      this.logger.error('Get accounts error', {
+      this.logger.error('Get accounts error', error as Error, {
         requestId,
         userId,
-        message: (error as Error).message,
-        stack: (error as Error).stack,
         timestamp: new Date().toISOString()
       });
 
@@ -475,12 +471,10 @@ export class AccountController {
       });
 
     } catch (error) {
-      this.logger.error('Get account error', {
+      this.logger.error('Get account error', error as Error, {
         requestId,
         userId,
         accountId,
-        message: (error as Error).message,
-        stack: (error as Error).stack,
         timestamp: new Date().toISOString()
       });
 
@@ -558,12 +552,10 @@ export class AccountController {
       });
 
     } catch (error) {
-      this.logger.error('Get account history error', {
+      this.logger.error('Get account history error', error as Error, {
         requestId,
         userId,
         accountId,
-        message: (error as Error).message,
-        stack: (error as Error).stack,
         timestamp: new Date().toISOString()
       });
 

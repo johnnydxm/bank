@@ -213,7 +213,7 @@ export class BusinessAccountAggregate extends AggregateRoot {
     }
 
     // Business Rule: Check spending limits and permissions
-    return this.permissions.canSpend(amount, currency);
+    return this.permissions.canSpend();
   }
 
   // Private helper methods
@@ -251,7 +251,7 @@ export class BusinessAccountAggregate extends AggregateRoot {
     );
 
     // Default permissions for business account owner
-    const ownerPermissions = PermissionSet.businessOwner();
+    const ownerPermissions = PermissionSet.createBusinessOwner(ownerUserId);
 
     const aggregate = new BusinessAccountAggregate(
       businessId,
@@ -263,11 +263,15 @@ export class BusinessAccountAggregate extends AggregateRoot {
 
     // Domain Event
     aggregate.addDomainEvent(new BusinessAccountCreatedEvent(
-      businessId,
-      mainAccountAddress,
-      businessName,
-      ownerUserId,
-      new Date()
+      businessId.value,
+      {
+        accountId: mainAccountAddress.value,
+        businessName,
+        accountType: 'business',
+        ownerId: ownerUserId,
+        initialBalance: BigInt(0),
+        currency: 'USD'
+      }
     ));
 
     return aggregate;

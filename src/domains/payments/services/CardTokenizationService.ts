@@ -84,11 +84,9 @@ export class CardTokenizationService {
       return tokenizedCard;
 
     } catch (error) {
-      this.logger.error('Card tokenization failed', {
-        message: `Card tokenization failed for user ${userId}: ${(error as Error).message}`,
+      this.logger.error('Card tokenization failed', error as Error, {
         provider: provider.toString(),
-        userId,
-        error: (error as Error).message
+        userId
       });
       throw error;
     }
@@ -166,11 +164,9 @@ export class CardTokenizationService {
       return virtualCard;
 
     } catch (error) {
-      this.logger.error('Virtual card issuance failed', {
-        message: `Virtual card issuance failed for user ${userId}: ${(error as Error).message}`,
+      this.logger.error('Virtual card issuance failed', error as Error, {
         userId,
-        businessId,
-        error: (error as Error).message
+        businessId
       });
       throw error;
     }
@@ -205,10 +201,8 @@ export class CardTokenizationService {
       this.logger.info('Card limits updated successfully', { cardId });
 
     } catch (error) {
-      this.logger.error('Card limit update failed', {
-        message: `Card limit update failed for card ${cardId}: ${(error as Error).message}`,
-        cardId,
-        error: (error as Error).message
+      this.logger.error('Card limit update failed', error as Error, {
+        cardId
       });
       throw error;
     }
@@ -232,10 +226,8 @@ export class CardTokenizationService {
       this.logger.info('Card freeze status updated', { cardId, frozen });
 
     } catch (error) {
-      this.logger.error('Card freeze operation failed', {
-        message: `Card freeze operation failed for card ${cardId}: ${(error as Error).message}`,
-        cardId,
-        error: (error as Error).message
+      this.logger.error('Card freeze operation failed', error as Error, {
+        cardId
       });
       throw error;
     }
@@ -264,10 +256,8 @@ export class CardTokenizationService {
       return transactions.map(tx => this.mapToCardTransaction(tx));
 
     } catch (error) {
-      this.logger.error('Failed to retrieve card transaction history', {
-        message: `Failed to retrieve transaction history for card ${cardId}: ${(error as Error).message}`,
-        cardId,
-        error: (error as Error).message
+      this.logger.error('Failed to retrieve card transaction history', error as Error, {
+        cardId
       });
       throw error;
     }

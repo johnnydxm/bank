@@ -358,8 +358,9 @@ export class ExchangeRateService implements ICurrencyConversionService {
       return rate;
 
     } catch (error) {
-      this.logger.error(`Error fetching from ${provider.name}`, {
-        message: `Error fetching ${pair} from ${provider.name}: ${(error as Error).message}`
+      this.logger.error(`Error fetching from ${provider.name}`, error as Error, {
+        pair,
+        provider: provider.name
       });
       throw error;
     }

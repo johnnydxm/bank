@@ -190,8 +190,8 @@ export class ComplianceValidationService {
         reason: verificationResult.reason
       });
     } catch (error) {
-      this.logger.error('KYC verification failed', {
-        message: `KYC verification failed for user ${userId}: ${(error as Error).message}`
+      this.logger.error('KYC verification failed', error as Error, {
+        userId
       });
     }
   }
@@ -271,8 +271,9 @@ export class ComplianceValidationService {
 
       return result;
     } catch (error) {
-      this.logger.error('AML check failed', {
-        message: `AML check failed for user ${userId} (${checkType}): ${(error as Error).message}`
+      this.logger.error('AML check failed', error as Error, {
+        userId,
+        checkType
       });
       throw error;
     }
@@ -429,8 +430,9 @@ export class ComplianceValidationService {
 
       return assessment;
     } catch (error) {
-      this.logger.error('Transaction risk assessment failed', {
-        message: `Transaction risk assessment failed for ${transactionId} (user: ${userId}): ${(error as Error).message}`
+      this.logger.error('Transaction risk assessment failed', error as Error, {
+        transactionId,
+        userId
       });
       throw error;
     }

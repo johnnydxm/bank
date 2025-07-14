@@ -5,7 +5,7 @@ export interface CryptoAssetProps {
   symbol: string;
   name: string;
   network: string;
-  contractAddress?: string;
+  contractAddress?: string | undefined;
   decimals: number;
   balance: bigint;
   lockedBalance: bigint;
@@ -16,13 +16,13 @@ export interface CryptoAssetProps {
   isStablecoin: boolean;
   isNative: boolean; // ETH on Ethereum, BTC on Bitcoin, etc.
   metadata?: {
-    logoUrl?: string;
-    description?: string;
-    website?: string;
-    coingeckoId?: string;
-    marketCap?: number;
-    volume24h?: number;
-  };
+    logoUrl?: string | undefined;
+    description?: string | undefined;
+    website?: string | undefined;
+    coingeckoId?: string | undefined;
+    marketCap?: number | undefined;
+    volume24h?: number | undefined;
+  } | undefined;
 }
 
 export class CryptoAsset extends Entity {

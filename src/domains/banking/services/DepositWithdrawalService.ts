@@ -172,8 +172,8 @@ export class DepositWithdrawalService {
 
       return transaction;
     } catch (error) {
-      this.logger.error('Failed to initiate deposit', {
-        message: `Failed to initiate deposit for user ${request.userId}: ${(error as Error).message}`,
+      this.logger.error('Failed to initiate deposit', error as Error, {
+        userId: request.userId,
         amount: request.amount.toString(),
         currency: request.currency
       });
@@ -306,8 +306,8 @@ export class DepositWithdrawalService {
 
       return transaction;
     } catch (error) {
-      this.logger.error('Failed to initiate withdrawal', {
-        message: `Failed to initiate withdrawal for user ${request.userId}: ${(error as Error).message}`,
+      this.logger.error('Failed to initiate withdrawal', error as Error, {
+        userId: request.userId,
         amount: request.amount.toString(),
         currency: request.currency
       });
@@ -383,8 +383,8 @@ export class DepositWithdrawalService {
 
       return cancelled;
     } catch (error) {
-      this.logger.error('Failed to cancel transaction', {
-        message: `Failed to cancel transaction ${transactionId}: ${(error as Error).message}`
+      this.logger.error('Failed to cancel transaction', error as Error, {
+        transactionId
       });
       throw error;
     }
@@ -455,8 +455,8 @@ export class DepositWithdrawalService {
         });
       }
     } catch (error) {
-      this.logger.error('Failed to update transaction status', {
-        message: `Failed to update transaction status for ${transaction.id}: ${(error as Error).message}`
+      this.logger.error('Failed to update transaction status', error as Error, {
+        transactionId: transaction.id
       });
     }
   }
@@ -529,10 +529,9 @@ export class DepositWithdrawalService {
       try {
         await this.reverseFormanceTransaction(transaction.formanceTransaction);
       } catch (error) {
-        this.logger.error('Failed to reverse Formance transaction', {
+        this.logger.error('Failed to reverse Formance transaction', error as Error, {
           transactionId: transaction.id,
-          formanceTransactionId: transaction.formanceTransaction.id,
-          error: (error as Error).message
+          formanceTransactionId: transaction.formanceTransaction.id
         });
       }
     }

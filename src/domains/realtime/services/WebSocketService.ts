@@ -158,8 +158,8 @@ export class WebSocketService implements WebSocketServer {
 
       return isValid;
     } catch (error) {
-      this.logger.error('WebSocket authentication failed', {
-        message: `WebSocket authentication failed for connection ${connectionId}: ${(error as Error).message}`
+      this.logger.error('WebSocket authentication failed', error as Error, {
+        connectionId
       });
       return false;
     }
@@ -268,8 +268,9 @@ export class WebSocketService implements WebSocketServer {
       this.metrics.totalMessagesSent++;
 
     } catch (error) {
-      this.logger.error('Failed to send WebSocket message', {
-        message: `Failed to send WebSocket message to ${connection.connectionId} (user: ${connection.userId}): ${(error as Error).message}`
+      this.logger.error('Failed to send WebSocket message', error as Error, {
+        connectionId: connection.connectionId,
+        userId: connection.userId
       });
       throw error;
     }

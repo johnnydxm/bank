@@ -137,8 +137,9 @@ export class TransactionQueueService {
     } else {
       // Move to dead letter queue
       this.deadLetterQueue.set(transaction.id, transaction);
-      this.logger.error('Transaction moved to dead letter queue', {
-        message: `Transaction ${transaction.id} moved to dead letter queue after ${transaction.retryCount} retries: ${errorMessage}`
+      this.logger.error('Transaction moved to dead letter queue', new Error(errorMessage), {
+        transactionId: transaction.id,
+        retryCount: transaction.retryCount
       });
     }
 
@@ -262,8 +263,9 @@ export class TransactionQueueService {
       const processingTime = Date.now() - startTime;
       const errorMessage = (error as Error).message;
       
-      this.logger.error('Transaction processing failed', {
-        message: `Transaction processing failed for ${transaction.id} (user: ${transaction.userId}): ${errorMessage}`,
+      this.logger.error('Transaction processing failed', error as Error, {
+        transactionId: transaction.id,
+        userId: transaction.userId,
         processingTimeMs: processingTime,
         retryCount: transaction.retryCount
       });

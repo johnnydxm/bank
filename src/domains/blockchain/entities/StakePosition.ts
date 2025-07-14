@@ -9,19 +9,19 @@ export interface StakePositionProps {
   rewardsEarned: bigint;
   apy: number;
   startDate: Date;
-  lockPeriod?: number; // days
-  unstakeDate?: Date;
+  lockPeriod?: number | undefined; // days
+  unstakeDate?: Date | undefined;
   status: 'active' | 'unstaking' | 'completed' | 'slashed';
-  validatorId?: string;
-  poolId?: string;
+  validatorId?: string | undefined;
+  poolId?: string | undefined;
   riskLevel: 'low' | 'medium' | 'high';
   metadata?: {
-    autoCompound?: boolean;
-    delegatorAddress?: string;
-    contractAddress?: string;
-    minimumStake?: bigint;
-    slashingRisk?: number;
-  };
+    autoCompound?: boolean | undefined;
+    delegatorAddress?: string | undefined;
+    contractAddress?: string | undefined;
+    minimumStake?: bigint | undefined;
+    slashingRisk?: number | undefined;
+  } | undefined;
 }
 
 export class StakePosition extends Entity {

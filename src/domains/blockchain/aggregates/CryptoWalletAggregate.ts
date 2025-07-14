@@ -29,7 +29,7 @@ export class CryptoWalletAggregate extends AggregateRoot {
     gasOptimizationStrategy?: GasOptimizationStrategy
   ) {
     super(`wallet:${walletId.value}`);
-    this.gasOptimizationStrategy = gasOptimizationStrategy || GasOptimizationStrategy.default();
+    this.gasOptimizationStrategy = gasOptimizationStrategy || GasOptimizationStrategy.createStandardStrategy();
     this.initializeDefaultL2Networks();
   }
 

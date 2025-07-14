@@ -254,8 +254,7 @@ export class FormanceClientService implements IFormanceClientRepository {
     const duration = Date.now() - startTime;
     const formanceError = this.convertToFormanceError(lastError!, operationName);
     
-    this.logger.error(`Formance operation ${operationName} failed after ${maxAttempts} attempts`, {
-      message: `Formance operation ${operationName} failed after ${maxAttempts} attempts: ${formanceError.message}`,
+    this.logger.error(`Formance operation ${operationName} failed after ${maxAttempts} attempts`, formanceError, {
       duration_ms: duration
     });
 

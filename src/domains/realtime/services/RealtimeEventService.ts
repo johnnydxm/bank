@@ -300,8 +300,7 @@ export class RealtimeEventService implements IRealtimeEventService {
       this.updateEventMetrics(event.type, processingTime, true);
       this.metrics.totalEventsFailed++;
 
-      this.logger.error('Event processing failed', {
-        message: `Event processing failed for ${event.type} (${event.id}): ${errorMessage}`,
+      this.logger.error('Event processing failed', error as Error, {
         eventType: event.type,
         userId: event.userId,
         processingTimeMs: processingTime

@@ -75,21 +75,21 @@ export class AccountAddress extends ValueObject<string> {
     if (!this.isSubAccount()) return null;
     const parts = this._value.split(':');
     const subIndex = parts.indexOf('sub');
-    return subIndex >= 0 && parts[subIndex + 1] ? parts[subIndex + 1] : null;
+    return subIndex >= 0 && parts[subIndex + 1] ? parts[subIndex + 1] || null : null;
   }
 
   public getCardId(): string | null {
     if (!this.isCardAccount()) return null;
     const parts = this._value.split(':');
     const cardIndex = parts.indexOf('card');
-    return cardIndex >= 0 && parts[cardIndex + 1] ? parts[cardIndex + 1] : null;
+    return cardIndex >= 0 && parts[cardIndex + 1] ? parts[cardIndex + 1] || null : null;
   }
 
   public getWalletId(): string | null {
     if (!this.isWalletAccount()) return null;
     const parts = this._value.split(':');
     const walletIndex = parts.indexOf('wallet');
-    return walletIndex >= 0 && parts[walletIndex + 1] ? parts[walletIndex + 1] : null;
+    return walletIndex >= 0 && parts[walletIndex + 1] ? parts[walletIndex + 1] || null : null;
   }
 
   public equals(other: AccountAddress): boolean {

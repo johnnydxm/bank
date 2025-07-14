@@ -110,9 +110,7 @@ export class RealtimeController {
 
       res.status(200).json(response);
     } catch (error) {
-      this.logger.error('Failed to get health status', {
-        message: `Failed to get health status: ${(error as Error).message}`
-      });
+      this.logger.error('Failed to get health status', error as Error);
       res.status(500).json({ error: 'Internal server error' });
     }
   }
@@ -164,8 +162,7 @@ export class RealtimeController {
         message: 'Event emitted successfully' 
       });
     } catch (error) {
-      this.logger.error('Failed to emit event', {
-        message: `Failed to emit event: ${(error as Error).message}`,
+      this.logger.error('Failed to emit event', error as Error, {
         eventType: req.body.type,
         userId: req.body.userId
       });
@@ -217,8 +214,7 @@ export class RealtimeController {
         message: 'Transaction event emitted successfully' 
       });
     } catch (error) {
-      this.logger.error('Failed to emit transaction event', {
-        message: `Failed to emit transaction event: ${(error as Error).message}`,
+      this.logger.error('Failed to emit transaction event', error as Error, {
         eventType: req.body.type,
         userId: req.body.userId
       });
@@ -254,8 +250,7 @@ export class RealtimeController {
         message: 'System alert emitted successfully' 
       });
     } catch (error) {
-      this.logger.error('Failed to emit system alert', {
-        message: `Failed to emit system alert: ${(error as Error).message}`,
+      this.logger.error('Failed to emit system alert', error as Error, {
         alertMessage: req.body.message,
         severity: req.body.severity
       });
@@ -276,9 +271,7 @@ export class RealtimeController {
         timestamp: new Date()
       });
     } catch (error) {
-      this.logger.error('Failed to get queue status', {
-        message: `Failed to get queue status: ${(error as Error).message}`
-      });
+      this.logger.error('Failed to get queue status', error as Error);
       res.status(500).json({ error: 'Failed to get queue status' });
     }
   }
@@ -294,9 +287,7 @@ export class RealtimeController {
         message: 'Queue processing paused' 
       });
     } catch (error) {
-      this.logger.error('Failed to pause queue', {
-        message: `Failed to pause queue: ${(error as Error).message}`
-      });
+      this.logger.error('Failed to pause queue', error as Error);
       res.status(500).json({ error: 'Failed to pause queue' });
     }
   }
@@ -312,9 +303,7 @@ export class RealtimeController {
         message: 'Queue processing resumed' 
       });
     } catch (error) {
-      this.logger.error('Failed to resume queue', {
-        message: `Failed to resume queue: ${(error as Error).message}`
-      });
+      this.logger.error('Failed to resume queue', error as Error);
       res.status(500).json({ error: 'Failed to resume queue' });
     }
   }
@@ -344,8 +333,8 @@ export class RealtimeController {
         timestamp: new Date()
       });
     } catch (error) {
-      this.logger.error('Failed to get transaction', {
-        message: `Failed to get transaction ${req.params.transactionId}: ${(error as Error).message}`
+      this.logger.error('Failed to get transaction', error as Error, {
+        transactionId: req.params.transactionId
       });
       res.status(500).json({ error: 'Failed to get transaction' });
     }
@@ -364,9 +353,7 @@ export class RealtimeController {
         timestamp: new Date()
       });
     } catch (error) {
-      this.logger.error('Failed to get WebSocket status', {
-        message: `Failed to get WebSocket status: ${(error as Error).message}`
-      });
+      this.logger.error('Failed to get WebSocket status', error as Error);
       res.status(500).json({ error: 'Failed to get WebSocket status' });
     }
   }
@@ -423,8 +410,7 @@ export class RealtimeController {
         timestamp: new Date()
       });
     } catch (error) {
-      this.logger.error('Failed to get event history', {
-        message: `Failed to get event history: ${(error as Error).message}`,
+      this.logger.error('Failed to get event history', error as Error, {
         queryParams: Object.keys(req.query).length
       });
       res.status(500).json({ error: 'Failed to get event history' });

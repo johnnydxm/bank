@@ -144,8 +144,7 @@ export class BankingIntegrationService {
 
       return connection;
     } catch (error) {
-      this.logger.error('Failed to create bank connection', {
-        message: `Failed to create bank connection: ${(error as Error).message}`,
+      this.logger.error('Failed to create bank connection', error as Error, {
         userId: request.userId,
         providerId: request.providerId
       });
@@ -191,8 +190,7 @@ export class BankingIntegrationService {
 
       return refreshedConnection;
     } catch (error) {
-      this.logger.error('Failed to refresh bank connection', {
-        message: `Failed to refresh bank connection: ${(error as Error).message}`,
+      this.logger.error('Failed to refresh bank connection', error as Error, {
         connectionId
       });
       
@@ -228,8 +226,8 @@ export class BankingIntegrationService {
         providerId: connection.providerId
       });
     } catch (error) {
-      this.logger.error('Failed to disconnect bank connection', {
-        message: `Failed to disconnect bank connection ${connectionId}: ${(error as Error).message}`
+      this.logger.error('Failed to disconnect bank connection', error as Error, {
+        connectionId
       });
       throw error;
     }
@@ -262,8 +260,8 @@ export class BankingIntegrationService {
 
       return accounts;
     } catch (error) {
-      this.logger.error('Failed to get bank accounts', {
-        message: `Failed to get bank accounts for connection ${connectionId}: ${(error as Error).message}`
+      this.logger.error('Failed to get bank accounts', error as Error, {
+        connectionId
       });
       throw error;
     }
@@ -290,8 +288,8 @@ export class BankingIntegrationService {
 
       return balances;
     } catch (error) {
-      this.logger.error('Failed to get bank balances', {
-        message: `Failed to get bank balances for connection ${connectionId}: ${(error as Error).message}`
+      this.logger.error('Failed to get bank balances', error as Error, {
+        connectionId
       });
       throw error;
     }
@@ -378,8 +376,8 @@ export class BankingIntegrationService {
 
       return transfer;
     } catch (error) {
-      this.logger.error('Failed to initiate bank transfer', {
-        message: `Failed to initiate bank transfer for connection ${connectionId}: ${(error as Error).message}`,
+      this.logger.error('Failed to initiate bank transfer', error as Error, {
+        connectionId,
         transferType: request.transferType,
         amount: request.amount.toString()
       });
@@ -419,8 +417,8 @@ export class BankingIntegrationService {
 
       return updatedTransfer;
     } catch (error) {
-      this.logger.error('Failed to get transfer status', {
-        message: `Failed to get transfer status for ${transferId}: ${(error as Error).message}`
+      this.logger.error('Failed to get transfer status', error as Error, {
+        transferId
       });
       throw error;
     }
@@ -456,8 +454,8 @@ export class BankingIntegrationService {
 
       return cancelled;
     } catch (error) {
-      this.logger.error('Failed to cancel transfer', {
-        message: `Failed to cancel transfer ${transferId}: ${(error as Error).message}`
+      this.logger.error('Failed to cancel transfer', error as Error, {
+        transferId
       });
       throw error;
     }
