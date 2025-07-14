@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DWAY Financial Freedom Platform</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+                'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+                sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .shake {
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+    </style>
+</head>
+<body>
+    <div id="root">
+        <div class="loading">
+            <div>
+                <div class="text-center">
+                    <h1 class="text-4xl font-bold mb-2 pulse">DWAY</h1>
+                    <p class="text-xl">Financial Freedom Platform</p>
+                    <p class="text-sm mt-4">Loading Magic...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useCallback, useContext, createContext } = React;
+        
+        // Enhanced Auth Context with Magic Persona enhancements
+        const AuthContext = createContext();
+        
+        const AuthProvider = ({ children }) => {
+            const [user, setUser] = useState(null);
+            const [isAuthenticated, setIsAuthenticated] = useState(false);
+            const [isLoading, setIsLoading] = useState(false);
+            const [error, setError] = useState(null);
+            
+            const signIn = useCallback(async (credentials) => {
+                console.log('🔐 Sign in attempt:', credentials.email);
+                setIsLoading(true);
+                setError(null);
+                
+                try {
+                    // Simulate API call
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    
+                    const userData = {
+                        firstName: 'John',
+                        lastName: 'Doe',
+                        email: credentials.email,
+                        id: Date.now()
+                    };
+                    
+                    setUser(userData);
+                    setIsAuthenticated(true);
+                    console.log('✅ Sign in successful:', userData);
+                    
+                    // Store in localStorage for persistence
+                    localStorage.setItem('dway_user', JSON.stringify(userData));
+                    localStorage.setItem('dway_authenticated', 'true');
+                    
+                } catch (err) {
+                    setError('Sign in failed. Please try again.');
+                    console.error('❌ Sign in error:', err);
+                } finally {
+                    setIsLoading(false);
+                }
+            }, []);
+            
+            const signUp = useCallback(async (userData) => {
+                console.log('📝 Sign up attempt:', userData.email);
+                setIsLoading(true);
+                setError(null);
+                
+                try {
+                    // Enhanced validation
+                    if (!userData.email || !userData.password || !userData.firstName || !userData.lastName) {
+                        throw new Error('All fields are required');
+                    }
+                    
+                    if (userData.password.length < 6) {
+                        throw new Error('Password must be at least 6 characters');
+                    }
+                    
+                    // Simulate API call
+                    await new Promise(resolve => setTimeout(resolve, 1500));
+                    
+                    const newUser = {
+                        firstName: userData.firstName,
+                        lastName: userData.lastName,
+                        email: userData.email,
+                        id: Date.now(),
+                        createdAt: new Date().toISOString()
+                    };
+                    
+                    setUser(newUser);
+                    setIsAuthenticated(true);
+                    console.log('✅ Sign up successful:', newUser);
+                    
+                    // Store in localStorage for persistence
+                    localStorage.setItem('dway_user', JSON.stringify(newUser));
+                    localStorage.setItem('dway_authenticated', 'true');
+                    
+                } catch (err) {
+                    setError(err.message || 'Registration failed. Please try again.');
+                    console.error('❌ Sign up error:', err);
+                    throw err; // Re-throw for form handling
+                } finally {
+                    setIsLoading(false);
+                }
+            }, []);
+            
+            const signOut = useCallback(() => {
+                console.log('🚪 Sign out');
+                setUser(null);
+                setIsAuthenticated(false);
+                setError(null);
+                localStorage.removeItem('dway_user');
+                localStorage.removeItem('dway_authenticated');
+            }, []);
+            
+            // Check for existing session on load
+            useEffect(() => {
+                const savedUser = localStorage.getItem('dway_user');
+                const savedAuth = localStorage.getItem('dway_authenticated');
+                
+                if (savedUser && savedAuth === 'true') {
+                    try {
+                        const userData = JSON.parse(savedUser);
+                        setUser(userData);
+                        setIsAuthenticated(true);
+                        console.log('🔄 Session restored:', userData.email);
+                    } catch (err) {
+                        console.error('❌ Session restore failed:', err);
+                        localStorage.removeItem('dway_user');
+                        localStorage.removeItem('dway_authenticated');
+                    }
+                }
+            }, []);
+            
+            return (
+                <AuthContext.Provider value={{
+                    user,
+                    isAuthenticated,
+                    isLoading,
+                    error,
+                    signIn,
+                    signUp,
+                    signOut
+                }}>
+                    {children}
+                </AuthContext.Provider>
+            );
+        };
+        
+        const useAuth = () => {
+            const context = useContext(AuthContext);
+            if (!context) {
+                throw new Error('useAuth must be used within AuthProvider');
+            }
+            return context;
+        };
+        
+        // Enhanced UI Components with Magic Persona styling
+        const Button = ({ children, onClick, disabled, variant = 'primary', className = '', isLoading = false, ...props }) => {
+            const baseClasses = 'px-6 py-3 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 active:scale-95';
+            const variantClasses = {
+                primary: 'bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 focus:ring-blue-500 shadow-lg',
+                outline: 'border-2 border-gray-300 text-gray-700 hover:bg-gray-50 focus:ring-blue-500 hover:border-gray-400',
+                danger: 'bg-gradient-to-r from-red-600 to-pink-600 text-white hover:from-red-700 hover:to-pink-700 focus:ring-red-500 shadow-lg'
+            };
+            
+            return (
+                <button
+                    className={`${baseClasses} ${variantClasses[variant]} ${className} ${disabled || isLoading ? 'transform-none' : ''}`}
+                    onClick={onClick}
+                    disabled={disabled || isLoading}
+                    {...props}
+                >
+                    {isLoading ? (
+                        <div className="flex items-center justify-center">
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                            {typeof children === 'string' ? 'Processing...' : children}
+                        </div>
+                    ) : children}
+                </button>
+            );
+        };
+        
+        const Input = ({ className = '', error = false, ...props }) => (
+            <input
+                className={`w-full px-4 py-3 border-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                    error 
+                        ? 'border-red-300 bg-red-50 shake' 
+                        : 'border-gray-300 focus:border-blue-500 hover:border-gray-400'
+                } ${className}`}
+                {...props}
+            />
+        );
+        
+        const Card = ({ children, className = '' }) => (
+            <div className={`bg-white rounded-xl shadow-xl border border-gray-100 fade-in ${className}`}>
+                {children}
+            </div>
+        );
+        
+        const Alert = ({ type = 'error', message, onClose }) => {
+            const styles = {
+                error: 'bg-red-50 border-red-200 text-red-800',
+                success: 'bg-green-50 border-green-200 text-green-800',
+                info: 'bg-blue-50 border-blue-200 text-blue-800'
+            };
+            
+            return (
+                <div className={`p-4 rounded-lg border ${styles[type]} fade-in`}>
+                    <div className="flex justify-between items-center">
+                        <span className="text-sm font-medium">{message}</span>
+                        {onClose && (
+                            <button 
+                                onClick={onClose}
+                                className="ml-4 text-current hover:opacity-70"
+                            >
+                                ✕
+                            </button>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+        
+        // Enhanced Authentication Form with Magic Persona UX
+        const AuthenticationForm = () => {
+            const [mode, setMode] = useState('signin');
+            const [formData, setFormData] = useState({
+                email: '',
+                password: '',
+                firstName: '',
+                lastName: ''
+            });
+            const [formErrors, setFormErrors] = useState({});
+            const { signIn, signUp, isLoading, error } = useAuth();
+            
+            const validateForm = () => {
+                const errors = {};
+                
+                if (!formData.email) {
+                    errors.email = 'Email is required';
+                } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+                    errors.email = 'Invalid email format';
+                }
+                
+                if (!formData.password) {
+                    errors.password = 'Password is required';
+                } else if (formData.password.length < 6) {
+                    errors.password = 'Password must be at least 6 characters';
+                }
+                
+                if (mode === 'signup') {
+                    if (!formData.firstName) {
+                        errors.firstName = 'First name is required';
+                    }
+                    if (!formData.lastName) {
+                        errors.lastName = 'Last name is required';
+                    }
+                }
+                
+                setFormErrors(errors);
+                return Object.keys(errors).length === 0;
+            };
+            
+            const handleSubmit = async (e) => {
+                e.preventDefault();
+                console.log('📋 Form submission started', { mode, email: formData.email });
+                
+                if (!validateForm()) {
+                    console.log('❌ Form validation failed', formErrors);
+                    return;
+                }
+                
+                try {
+                    if (mode === 'signin') {
+                        await signIn({ 
+                            email: formData.email, 
+                            password: formData.password 
+                        });
+                    } else {
+                        await signUp(formData);
+                    }
+                    console.log('✅ Authentication successful');
+                } catch (error) {
+                    console.error('❌ Authentication failed:', error);
+                }
+            };
+            
+            const handleInputChange = (field, value) => {
+                setFormData(prev => ({ ...prev, [field]: value }));
+                // Clear error when user starts typing
+                if (formErrors[field]) {
+                    setFormErrors(prev => ({ ...prev, [field]: '' }));
+                }
+            };
+            
+            const toggleMode = () => {
+                setMode(mode === 'signin' ? 'signup' : 'signin');
+                setFormErrors({});
+                setFormData({
+                    email: formData.email, // Keep email
+                    password: '',
+                    firstName: '',
+                    lastName: ''
+                });
+            };
+            
+            return (
+                <Card className="p-8 w-full max-w-md">
+                    <div className="mb-8 text-center">
+                        <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full mb-4">
+                            <span className="text-2xl text-white">
+                                {mode === 'signin' ? '🔐' : '✨'}
+                            </span>
+                        </div>
+                        <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                            {mode === 'signin' ? 'Welcome Back!' : 'Join DWAY'}
+                        </h2>
+                        <p className="text-gray-600">
+                            {mode === 'signin' 
+                                ? 'Sign in to your account to continue your financial journey' 
+                                : 'Start your financial freedom journey today'
+                            }
+                        </p>
+                    </div>
+                    
+                    {error && (
+                        <Alert 
+                            type="error" 
+                            message={error}
+                            onClose={() => {}} 
+                        />
+                    )}
+                    
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        {mode === 'signup' && (
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                        First Name
+                                    </label>
+                                    <Input
+                                        type="text"
+                                        placeholder="John"
+                                        value={formData.firstName}
+                                        onChange={(e) => handleInputChange('firstName', e.target.value)}
+                                        error={!!formErrors.firstName}
+                                        required
+                                    />
+                                    {formErrors.firstName && (
+                                        <p className="text-red-500 text-xs mt-1">{formErrors.firstName}</p>
+                                    )}
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                        Last Name
+                                    </label>
+                                    <Input
+                                        type="text"
+                                        placeholder="Doe"
+                                        value={formData.lastName}
+                                        onChange={(e) => handleInputChange('lastName', e.target.value)}
+                                        error={!!formErrors.lastName}
+                                        required
+                                    />
+                                    {formErrors.lastName && (
+                                        <p className="text-red-500 text-xs mt-1">{formErrors.lastName}</p>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+                        
+                        <div>
+                            <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                Email Address
+                            </label>
+                            <Input
+                                type="email"
+                                placeholder="john@example.com"
+                                value={formData.email}
+                                onChange={(e) => handleInputChange('email', e.target.value)}
+                                error={!!formErrors.email}
+                                required
+                            />
+                            {formErrors.email && (
+                                <p className="text-red-500 text-xs mt-1">{formErrors.email}</p>
+                            )}
+                        </div>
+                        
+                        <div>
+                            <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                Password
+                            </label>
+                            <Input
+                                type="password"
+                                placeholder="••••••••"
+                                value={formData.password}
+                                onChange={(e) => handleInputChange('password', e.target.value)}
+                                error={!!formErrors.password}
+                                required
+                            />
+                            {formErrors.password && (
+                                <p className="text-red-500 text-xs mt-1">{formErrors.password}</p>
+                            )}
+                        </div>
+                        
+                        <Button 
+                            type="submit" 
+                            isLoading={isLoading}
+                            className="w-full text-lg py-4"
+                        >
+                            {mode === 'signin' ? '🚀 Sign In' : '✨ Create Account'}
+                        </Button>
+                        
+                        <div className="text-center">
+                            <button
+                                type="button"
+                                onClick={toggleMode}
+                                className="text-blue-600 hover:text-blue-500 text-sm font-medium transition-colors"
+                            >
+                                {mode === 'signin' 
+                                    ? "Don't have an account? Sign up" 
+                                    : 'Already have an account? Sign in'
+                                }
+                            </button>
+                        </div>
+                    </form>
+                    
+                    {mode === 'signup' && (
+                        <div className="mt-8 pt-6 border-t border-gray-200">
+                            <h3 className="text-sm font-semibold text-gray-900 mb-3">What you get:</h3>
+                            <div className="grid grid-cols-2 gap-3 text-xs text-gray-600">
+                                <div className="flex items-center">
+                                    <span className="mr-2">💰</span>
+                                    Multi-currency accounts
+                                </div>
+                                <div className="flex items-center">
+                                    <span className="mr-2">🚀</span>
+                                    DeFi integration
+                                </div>
+                                <div className="flex items-center">
+                                    <span className="mr-2">⚡</span>
+                                    Instant transfers
+                                </div>
+                                <div className="flex items-center">
+                                    <span className="mr-2">🔒</span>
+                                    Bank-grade security
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </Card>
+            );
+        };
+        
+        // Enhanced Dashboard with Magic Persona improvements
+        const UserDashboard = () => {
+            const { user, signOut } = useAuth();
+            const [accounts] = useState([
+                { id: 1, name: 'Main Checking', balance: 5420.50, currency: 'USD', change: '+2.4%' },
+                { id: 2, name: 'Euro Savings', balance: 2800.00, currency: 'EUR', change: '+1.8%' },
+                { id: 3, name: 'Crypto Wallet', balance: 0.15, currency: 'BTC', change: '+8.2%' }
+            ]);
+            
+            const [transactions] = useState([
+                { id: 1, description: 'Salary Deposit', amount: 2500.00, date: '2025-07-14', type: 'credit', icon: '💰' },
+                { id: 2, description: 'Grocery Store', amount: -85.50, date: '2025-07-13', type: 'debit', icon: '🛒' },
+                { id: 3, description: 'Investment Return', amount: 150.00, date: '2025-07-12', type: 'credit', icon: '📈' },
+                { id: 4, description: 'Coffee Shop', amount: -4.50, date: '2025-07-11', type: 'debit', icon: '☕' }
+            ]);
+            
+            return (
+                <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
+                    <header className="bg-white/90 backdrop-blur-sm shadow-lg border-b border-gray-200 sticky top-0 z-10">
+                        <div className="max-w-7xl mx-auto px-4 py-6">
+                            <div className="flex items-center justify-between">
+                                <div className="fade-in">
+                                    <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                                        Welcome back, {user?.firstName}! ✨
+                                    </h1>
+                                    <p className="text-gray-600 mt-2 text-lg">Here's your financial overview</p>
+                                </div>
+                                <div className="flex items-center space-x-4">
+                                    <div className="text-right">
+                                        <p className="text-sm text-gray-500">Logged in as</p>
+                                        <p className="font-medium">{user?.email}</p>
+                                    </div>
+                                    <Button variant="outline" onClick={signOut}>
+                                        🚪 Sign Out
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+                    
+                    <main className="max-w-7xl mx-auto px-4 py-8">
+                        {/* Enhanced Balance Overview */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                            <Card className="p-6 bg-gradient-to-br from-blue-600 to-purple-600 text-white">
+                                <div className="text-center">
+                                    <p className="text-blue-100 text-sm">Total Balance</p>
+                                    <p className="text-4xl font-bold">$13,867.50</p>
+                                    <div className="flex items-center justify-center mt-2">
+                                        <span className="text-green-200 text-sm">📈 +8.2% this month</span>
+                                    </div>
+                                </div>
+                            </Card>
+                            
+                            <Card className="p-6">
+                                <div className="text-center">
+                                    <p className="text-sm text-gray-600">Monthly Income</p>
+                                    <p className="text-3xl font-bold text-green-600">+$2,650</p>
+                                    <p className="text-sm text-gray-500 mt-2">💰 3 deposits</p>
+                                </div>
+                            </Card>
+                            
+                            <Card className="p-6">
+                                <div className="text-center">
+                                    <p className="text-sm text-gray-600">Monthly Expenses</p>
+                                    <p className="text-3xl font-bold text-red-600">-$1,340</p>
+                                    <p className="text-sm text-gray-500 mt-2">🛍️ 12 transactions</p>
+                                </div>
+                            </Card>
+                        </div>
+                        
+                        {/* Enhanced Accounts */}
+                        <Card className="p-6 mb-8">
+                            <h2 className="text-2xl font-bold mb-6 flex items-center">
+                                <span className="mr-2">🏦</span>
+                                Your Accounts
+                            </h2>
+                            <div className="grid gap-4">
+                                {accounts.map(account => (
+                                    <div key={account.id} className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl border border-gray-200 hover:shadow-md transition-all">
+                                        <div className="flex items-center">
+                                            <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-bold mr-4">
+                                                {account.currency === 'USD' ? '$' : account.currency === 'EUR' ? '€' : '₿'}
+                                            </div>
+                                            <div>
+                                                <p className="font-semibold text-lg">{account.name}</p>
+                                                <p className="text-sm text-gray-600">{account.currency} Account</p>
+                                            </div>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="text-xl font-bold">
+                                                {account.currency === 'USD' ? '$' : account.currency === 'EUR' ? '€' : ''}
+                                                {account.balance.toLocaleString()}
+                                                {account.currency === 'BTC' ? ' BTC' : ''}
+                                            </p>
+                                            <p className="text-sm text-green-600">{account.change}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </Card>
+                        
+                        {/* Enhanced Quick Actions */}
+                        <Card className="p-6 mb-8">
+                            <h2 className="text-2xl font-bold mb-6 flex items-center">
+                                <span className="mr-2">⚡</span>
+                                Quick Actions
+                            </h2>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                {[
+                                    { icon: '💸', label: 'Send Money', color: 'from-blue-500 to-cyan-500' },
+                                    { icon: '📥', label: 'Deposit', color: 'from-green-500 to-emerald-500' },
+                                    { icon: '🔄', label: 'Exchange', color: 'from-purple-500 to-pink-500' },
+                                    { icon: '⛓️', label: 'DeFi', color: 'from-orange-500 to-red-500' }
+                                ].map((action, index) => (
+                                    <Button 
+                                        key={index}
+                                        className={`p-6 h-auto flex flex-col items-center bg-gradient-to-r ${action.color} hover:scale-105 transform transition-all`}
+                                    >
+                                        <span className="text-3xl mb-2">{action.icon}</span>
+                                        <span className="font-semibold">{action.label}</span>
+                                    </Button>
+                                ))}
+                            </div>
+                        </Card>
+                        
+                        {/* Enhanced Recent Transactions */}
+                        <Card className="p-6">
+                            <h2 className="text-2xl font-bold mb-6 flex items-center">
+                                <span className="mr-2">📋</span>
+                                Recent Transactions
+                            </h2>
+                            <div className="space-y-3">
+                                {transactions.map(transaction => (
+                                    <div key={transaction.id} className="flex items-center justify-between p-4 hover:bg-gray-50 rounded-lg transition-colors border border-gray-100">
+                                        <div className="flex items-center">
+                                            <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center mr-4">
+                                                <span className="text-lg">{transaction.icon}</span>
+                                            </div>
+                                            <div>
+                                                <p className="font-semibold">{transaction.description}</p>
+                                                <p className="text-sm text-gray-500">{transaction.date}</p>
+                                            </div>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className={`text-lg font-bold ${transaction.type === 'credit' ? 'text-green-600' : 'text-red-600'}`}>
+                                                {transaction.type === 'credit' ? '+' : ''}${Math.abs(transaction.amount).toLocaleString()}
+                                            </p>
+                                            <div className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
+                                                transaction.type === 'credit' 
+                                                    ? 'bg-green-100 text-green-800' 
+                                                    : 'bg-red-100 text-red-800'
+                                            }`}>
+                                                {transaction.type === 'credit' ? '📈 Credit' : '📉 Debit'}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </Card>
+                    </main>
+                </div>
+            );
+        };
+        
+        // Main App Component with Enhanced State Management
+        const App = () => {
+            return (
+                <AuthProvider>
+                    <AppContent />
+                </AuthProvider>
+            );
+        };
+        
+        const AppContent = () => {
+            const { isAuthenticated, isLoading } = useAuth();
+            
+            if (isLoading) {
+                return (
+                    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+                        <div className="text-center">
+                            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                            <p className="text-lg text-gray-600">Loading your account...</p>
+                        </div>
+                    </div>
+                );
+            }
+            
+            if (!isAuthenticated) {
+                return (
+                    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+                        <div className="max-w-md w-full">
+                            <div className="text-center mb-8 fade-in">
+                                <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
+                                    DWAY
+                                </h1>
+                                <p className="text-2xl text-gray-800 font-semibold">Financial Freedom Platform</p>
+                                <p className="text-gray-600 mt-3">Multi-currency banking meets DeFi innovation</p>
+                            </div>
+                            <AuthenticationForm />
+                        </div>
+                    </div>
+                );
+            }
+            
+            return <UserDashboard />;
+        };
+        
+        // Render the App using React 18 API
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+        
+        // Debug logging
+        console.log('🚀 DWAY Platform Enhanced with Magic Persona activated!');
+        console.log('✨ Features: Enhanced UX, Better error handling, Persistent sessions');
+    </script>
+</body>
+</html>

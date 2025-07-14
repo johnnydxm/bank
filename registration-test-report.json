@@ -1,0 +1,323 @@
+{
+  "timestamp": "2025-07-14T22:18:57.614Z",
+  "testDuration": 10096,
+  "summary": {
+    "pageLoadSuccess": true,
+    "formFieldsFound": 4,
+    "totalErrors": 0,
+    "totalConsoleMessages": 7,
+    "totalNetworkRequests": 10,
+    "screenshotsTaken": 5
+  },
+  "detailedResults": {
+    "pageLoad": {
+      "success": true,
+      "statusCode": 200,
+      "loadTime": 1525,
+      "title": "DWAY Financial Freedom Platform",
+      "hasReactApp": true,
+      "hasAuthForm": true,
+      "url": "http://localhost:3001/",
+      "errors": 0
+    },
+    "registrationForm": {
+      "signupToggleFound": true,
+      "formFieldsFound": {
+        "firstName": true,
+        "lastName": false,
+        "email": true,
+        "password": true,
+        "submitButton": true
+      },
+      "formFillSuccess": true,
+      "submissionResult": {
+        "clicked": true,
+        "urlChanged": false,
+        "currentUrl": "http://localhost:3001/",
+        "newConsoleMessages": 0,
+        "newErrors": 0,
+        "newRequests": 0,
+        "successIndicators": {
+          "dashboardVisible": false,
+          "successMessage": false,
+          "userLoggedIn": false,
+          "authToken": false
+        }
+      }
+    },
+    "debugInfo": {
+      "consoleMessages": [
+        {
+          "timestamp": "2025-07-14T22:18:49.286Z",
+          "type": "info",
+          "text": "%cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold",
+          "location": {
+            "url": "https://unpkg.com/react-dom@18/umd/react-dom.development.js",
+            "lineNumber": 29904,
+            "columnNumber": 18
+          }
+        },
+        {
+          "timestamp": "2025-07-14T22:18:49.387Z",
+          "type": "warn",
+          "text": "cdn.tailwindcss.com should not be used in production. To use Tailwind CSS in production, install it as a PostCSS plugin or use the Tailwind CLI: https://tailwindcss.com/docs/installation",
+          "location": {
+            "url": "https://cdn.tailwindcss.com/",
+            "lineNumber": 63,
+            "columnNumber": 1710
+          }
+        },
+        {
+          "timestamp": "2025-07-14T22:18:49.449Z",
+          "type": "warn",
+          "text": "You are using the in-browser Babel transformer. Be sure to precompile your scripts for production - https://babeljs.io/docs/setup/",
+          "location": {
+            "url": "https://unpkg.com/@babel/standalone/babel.min.js",
+            "lineNumber": 2,
+            "columnNumber": 3043988
+          }
+        },
+        {
+          "timestamp": "2025-07-14T22:18:49.570Z",
+          "type": "log",
+          "text": "🚀 DWAY Platform Enhanced with Magic Persona activated!",
+          "location": {
+            "url": "",
+            "lineNumber": 754,
+            "columnNumber": 8
+          }
+        },
+        {
+          "timestamp": "2025-07-14T22:18:49.570Z",
+          "type": "log",
+          "text": "✨ Features: Enhanced UX, Better error handling, Persistent sessions",
+          "location": {
+            "url": "",
+            "lineNumber": 755,
+            "columnNumber": 8
+          }
+        },
+        {
+          "timestamp": "2025-07-14T22:18:49.625Z",
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "location": {
+            "url": "http://localhost:3001/favicon.ico"
+          }
+        },
+        {
+          "timestamp": "2025-07-14T22:18:49.685Z",
+          "type": "verbose",
+          "text": "[DOM] Input elements should have autocomplete attributes (suggested: \"current-password\"): (More info: https://goo.gl/9p2vKq) %o",
+          "location": {
+            "url": "http://localhost:3001/"
+          }
+        }
+      ],
+      "networkRequests": [
+        {
+          "timestamp": "2025-07-14T22:18:48.795Z",
+          "method": "GET",
+          "url": "http://localhost:3001/",
+          "headers": {
+            "accept-language": "en-US,en;q=0.9",
+            "upgrade-insecure-requests": "1",
+            "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+            "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+            "sec-ch-ua-mobile": "?0",
+            "sec-ch-ua-platform": "\"macOS\"",
+            "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"
+          }
+        },
+        {
+          "timestamp": "2025-07-14T22:18:48.813Z",
+          "method": "GET",
+          "url": "https://unpkg.com/react@18/umd/react.development.js",
+          "headers": {
+            "sec-ch-ua-platform": "\"macOS\"",
+            "referer": "http://localhost:3001/",
+            "accept-language": "en-US,en;q=0.9",
+            "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+            "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+            "sec-ch-ua-mobile": "?0",
+            "accept": "*/*"
+          }
+        },
+        {
+          "timestamp": "2025-07-14T22:18:48.814Z",
+          "method": "GET",
+          "url": "https://unpkg.com/react-dom@18/umd/react-dom.development.js",
+          "headers": {
+            "sec-ch-ua-platform": "\"macOS\"",
+            "referer": "http://localhost:3001/",
+            "accept-language": "en-US,en;q=0.9",
+            "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+            "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+            "sec-ch-ua-mobile": "?0",
+            "accept": "*/*"
+          }
+        },
+        {
+          "timestamp": "2025-07-14T22:18:48.814Z",
+          "method": "GET",
+          "url": "https://unpkg.com/@babel/standalone/babel.min.js",
+          "headers": {
+            "sec-ch-ua-platform": "\"macOS\"",
+            "referer": "http://localhost:3001/",
+            "accept-language": "en-US,en;q=0.9",
+            "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+            "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+            "sec-ch-ua-mobile": "?0",
+            "accept": "*/*"
+          }
+        },
+        {
+          "timestamp": "2025-07-14T22:18:48.814Z",
+          "method": "GET",
+          "url": "https://cdn.tailwindcss.com/",
+          "headers": {
+            "sec-ch-ua-platform": "\"macOS\"",
+            "referer": "http://localhost:3001/",
+            "accept-language": "en-US,en;q=0.9",
+            "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+            "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+            "sec-ch-ua-mobile": "?0",
+            "accept": "*/*"
+          }
+        },
+        {
+          "timestamp": "2025-07-14T22:18:48.914Z",
+          "method": "GET",
+          "url": "https://cdn.tailwindcss.com/3.4.16",
+          "headers": {
+            "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+            "referer": "http://localhost:3001/",
+            "accept": "*/*",
+            "accept-language": "en-US,en;q=0.9"
+          }
+        },
+        {
+          "timestamp": "2025-07-14T22:18:48.951Z",
+          "method": "GET",
+          "url": "https://unpkg.com/@babel/standalone@7.28.1/babel.min.js",
+          "headers": {
+            "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+            "referer": "http://localhost:3001/",
+            "accept": "*/*",
+            "accept-language": "en-US,en;q=0.9"
+          }
+        },
+        {
+          "timestamp": "2025-07-14T22:18:49.011Z",
+          "method": "GET",
+          "url": "https://unpkg.com/react@18.3.1/umd/react.development.js",
+          "headers": {
+            "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+            "referer": "http://localhost:3001/",
+            "accept": "*/*",
+            "accept-language": "en-US,en;q=0.9"
+          }
+        },
+        {
+          "timestamp": "2025-07-14T22:18:49.099Z",
+          "method": "GET",
+          "url": "https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js",
+          "headers": {
+            "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+            "referer": "http://localhost:3001/",
+            "accept": "*/*",
+            "accept-language": "en-US,en;q=0.9"
+          }
+        },
+        {
+          "timestamp": "2025-07-14T22:18:49.620Z",
+          "method": "GET",
+          "url": "http://localhost:3001/favicon.ico",
+          "headers": {
+            "sec-ch-ua-platform": "\"macOS\"",
+            "referer": "http://localhost:3001/",
+            "accept-language": "en-US,en;q=0.9",
+            "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+            "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+            "sec-ch-ua-mobile": "?0",
+            "accept": "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8"
+          }
+        }
+      ],
+      "errors": [],
+      "screenshots": [
+        {
+          "description": "initial-page-load",
+          "filename": "screenshot-1-initial-page-load.png",
+          "filepath": "/Users/aubk/Documents/Projects/bank/my-formance-stack/test-screenshots/screenshot-1-initial-page-load.png",
+          "timestamp": "2025-07-14T22:18:50.500Z"
+        },
+        {
+          "description": "after-signup-toggle",
+          "filename": "screenshot-2-after-signup-toggle.png",
+          "filepath": "/Users/aubk/Documents/Projects/bank/my-formance-stack/test-screenshots/screenshot-2-after-signup-toggle.png",
+          "timestamp": "2025-07-14T22:18:53.687Z"
+        },
+        {
+          "description": "form-filled",
+          "filename": "screenshot-3-form-filled.png",
+          "filepath": "/Users/aubk/Documents/Projects/bank/my-formance-stack/test-screenshots/screenshot-3-form-filled.png",
+          "timestamp": "2025-07-14T22:18:53.872Z"
+        },
+        {
+          "description": "after-submit",
+          "filename": "screenshot-4-after-submit.png",
+          "filepath": "/Users/aubk/Documents/Projects/bank/my-formance-stack/test-screenshots/screenshot-4-after-submit.png",
+          "timestamp": "2025-07-14T22:18:56.971Z"
+        },
+        {
+          "description": "validation-errors",
+          "filename": "screenshot-5-validation-errors.png",
+          "filepath": "/Users/aubk/Documents/Projects/bank/my-formance-stack/test-screenshots/screenshot-5-validation-errors.png",
+          "timestamp": "2025-07-14T22:18:57.613Z"
+        }
+      ],
+      "analysis": {
+        "consoleStats": {
+          "total": 7,
+          "byType": {
+            "info": 1,
+            "warn": 2,
+            "log": 2,
+            "error": 1,
+            "verbose": 1
+          }
+        },
+        "networkStats": {
+          "total": 10,
+          "byMethod": {
+            "GET": 10
+          },
+          "failed": []
+        },
+        "storageData": {
+          "localStorage": {},
+          "sessionStorage": {}
+        },
+        "reactInfo": {
+          "reactDetected": true,
+          "reactVersion": "18.3.1",
+          "reactErrors": 0
+        },
+        "totalErrors": 0
+      }
+    },
+    "userExperience": {
+      "loadingIndicators": 0,
+      "hasAnimations": true,
+      "accessibilityFeatures": {
+        "hasAriaLabels": false,
+        "hasAriaDescriptions": false,
+        "hasSkipLinks": false,
+        "hasFocusVisible": true,
+        "hasHeadings": true
+      },
+      "validationTested": true
+    }
+  }
+}
