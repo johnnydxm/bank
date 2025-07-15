@@ -66,22 +66,32 @@ export class TransactionBatch extends Entity {
     return this._metadata;
   }
 
-  constructor(props: Omit<TransactionBatchProps, 'id' | 'createdAt'>) {
-    super(`batch_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
-    this._transactions = props.transactions;
-    this._network = props.network;
-    this._status = props.status;
-    this._estimatedGas = props.estimatedGas;
-    this._actualGas = props.actualGas;
-    this._gasPrice = props.gasPrice;
-    this._totalCost = props.totalCost;
+  constructor(
+    id: string,
+    transactions: string[],
+    gasSavings: bigint,
+    estimatedTime: number
+  ) {
+    super(id);
+    this._transactions = transactions;
+    this._network = 'ethereum';
+    this._status = 'pending';
+    this._estimatedGas = BigInt(transactions.length * 50000);
+    this._actualGas = undefined;
+    this._gasPrice = BigInt(20000000000);
+    this._totalCost = this._estimatedGas * this._gasPrice;
     this._batchCreatedAt = new Date();
-    this._processedAt = props.processedAt;
-    this._metadata = props.metadata;
+    this._processedAt = undefined;
+    this._metadata = { gasSavings, estimatedTime };
+  }
+
+  public static generateId(): string {
+    return `batch_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
   public static create(props: Omit<TransactionBatchProps, 'id' | 'createdAt'>): TransactionBatch {
-    return new TransactionBatch(props);
+    const id = TransactionBatch.generateId();
+    return new TransactionBatch(id, props.transactions, BigInt(0), 300);
   }
 
   public markAsProcessing(): void {

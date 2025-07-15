@@ -122,7 +122,7 @@ export class MultiCurrencyAccountService {
         this.logger.info(`Created ${currency} account`, { accountAddress });
         
       } catch (error) {
-        this.logger.error(`Failed to create ${currency} account for user ${userId}`, (error as Error).message);
+        this.logger.error(`Failed to create ${currency} account for user ${userId}`, error as Error);
       }
     }
 
@@ -371,7 +371,7 @@ export class MultiCurrencyAccountService {
 
         conversions.push(conversion);
       } catch (error) {
-        this.logger.error(`Failed to convert ${balance.currency} to ${targetCurrency}`, (error as Error).message);
+        this.logger.error(`Failed to convert ${balance.currency} to ${targetCurrency}`, error as Error);
       }
     }
 

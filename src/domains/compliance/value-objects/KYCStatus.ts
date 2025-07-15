@@ -13,27 +13,51 @@ export interface KYCStatusProps {
 
 export class KYCStatus extends ValueObject<KYCStatusProps> {
   get status(): KYCStatusType {
-    return this.props.status;
+    return this._value.status;
   }
 
   get verificationLevel(): 'basic' | 'standard' | 'enhanced' {
-    return this.props.verificationLevel;
+    return this._value.verificationLevel;
   }
 
   get lastUpdated(): Date {
-    return this.props.lastUpdated;
+    return this._value.lastUpdated;
   }
 
   get expiryDate(): Date | undefined {
-    return this.props.expiryDate;
+    return this._value.expiryDate;
   }
 
   get rejectionReason(): string | undefined {
-    return this.props.rejectionReason;
+    return this._value.rejectionReason;
   }
 
   get verifiedBy(): string | undefined {
-    return this.props.verifiedBy;
+    return this._value.verifiedBy;
+  }
+
+  protected validate(): void {
+    if (!this._value.status) {
+      throw new Error('KYC status is required');
+    }
+
+    if (!this._value.verificationLevel) {
+      throw new Error('Verification level is required');
+    }
+
+    if (!this._value.lastUpdated) {
+      throw new Error('Last updated date is required');
+    }
+
+    const validStatuses: KYCStatusType[] = ['pending', 'in_progress', 'approved', 'rejected', 'expired', 'incomplete'];
+    if (!validStatuses.includes(this._value.status)) {
+      throw new Error(`Invalid KYC status: ${this._value.status}`);
+    }
+
+    const validLevels = ['basic', 'standard', 'enhanced'];
+    if (!validLevels.includes(this._value.verificationLevel)) {
+      throw new Error(`Invalid verification level: ${this._value.verificationLevel}`);
+    }
   }
 
   public static create(props: Omit<KYCStatusProps, 'lastUpdated'>): KYCStatus {
@@ -91,5 +115,30 @@ export class KYCStatus extends ValueObject<KYCStatusProps> {
     const now = new Date();
     const diffTime = this.expiryDate.getTime() - now.getTime();
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  }
+
+  public isCompleted(): boolean {
+    return this.status === 'approved';
+  }
+
+  // Static factory methods for enum-like access
+  public static get PENDING(): KYCStatus {
+    return KYCStatus.pending();
+  }
+
+  public static get IN_PROGRESS(): KYCStatus {
+    return new KYCStatus({
+      status: 'in_progress',
+      verificationLevel: 'basic',
+      lastUpdated: new Date()
+    });
+  }
+
+  public static get VERIFIED(): KYCStatus {
+    return KYCStatus.approved('standard', 'system');
+  }
+
+  public static get FAILED(): KYCStatus {
+    return KYCStatus.rejected('Verification failed');
   }
 }

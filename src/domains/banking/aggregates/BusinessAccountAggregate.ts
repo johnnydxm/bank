@@ -114,6 +114,7 @@ export class BusinessAccountAggregate extends AggregateRoot {
     const virtualCard = new VirtualCard({
       id: cardId,
       accountId: cardAccountAddress.value,
+      accountAddress: cardAccountAddress.value,
       cardholderName: `${this.businessName} - ${purpose}`,
       cardType: 'debit',
       currency: 'USD',
@@ -129,6 +130,7 @@ export class BusinessAccountAggregate extends AggregateRoot {
       cardNumber: undefined,
       cvv: undefined,
       pin: undefined,
+      purpose: purpose,
       usage: {
         dailySpent: 0n,
         monthlySpent: 0n,

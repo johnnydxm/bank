@@ -3,6 +3,7 @@ import { Entity } from '../../../shared/domain/Entity';
 export interface VirtualCardProps {
   id: string;
   accountId: string;
+  accountAddress: string;
   cardholderName: string;
   cardType: 'debit' | 'credit';
   currency: string;
@@ -18,6 +19,7 @@ export interface VirtualCardProps {
   cardNumber?: string | undefined; // Encrypted/tokenized
   cvv?: string | undefined; // Encrypted
   pin?: string | undefined; // Hashed
+  purpose: string;
   usage: {
     dailySpent: bigint;
     monthlySpent: bigint;
@@ -41,6 +43,7 @@ export interface VirtualCardProps {
 
 export class VirtualCard extends Entity {
   private _accountId: string;
+  private _accountAddress: string;
   private _cardholderName: string;
   private _cardType: VirtualCardProps['cardType'];
   private _currency: string;
@@ -56,6 +59,7 @@ export class VirtualCard extends Entity {
   private _cardNumber?: string | undefined;
   private _cvv?: string | undefined;
   private _pin?: string | undefined;
+  private _purpose: string;
   private _usage: VirtualCardProps['usage'];
   private _restrictions: VirtualCardProps['restrictions'];
   private _metadata?: Record<string, any> | undefined;
@@ -63,6 +67,7 @@ export class VirtualCard extends Entity {
   constructor(props: VirtualCardProps) {
     super(props.id);
     this._accountId = props.accountId;
+    this._accountAddress = props.accountAddress;
     this._cardholderName = props.cardholderName;
     this._cardType = props.cardType;
     this._currency = props.currency;
@@ -78,6 +83,7 @@ export class VirtualCard extends Entity {
     this._cardNumber = props.cardNumber;
     this._cvv = props.cvv;
     this._pin = props.pin;
+    this._purpose = props.purpose;
     this._usage = { ...props.usage };
     this._restrictions = { ...props.restrictions };
     this._metadata = props.metadata ? { ...props.metadata } : undefined;
@@ -86,6 +92,10 @@ export class VirtualCard extends Entity {
   // Getters
   public get accountId(): string {
     return this._accountId;
+  }
+
+  public get accountAddress(): { value: string } {
+    return { value: this._accountAddress };
   }
 
   public get cardholderName(): string {
@@ -134,6 +144,10 @@ export class VirtualCard extends Entity {
 
   public get assignedUserId(): string | undefined {
     return this._assignedUserId;
+  }
+
+  public get purpose(): string {
+    return this._purpose;
   }
 
   public get usage(): VirtualCardProps['usage'] {
@@ -305,6 +319,7 @@ export class VirtualCard extends Entity {
     return {
       id: this.id,
       accountId: this._accountId,
+      accountAddress: this._accountAddress,
       cardholderName: this._cardholderName,
       cardType: this._cardType,
       currency: this._currency,
@@ -317,6 +332,7 @@ export class VirtualCard extends Entity {
       expiryDate: this._expiryDate,
       isActive: this._isActive,
       assignedUserId: this._assignedUserId,
+      purpose: this._purpose,
       usage: { ...this._usage },
       restrictions: { ...this._restrictions },
       metadata: this._metadata ? { ...this._metadata } : undefined

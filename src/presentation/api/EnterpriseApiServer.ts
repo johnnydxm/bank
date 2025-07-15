@@ -58,12 +58,12 @@ export class EnterpriseApiServer {
 
   private setupRoutes(): void {
     // Serve React app
-    this.app.get('/', (req: Request, res: Response) => {
+    this.app.get('/', (req: Request, res: Response): void => {
       res.sendFile(path.join(process.cwd(), 'public', 'index.html'));
     });
 
     // Health check
-    this.app.get('/api/health', async (req: Request, res: Response) => {
+    this.app.get('/api/health', async (req: Request, res: Response): Promise<void> => {
       try {
         const formanceHealth = await this.formanceClient.getHealthStatus();
         
@@ -102,18 +102,19 @@ export class EnterpriseApiServer {
 
   private setupAuthenticationRoutes(): void {
     // TODO: Implement enterprise OAuth2 authentication
-    this.app.post('/api/auth/signup', async (req: Request, res: Response) => {
+    this.app.post('/api/auth/signup', async (req: Request, res: Response): Promise<void> => {
       try {
         this.logger.info('Enterprise signup attempt', { email: req.body.email });
         
         // Validate input
         const { email, password, firstName, lastName } = req.body;
         if (!email || !password || !firstName || !lastName) {
-          return res.status(400).json({
+          res.status(400).json({
             success: false,
             error: 'All fields are required',
             code: 'VALIDATION_ERROR'
           });
+          return;
         }
 
         // Create Formance account structure for individual user
@@ -126,7 +127,9 @@ export class EnterpriseApiServer {
             email,
             firstName,
             lastName,
+            account_type: 'individual',
             accountType: 'individual',
+            created_at: new Date().toISOString(),
             createdAt: new Date().toISOString(),
             status: 'active'
           }
@@ -160,16 +163,17 @@ export class EnterpriseApiServer {
       }
     });
 
-    this.app.post('/api/auth/signin', async (req: Request, res: Response) => {
+    this.app.post('/api/auth/signin', async (req: Request, res: Response): Promise<void> => {
       try {
         this.logger.info('Enterprise signin attempt', { email: req.body.email });
         
         const { email, password } = req.body;
         if (!email || !password) {
-          return res.status(400).json({
+          res.status(400).json({
             success: false,
             error: 'Email and password are required'
           });
+          return;
         }
 
         // Check if user account exists in Formance
@@ -177,10 +181,11 @@ export class EnterpriseApiServer {
         const account = await this.formanceLedger.getAccount(userAccountAddress);
         
         if (!account) {
-          return res.status(401).json({
+          res.status(401).json({
             success: false,
             error: 'Invalid credentials'
           });
+          return;
         }
 
         this.logger.info('Enterprise signin successful', { 
@@ -213,7 +218,7 @@ export class EnterpriseApiServer {
 
   private setupAccountRoutes(): void {
     // Account listing with FormanceLedgerService
-    this.app.get('/api/accounts', async (req: Request, res: Response) => {
+    this.app.get('/api/accounts', async (req: Request, res: Response): Promise<void> => {
       try {
         // TODO: Extract user ID from JWT token
         const userEmail = 'demo@dway.com'; // Placeholder
@@ -226,8 +231,8 @@ export class EnterpriseApiServer {
         const formattedAccounts = accounts.map(account => ({
           id: account.address,
           name: this.getAccountDisplayName(account.address),
-          balance: this.calculateDisplayBalance(account.balances),
-          currency: this.extractPrimaryCurrency(account.balances),
+          balance: this.calculateDisplayBalance(account.balances || {}),
+          currency: this.extractPrimaryCurrency(account.balances || {}),
           type: account.type,
           metadata: account.metadata
         }));
@@ -244,10 +249,10 @@ export class EnterpriseApiServer {
     });
 
     // Account balance - enterprise precision
-    this.app.get('/api/accounts/:address/balance', async (req: Request, res: Response) => {
+    this.app.get('/api/accounts/:address/balance', async (req: Request, res: Response): Promise<void> => {
       try {
         const { address } = req.params;
-        const balances = await this.formanceLedger.getAccountBalance(address);
+        const balances = await this.formanceLedger.getAccountBalance(address!);
 
         const formattedBalances = balances.map(balance => ({
           asset: balance.asset,
@@ -273,16 +278,17 @@ export class EnterpriseApiServer {
 
   private setupTransactionRoutes(): void {
     // Enterprise transaction creation
-    this.app.post('/api/transfers', async (req: Request, res: Response) => {
+    this.app.post('/api/transfers', async (req: Request, res: Response): Promise<void> => {
       try {
         const { recipient, amount, currency, description } = req.body;
         
         // Validate input
         if (!recipient || !amount || !currency) {
-          return res.status(400).json({
+          res.status(400).json({
             success: false,
             error: 'Recipient, amount, and currency are required'
           });
+          return;
         }
 
         // Create enterprise transaction request
@@ -297,7 +303,7 @@ export class EnterpriseApiServer {
             destination: recipientAddress
           }],
           metadata: {
-            type: 'p2p_transfer',
+            type: 'p2p_transfer' as const,
             description: description || 'P2P Transfer',
             recipient,
             timestamp: new Date().toISOString()
@@ -308,11 +314,12 @@ export class EnterpriseApiServer {
         // Validate transaction with enterprise service
         const validation = await this.formanceLedger.validateTransaction(transactionRequest);
         if (!validation.valid) {
-          return res.status(400).json({
+          res.status(400).json({
             success: false,
             error: 'Transaction validation failed',
             details: validation.errors
           });
+          return;
         }
 
         // Create transaction via FormanceLedgerService
@@ -353,7 +360,7 @@ export class EnterpriseApiServer {
     });
 
     // Transaction history with enterprise data
-    this.app.get('/api/transactions', async (req: Request, res: Response) => {
+    this.app.get('/api/transactions', async (req: Request, res: Response): Promise<void> => {
       try {
         const userAccountPattern = 'users:demo_dway_com:*'; // TODO: Extract from JWT
         
@@ -385,7 +392,7 @@ export class EnterpriseApiServer {
 
   private setupCurrencyRoutes(): void {
     // Enterprise exchange rates
-    this.app.get('/api/exchange-rates', async (req: Request, res: Response) => {
+    this.app.get('/api/exchange-rates', async (req: Request, res: Response): Promise<void> => {
       try {
         // TODO: Integrate with enterprise exchange rate service
         res.json({
@@ -414,7 +421,7 @@ export class EnterpriseApiServer {
 
   private setupCryptoRoutes(): void {
     // Enterprise crypto portfolio
-    this.app.get('/api/crypto/portfolio', async (req: Request, res: Response) => {
+    this.app.get('/api/crypto/portfolio', async (req: Request, res: Response): Promise<void> => {
       try {
         // TODO: Integrate with enterprise crypto services
         res.json({

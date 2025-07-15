@@ -67,13 +67,16 @@ export class GasOptimizationEngine {
         throw new Error('No viable routes found for transfer');
       }
 
-      const optimalRoute = viableRoutes[0];
+      const optimalRoute = viableRoutes[0]!;
 
+      const allRoutes = routes.flat();
+      const baselineRoute = allRoutes.find(r => r.type === RouteType.DIRECT_L1) || optimalRoute;
+      
       this.logger.info('Optimal route selected', {
         routeType: optimalRoute.type,
         totalCost: optimalRoute.totalCost.toString(),
         estimatedTime: optimalRoute.estimatedTime,
-        gasSavings: this.calculateSavings(optimalRoute, routes[0][0])
+        gasSavings: this.calculateSavings(optimalRoute, baselineRoute)
       });
 
       return optimalRoute;
@@ -121,11 +124,11 @@ export class GasOptimizationEngine {
         break;
     }
 
-    return new OptimalTiming(
+    return {
       recommendedTime,
       estimatedGas,
-      this.calculatePotentialSavings(currentGas.fast, estimatedGas)
-    );
+      potentialSavings: this.calculatePotentialSavings(currentGas.fast, estimatedGas)
+    };
   }
 
   /**
@@ -146,7 +149,7 @@ export class GasOptimizationEngine {
         
         const batch = new TransactionBatch(
           TransactionBatch.generateId(),
-          batchTransactions,
+          batchTransactions.map(tx => tx.id),
           this.calculateBatchGasSavings(batchTransactions),
           await this.estimateBatchExecutionTime(batchTransactions)
         );
@@ -238,13 +241,13 @@ export class GasOptimizationEngine {
       slippageCost = this.estimateSlippageCost(asset, amount, route.swapRoute);
     }
 
-    return new TransactionCost(
+    return {
       gasCost,
       bridgeFees,
       protocolFees,
       slippageCost,
-      gasCost + bridgeFees + protocolFees + slippageCost
-    );
+      totalCost: gasCost + bridgeFees + protocolFees + slippageCost
+    };
   }
 
   // Private analysis methods
@@ -265,7 +268,6 @@ export class GasOptimizationEngine {
       estimatedTime: 300, // 5 minutes
       isViable: totalCost <= this.gasThresholds.maxAcceptableGas,
       protocols: [],
-      l2Network: undefined,
       requiresSwap: false,
       swapRoute: undefined
     }];
@@ -331,7 +333,6 @@ export class GasOptimizationEngine {
       estimatedTime: 600, // 10 minutes (waiting for batch)
       isViable: totalCost <= this.gasThresholds.maxAcceptableGas,
       protocols: ['Batch'],
-      l2Network: undefined,
       requiresSwap: false,
       swapRoute: undefined
     }];
@@ -352,8 +353,12 @@ export class GasOptimizationEngine {
 
   private predictGasPrices(gasHistory: GasHistoryPoint[]): GasPrediction {
     // Simple prediction algorithm - in production would use ML models
+    if (gasHistory.length === 0) {
+      throw new Error('Gas history cannot be empty');
+    }
+    
     const avgGas = gasHistory.reduce((sum, point) => sum + point.gasPrice, BigInt(0)) / BigInt(gasHistory.length);
-    const minGas = gasHistory.reduce((min, point) => point.gasPrice < min ? point.gasPrice : min, gasHistory[0].gasPrice);
+    const minGas = gasHistory.reduce((min, point) => point.gasPrice < min ? point.gasPrice : min, gasHistory[0]!.gasPrice);
 
     // Find typical low gas periods (usually early morning UTC)
     const now = new Date();
@@ -397,7 +402,7 @@ export class GasOptimizationEngine {
 
   private estimateTransferGas(asset: CryptoAsset, amount: bigint): bigint {
     // Gas estimates for different asset types
-    if (asset.isNative()) {
+    if (asset.isNative) {
       return BigInt(21000); // ETH transfer
     } else if (asset.isERC20()) {
       return BigInt(65000); // ERC20 transfer
@@ -471,9 +476,9 @@ export interface OptimalRoute {
   estimatedTime: number;
   isViable: boolean;
   protocols: string[];
-  l2Network?: LayerTwoNetwork;
+  l2Network?: LayerTwoNetwork | undefined;
   requiresSwap: boolean;
-  swapRoute?: any;
+  swapRoute?: any | undefined;
 }
 
 export interface OptimalTiming {

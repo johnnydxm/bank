@@ -485,6 +485,29 @@ export class MCPIntegrationService {
     return this.isInitialized && this.mcpManager.isServerRunning(serverName);
   }
 
+  // Generic MCP function calling method
+  public async callMCPFunction(serverName: string, functionName: string, params: any = {}): Promise<any> {
+    this.ensureInitialized();
+    
+    if (!this.isServerAvailable(serverName)) {
+      throw new Error(`MCP server ${serverName} is not available`);
+    }
+
+    try {
+      const result = await this.mcpManager.sendRequest(serverName, {
+        jsonrpc: '2.0',
+        id: `${functionName}_${Date.now()}`,
+        method: functionName,
+        params
+      });
+
+      return result;
+    } catch (error) {
+      this.logger.error(`MCP function call failed: ${serverName}.${functionName}`, error as Error);
+      throw error;
+    }
+  }
+
   // Enhanced analysis methods using multiple MCP servers
   public async runComprehensiveAnalysis(target: any): Promise<any> {
     this.ensureInitialized();

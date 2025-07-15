@@ -13,27 +13,54 @@ export interface AMLRiskScoreProps {
 
 export class AMLRiskScore extends ValueObject<AMLRiskScoreProps> {
   get score(): number {
-    return this.props.score;
+    return this._value.score;
   }
 
   get level(): RiskLevel {
-    return this.props.level;
+    return this._value.level;
   }
 
   get factors(): string[] {
-    return this.props.factors;
+    return this._value.factors;
   }
 
   get calculatedAt(): Date {
-    return this.props.calculatedAt;
+    return this._value.calculatedAt;
   }
 
   get validUntil(): Date {
-    return this.props.validUntil;
+    return this._value.validUntil;
   }
 
   get confidence(): number {
-    return this.props.confidence;
+    return this._value.confidence;
+  }
+
+  protected validate(): void {
+    if (this._value.score < 0 || this._value.score > 100) {
+      throw new Error('AML risk score must be between 0 and 100');
+    }
+
+    if (this._value.confidence < 0 || this._value.confidence > 1) {
+      throw new Error('Confidence must be between 0 and 1');
+    }
+
+    if (!this._value.level) {
+      throw new Error('Risk level is required');
+    }
+
+    if (!this._value.calculatedAt) {
+      throw new Error('Calculated date is required');
+    }
+
+    if (!this._value.validUntil) {
+      throw new Error('Valid until date is required');
+    }
+
+    const validLevels: RiskLevel[] = ['low', 'medium', 'high', 'critical'];
+    if (!validLevels.includes(this._value.level)) {
+      throw new Error(`Invalid risk level: ${this._value.level}`);
+    }
   }
 
   public static create(score: number, factors: string[], confidence: number = 0.8): AMLRiskScore {
@@ -106,8 +133,25 @@ export class AMLRiskScore extends ValueObject<AMLRiskScoreProps> {
     }
 
     return new AMLRiskScore({
-      ...this.props,
+      ...this._value,
       factors: [...this.factors, factor]
     });
+  }
+
+  public isHigh(): boolean {
+    return this.level === 'high' || this.level === 'critical';
+  }
+
+  public equals(other: AMLRiskScore): boolean {
+    return super.equals(other);
+  }
+
+  // Static factory methods for enum-like access
+  public static get UNKNOWN(): AMLRiskScore {
+    return AMLRiskScore.create(0, ['Unknown risk profile'], 0.5);
+  }
+
+  public static fromNumeric(score: number): AMLRiskScore {
+    return AMLRiskScore.create(score, [`Score: ${score}`]);
   }
 }

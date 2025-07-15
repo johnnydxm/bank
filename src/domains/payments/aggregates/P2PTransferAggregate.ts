@@ -10,6 +10,7 @@ import { TransferAcceptedEvent } from '../events/TransferAcceptedEvent';
 import { TransferDeclinedEvent } from '../events/TransferDeclinedEvent';
 import { TransferCompletedEvent } from '../events/TransferCompletedEvent';
 import { TransferExpiredEvent } from '../events/TransferExpiredEvent';
+import { TransferCancelledEvent } from '../events/TransferCancelledEvent';
 
 /**
  * P2P Transfer Aggregate
@@ -18,26 +19,38 @@ import { TransferExpiredEvent } from '../events/TransferExpiredEvent';
  */
 export class P2PTransferAggregate extends AggregateRoot {
   private status: TransferStatus;
-  private acceptedAt?: Date;
-  private declinedAt?: Date;
-  private completedAt?: Date;
+  private transferId: TransactionId;
+  private from: AccountAddress;
+  private to: AccountAddress;
+  private amount: MultiCurrencyAmount;
+  private message: string;
+  private transferCreatedAt: Date;
+  private acceptedAt?: Date | undefined;
+  private declinedAt?: Date | undefined;
+  private completedAt?: Date | undefined;
   private expiresAt: Date;
-  private destinationCurrency?: Currency;
-  private destinationCard?: CardToken;
-  private escrowAccountAddress?: AccountAddress;
-  private finalConvertedAmount?: MultiCurrencyAmount;
+  private destinationCurrency?: Currency | undefined;
+  private destinationCard?: CardToken | undefined;
+  private escrowAccountAddress?: AccountAddress | undefined;
+  private finalConvertedAmount?: MultiCurrencyAmount | undefined;
 
   constructor(
-    private transferId: TransactionId,
-    private from: AccountAddress,
-    private to: AccountAddress,
-    private amount: MultiCurrencyAmount,
-    private message: string,
-    private createdAt: Date,
+    transferId: TransactionId,
+    from: AccountAddress,
+    to: AccountAddress,
+    amount: MultiCurrencyAmount,
+    message: string,
+    createdAt: Date,
     expirationHours: number = 72 // 3 days default expiration
   ) {
     super(`p2p:${transferId.value}`);
-    this.status = TransferStatus.PENDING;
+    this.transferId = transferId;
+    this.from = from;
+    this.to = to;
+    this.amount = amount;
+    this.message = message;
+    this.transferCreatedAt = createdAt;
+    this.status = TransferStatus.pending();
     this.expiresAt = new Date(createdAt.getTime() + (expirationHours * 60 * 60 * 1000));
   }
 
@@ -49,7 +62,7 @@ export class P2PTransferAggregate extends AggregateRoot {
     escrowService: EscrowService
   ): void {
     // Business Rule: Cannot initiate already processed transfer
-    if (this.status !== TransferStatus.PENDING) {
+    if (!this.status.isPending()) {
       throw new Error('Transfer has already been processed');
     }
 
@@ -91,11 +104,11 @@ export class P2PTransferAggregate extends AggregateRoot {
    */
   public accept(
     destinationCurrency: Currency,
-    destinationCard?: CardToken,
-    acceptedBy: string
+    acceptedBy: string,
+    destinationCard?: CardToken | undefined
   ): void {
     // Business Rule: Only pending transfers can be accepted
-    if (this.status !== TransferStatus.PENDING) {
+    if (!this.status.isPending()) {
       throw new Error('Transfer is not in pending state');
     }
 
@@ -104,7 +117,7 @@ export class P2PTransferAggregate extends AggregateRoot {
       throw new Error('Transfer has expired');
     }
 
-    this.status = TransferStatus.ACCEPTED;
+    this.status = TransferStatus.accepted();
     this.acceptedAt = new Date();
     this.destinationCurrency = destinationCurrency;
     this.destinationCard = destinationCard;
@@ -116,20 +129,20 @@ export class P2PTransferAggregate extends AggregateRoot {
       destinationCurrency,
       destinationCard,
       acceptedBy,
-      this.acceptedAt
+      this.acceptedAt!
     ));
   }
 
   /**
    * Decline transfer with reason
    */
-  public decline(declinedBy: string, reason?: string): void {
+  public decline(declinedBy: string, reason?: string | undefined): void {
     // Business Rule: Only pending transfers can be declined
-    if (this.status !== TransferStatus.PENDING) {
+    if (!this.status.isPending()) {
       throw new Error('Transfer is not in pending state');
     }
 
-    this.status = TransferStatus.DECLINED;
+    this.status = TransferStatus.declined();
     this.declinedAt = new Date();
 
     // Domain Event
@@ -138,7 +151,7 @@ export class P2PTransferAggregate extends AggregateRoot {
       this.to,
       declinedBy,
       reason,
-      this.declinedAt
+      this.declinedAt!
     ));
   }
 
@@ -150,7 +163,7 @@ export class P2PTransferAggregate extends AggregateRoot {
     paymentRailService: PaymentRailService
   ): void {
     // Business Rule: Only accepted transfers can be completed
-    if (this.status !== TransferStatus.ACCEPTED) {
+    if (!this.status.isAccepted()) {
       throw new Error('Transfer must be accepted before completion');
     }
 
@@ -182,7 +195,7 @@ export class P2PTransferAggregate extends AggregateRoot {
       );
     }
 
-    this.status = TransferStatus.COMPLETED;
+    this.status = TransferStatus.completed();
     this.completedAt = new Date();
 
     // Domain Event
@@ -190,9 +203,9 @@ export class P2PTransferAggregate extends AggregateRoot {
       this.transferId,
       this.from,
       this.to,
-      this.finalConvertedAmount,
+      this.finalConvertedAmount!,
       this.destinationCard,
-      this.completedAt
+      this.completedAt!
     ));
   }
 
@@ -201,7 +214,7 @@ export class P2PTransferAggregate extends AggregateRoot {
    */
   public expire(refundService: RefundService): void {
     // Business Rule: Only pending transfers can expire
-    if (this.status !== TransferStatus.PENDING) {
+    if (!this.status.isPending()) {
       throw new Error('Only pending transfers can expire');
     }
 
@@ -217,7 +230,7 @@ export class P2PTransferAggregate extends AggregateRoot {
       this.amount
     );
 
-    this.status = TransferStatus.EXPIRED;
+    this.status = TransferStatus.expired();
 
     // Domain Event
     this.addDomainEvent(new TransferExpiredEvent(
@@ -231,18 +244,18 @@ export class P2PTransferAggregate extends AggregateRoot {
   /**
    * Cancel transfer before acceptance (sender initiated)
    */
-  public cancel(cancelledBy: string, reason?: string): void {
+  public cancel(cancelledBy: string, reason?: string | undefined): void {
     // Business Rule: Only pending transfers can be cancelled
-    if (this.status !== TransferStatus.PENDING) {
+    if (!this.status.isPending()) {
       throw new Error('Transfer is not in pending state');
     }
 
     // Business Rule: Only sender can cancel
-    if (cancelledBy !== this.from.toString()) {
+    if (cancelledBy !== this.from.value) {
       throw new Error('Only sender can cancel transfer');
     }
 
-    this.status = TransferStatus.CANCELLED;
+    this.status = TransferStatus.cancelled();
 
     // Refund from escrow will be handled by event handler
     this.addDomainEvent(new TransferCancelledEvent(
@@ -323,7 +336,7 @@ export class P2PTransferAggregate extends AggregateRoot {
     // Extract user ID from address format: users:userId:accountType
     const parts = address.value.split(':');
     if (parts[0] === 'users' && parts.length >= 2) {
-      return parts[1];
+      return parts[1] || '';
     }
     throw new Error(`Cannot extract user ID from address: ${address.value}`);
   }
@@ -334,7 +347,7 @@ export class P2PTransferAggregate extends AggregateRoot {
     to: AccountAddress,
     amount: MultiCurrencyAmount,
     message: string,
-    expirationHours?: number
+    expirationHours?: number | undefined
   ): P2PTransferAggregate {
     const transferId = TransactionId.generate();
     const createdAt = new Date();

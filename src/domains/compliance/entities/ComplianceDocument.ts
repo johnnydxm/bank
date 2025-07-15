@@ -4,7 +4,6 @@ export type DocumentType = 'passport' | 'national_id' | 'drivers_license' | 'uti
 export type DocumentStatus = 'pending' | 'processing' | 'approved' | 'rejected' | 'expired';
 
 export interface ComplianceDocumentProps {
-  readonly id: string;
   readonly userId: string;
   readonly type: DocumentType;
   readonly status: DocumentStatus;
@@ -22,88 +21,101 @@ export interface ComplianceDocumentProps {
   } | undefined;
 }
 
-export class ComplianceDocument extends Entity<ComplianceDocumentProps> {
+export class ComplianceDocument extends Entity {
+  private _props: ComplianceDocumentProps;
+
+  constructor(id: string, props: ComplianceDocumentProps) {
+    super(id);
+    this._props = { ...props };
+  }
   get userId(): string {
-    return this.props.userId;
+    return this._props.userId;
   }
 
   get type(): DocumentType {
-    return this.props.type;
+    return this._props.type;
   }
 
   get status(): DocumentStatus {
-    return this.props.status;
+    return this._props.status;
   }
 
   get fileName(): string {
-    return this.props.fileName;
+    return this._props.fileName;
   }
 
   get fileSize(): number {
-    return this.props.fileSize;
+    return this._props.fileSize;
   }
 
   get mimeType(): string {
-    return this.props.mimeType;
+    return this._props.mimeType;
   }
 
   get uploadedAt(): Date {
-    return this.props.uploadedAt;
+    return this._props.uploadedAt;
   }
 
   get processedAt(): Date | undefined {
-    return this.props.processedAt;
+    return this._props.processedAt;
   }
 
   get expiryDate(): Date | undefined {
-    return this.props.expiryDate;
+    return this._props.expiryDate;
   }
 
   get rejectionReason(): string | undefined {
-    return this.props.rejectionReason;
+    return this._props.rejectionReason;
   }
 
   get metadata(): ComplianceDocumentProps['metadata'] {
-    return this.props.metadata;
+    return this._props.metadata;
   }
 
-  public static create(props: Omit<ComplianceDocumentProps, 'id' | 'uploadedAt' | 'status'>): ComplianceDocument {
-    return new ComplianceDocument({
+  public static create(props: Omit<ComplianceDocumentProps, 'uploadedAt' | 'status'>): ComplianceDocument {
+    const id = `doc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return new ComplianceDocument(id, {
       ...props,
-      id: `doc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       status: 'pending',
       uploadedAt: new Date()
     });
   }
 
+  public static generateId(): string {
+    return `doc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  }
+
   public markAsProcessing(): void {
-    this.props = {
-      ...this.props,
+    this._props = {
+      ...this._props,
       status: 'processing'
     };
+    this.updateTimestamp();
   }
 
   public approve(extractedData?: Record<string, any>, expiryDate?: Date): void {
-    this.props = {
-      ...this.props,
+    this._props = {
+      ...this._props,
       status: 'approved',
       processedAt: new Date(),
       expiryDate,
       metadata: {
-        ...this.props.metadata,
+        ...this._props.metadata,
         extractedData,
         verificationResults: { verified: true, verifiedAt: new Date() }
       }
     };
+    this.updateTimestamp();
   }
 
   public reject(reason: string): void {
-    this.props = {
-      ...this.props,
+    this._props = {
+      ...this._props,
       status: 'rejected',
       processedAt: new Date(),
       rejectionReason: reason
     };
+    this.updateTimestamp();
   }
 
   public isExpired(): boolean {
@@ -133,13 +145,39 @@ export class ComplianceDocument extends Entity<ComplianceDocumentProps> {
   public addProcessingFlag(flag: string): void {
     const currentFlags = this.metadata?.processingFlags || [];
     if (!currentFlags.includes(flag)) {
-      this.props = {
-        ...this.props,
+      this._props = {
+        ...this._props,
         metadata: {
-          ...this.props.metadata,
+          ...this._props.metadata,
           processingFlags: [...currentFlags, flag]
         }
       };
+      this.updateTimestamp();
     }
+  }
+
+  public validate(): { valid: boolean; errors: string[] } {
+    const errors: string[] = [];
+
+    if (!this._props.userId || this._props.userId.trim().length === 0) {
+      errors.push('User ID is required');
+    }
+
+    if (!this._props.fileName || this._props.fileName.trim().length === 0) {
+      errors.push('File name is required');
+    }
+
+    if (this._props.fileSize <= 0) {
+      errors.push('File size must be greater than 0');
+    }
+
+    if (!this._props.mimeType || this._props.mimeType.trim().length === 0) {
+      errors.push('MIME type is required');
+    }
+
+    return {
+      valid: errors.length === 0,
+      errors
+    };
   }
 }

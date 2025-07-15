@@ -7,6 +7,7 @@ import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
 import { useAuth } from '../hooks/useAuth';
+import { TransactionType, TransactionStatus } from '../../domains/banking/entities/Transaction';
 
 interface UserAccount {
   id: string;
@@ -15,16 +16,22 @@ interface UserAccount {
   currency: string;
   balance: number;
   formattedBalance: string;
+  lastUpdated: Date;
 }
 
 interface RecentTransaction {
   id: string;
-  type: 'deposit' | 'withdrawal' | 'transfer' | 'payment';
+  type: TransactionType;
   amount: number;
   currency: string;
   description: string;
   date: string;
-  status: 'completed' | 'pending' | 'failed';
+  status: TransactionStatus;
+  createdAt: Date;
+  fromAccount?: string;
+  toAccount?: string;
+  completedAt?: Date;
+  metadata?: Record<string, any>;
 }
 
 export const UserDashboard: React.FC = () => {
@@ -48,7 +55,8 @@ export const UserDashboard: React.FC = () => {
           type: 'checking',
           currency: 'USD',
           balance: 5420.50,
-          formattedBalance: '$5,420.50'
+          formattedBalance: '$5,420.50',
+          lastUpdated: new Date()
         },
         {
           id: 'acc_2',
@@ -56,7 +64,8 @@ export const UserDashboard: React.FC = () => {
           type: 'crypto',
           currency: 'BTC',
           balance: 0.15,
-          formattedBalance: '0.15 BTC'
+          formattedBalance: '0.15 BTC',
+          lastUpdated: new Date()
         },
         {
           id: 'acc_3',
@@ -64,7 +73,8 @@ export const UserDashboard: React.FC = () => {
           type: 'savings',
           currency: 'EUR',
           balance: 2800.00,
-          formattedBalance: '€2,800.00'
+          formattedBalance: '€2,800.00',
+          lastUpdated: new Date()
         }
       ];
 
@@ -72,39 +82,48 @@ export const UserDashboard: React.FC = () => {
       const mockTransactions: RecentTransaction[] = [
         {
           id: 'tx_1',
-          type: 'deposit',
+          type: TransactionType.DEPOSIT,
           amount: 1200.00,
           currency: 'USD',
           description: 'Salary deposit',
           date: '2025-07-14T10:30:00Z',
-          status: 'completed'
+          status: TransactionStatus.COMPLETED,
+          createdAt: new Date('2025-07-14T10:30:00Z'),
+          completedAt: new Date('2025-07-14T10:30:00Z')
         },
         {
           id: 'tx_2',
-          type: 'transfer',
+          type: TransactionType.P2P_TRANSFER,
           amount: -250.00,
           currency: 'USD',
           description: 'Transfer to John Doe',
           date: '2025-07-13T15:45:00Z',
-          status: 'completed'
+          status: TransactionStatus.COMPLETED,
+          createdAt: new Date('2025-07-13T15:45:00Z'),
+          completedAt: new Date('2025-07-13T15:45:00Z'),
+          toAccount: 'john_doe_wallet'
         },
         {
           id: 'tx_3',
-          type: 'payment',
+          type: TransactionType.CARD_PAYMENT,
           amount: -89.99,
           currency: 'USD',
           description: 'Online purchase - Amazon',
           date: '2025-07-13T09:20:00Z',
-          status: 'completed'
+          status: TransactionStatus.COMPLETED,
+          createdAt: new Date('2025-07-13T09:20:00Z'),
+          completedAt: new Date('2025-07-13T09:20:00Z')
         },
         {
           id: 'tx_4',
-          type: 'deposit',
+          type: TransactionType.DEPOSIT,
           amount: 0.05,
           currency: 'BTC',
           description: 'DeFi staking rewards',
           date: '2025-07-12T18:00:00Z',
-          status: 'completed'
+          status: TransactionStatus.COMPLETED,
+          createdAt: new Date('2025-07-12T18:00:00Z'),
+          completedAt: new Date('2025-07-12T18:00:00Z')
         }
       ];
 
@@ -170,6 +189,8 @@ export const UserDashboard: React.FC = () => {
             totalBalance={totalBalance}
             currency={selectedCurrency}
             accounts={accounts}
+            showBalance={true}
+            onToggleVisibility={() => {}}
           />
         </div>
 
@@ -203,10 +224,10 @@ export const UserDashboard: React.FC = () => {
           {/* Left Column - Accounts & Balance */}
           <div className="lg:col-span-2 space-y-6">
             {/* Multi-Currency Balance */}
-            <MultiCurrencyBalance accounts={accounts} />
+            <MultiCurrencyBalance userId={user?.id || 'guest'} />
 
             {/* Balance Chart */}
-            <BalanceChart />
+            <BalanceChart accounts={accounts} />
 
             {/* Recent Transactions */}
             <Card className="p-6">

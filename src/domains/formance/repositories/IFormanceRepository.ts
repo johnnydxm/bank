@@ -95,9 +95,10 @@ export interface IFormanceClientRepository {
   validateToken(): Promise<boolean>;
 }
 
-export interface FormanceError {
+export interface FormanceError extends Error {
   code: string;
   message: string;
+  name: string;
   details?: Record<string, any> | undefined;
   retryable: boolean;
 }

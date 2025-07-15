@@ -4,7 +4,7 @@ import { TYPES } from '../../../infrastructure/ioc/types';
 import { FormanceLedgerService } from '../../../infrastructure/formance/FormanceLedgerService';
 import { CardToken } from '../value-objects/CardToken';
 import { CardDetails } from '../value-objects/CardDetails';
-import { PaymentProvider } from '../value-objects/PaymentProvider';
+import { PaymentProvider, PaymentProviderEnum } from '../value-objects/PaymentProvider';
 import { CardLimits } from '../../banking/value-objects/CardLimits';
 import { PermissionSet } from '../../banking/value-objects/PermissionSet';
 import { AccountAddress } from '../../banking/value-objects/AccountAddress';
@@ -47,21 +47,21 @@ export class CardTokenizationService {
       let tokenizedCard: CardToken;
 
       // Route to appropriate tokenization service
-      switch (provider) {
-        case PaymentProvider.APPLE_PAY:
+      switch (provider.value) {
+        case PaymentProviderEnum.APPLE_PAY:
           tokenizedCard = await this.tokenizeWithApplePay(cardDetails);
           break;
         
-        case PaymentProvider.GOOGLE_PAY:
+        case PaymentProviderEnum.GOOGLE_PAY:
           tokenizedCard = await this.tokenizeWithGooglePay(cardDetails);
           break;
         
-        case PaymentProvider.DIRECT_BANK:
+        case PaymentProviderEnum.DIRECT_BANK:
           tokenizedCard = await this.tokenizeWithDirectBank(cardDetails);
           break;
         
         default:
-          throw new Error(`Unsupported payment provider: ${provider}`);
+          throw new Error(`Unsupported payment provider: ${provider.value}`);
       }
 
       // Link tokenized card to user's Formance account
@@ -121,6 +121,7 @@ export class CardTokenizationService {
         address: cardAccountAddress.value,
         type: businessId ? 'business' : 'user',
         metadata: {
+          account_type: businessId ? 'business' : 'user',
           card_token: cardToken.token,
           card_type: 'virtual',
           purpose: purpose.toString(),
@@ -138,14 +139,33 @@ export class CardTokenizationService {
       });
 
       // Create virtual card entity
-      const virtualCard = new VirtualCard(
-        cardToken.id,
-        cardAccountAddress,
-        userId,
-        limits,
-        purpose.toString(),
-        businessId ? AccountAddress.forBusiness(businessId) : AccountAddress.forUser(userId)
-      );
+      const virtualCard = new VirtualCard({
+        id: cardToken.id,
+        accountId: cardAccountAddress.value,
+        accountAddress: cardAccountAddress.value,
+        cardholderName: userId, // TODO: Get actual user name
+        cardType: 'debit',
+        currency: 'USD', // TODO: Get from limits
+        dailyLimit: limits.daily.amount,
+        monthlyLimit: limits.monthly.amount,
+        yearlyLimit: limits.yearly.amount,
+        allowedChannels: limits.channels,
+        expiryDate: new Date(Date.now() + 3 * 365 * 24 * 60 * 60 * 1000), // 3 years
+        isActive: true,
+        assignedUserId: userId,
+        purpose: purpose.toString(),
+        usage: {
+          dailySpent: 0n,
+          monthlySpent: 0n,
+          yearlySpent: 0n,
+          transactionCount: 0
+        },
+        restrictions: {
+          geographicRestrictions: limits.geography,
+          timeRestrictions: undefined,
+          amountRestrictions: undefined
+        }
+      });
 
       // Publish domain event
       await this.eventPublisher.publish(new VirtualCardIssuedEvent(
@@ -247,8 +267,8 @@ export class CardTokenizationService {
       const transactions = await this.formanceService.getTransactionsForAccount(
         cardAccountAddress.value,
         {
-          start_time: fromDate,
-          end_time: toDate,
+          start_time: fromDate?.toISOString(),
+          end_time: toDate?.toISOString(),
           limit: 1000
         }
       );
@@ -275,7 +295,7 @@ export class CardTokenizationService {
     return new CardToken(
       applePayResult.devicePrimaryAccountIdentifier,
       applePayResult.paymentToken,
-      PaymentProvider.APPLE_PAY,
+      PaymentProvider.applePay(),
       cardDetails.getCardType(),
       cardDetails.maskedNumber,
       cardDetails.expiryDate,
@@ -296,7 +316,7 @@ export class CardTokenizationService {
     return new CardToken(
       googlePayResult.tokenReferenceId,
       googlePayResult.paymentToken,
-      PaymentProvider.GOOGLE_PAY,
+      PaymentProvider.googlePay(),
       cardDetails.getCardType(),
       cardDetails.maskedNumber,
       cardDetails.expiryDate,
@@ -308,17 +328,17 @@ export class CardTokenizationService {
   private async tokenizeWithDirectBank(cardDetails: CardDetails): Promise<CardToken> {
     // Direct bank API integration
     const bankResult = await this.bankAPIService.tokenize({
-      accountNumber: cardDetails.accountNumber,
-      routingNumber: cardDetails.routingNumber,
-      accountType: cardDetails.accountType
+      accountNumber: cardDetails.accountNumber!,
+      routingNumber: cardDetails.routingNumber!,
+      accountType: cardDetails.accountType!
     });
 
     return new CardToken(
       bankResult.tokenId,
       bankResult.accountToken,
-      PaymentProvider.DIRECT_BANK,
+      PaymentProvider.directBank(),
       'BANK_ACCOUNT',
-      cardDetails.maskedAccountNumber,
+      cardDetails.maskedAccountNumber!,
       undefined, // Bank accounts don't have expiry dates
       new Date(),
       new Date(Date.now() + (5 * 365 * 24 * 60 * 60 * 1000)) // 5 years for bank accounts
@@ -333,11 +353,13 @@ export class CardTokenizationService {
       address: linkedAccountAddress.value,
       type: 'user',
       metadata: {
+        account_type: 'user',
         card_token_id: cardToken.id,
         card_provider: cardToken.provider.toString(),
         card_type: cardToken.cardType,
         masked_number: cardToken.maskedNumber,
         linked_at: new Date().toISOString(),
+        created_at: new Date().toISOString(),
         user_id: userId
       }
     });
@@ -350,7 +372,7 @@ export class CardTokenizationService {
     return new CardToken(
       tokenId,
       token,
-      PaymentProvider.VIRTUAL,
+      PaymentProvider.virtual(),
       'VIRTUAL',
       this.generateVirtualCardNumber(),
       this.generateFutureExpiryDate(),

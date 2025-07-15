@@ -32,11 +32,11 @@ export class StakePosition extends Entity {
   private _rewardsEarned: bigint;
   private _apy: number;
   private _startDate: Date;
-  private _lockPeriod?: number;
-  private _unstakeDate?: Date;
+  private _lockPeriod?: number | undefined;
+  private _unstakeDate?: Date | undefined;
   private _status: StakePositionProps['status'];
-  private _validatorId?: string;
-  private _poolId?: string;
+  private _validatorId?: string | undefined;
+  private _poolId?: string | undefined;
   private _riskLevel: StakePositionProps['riskLevel'];
   private _metadata?: StakePositionProps['metadata'];
 
@@ -305,6 +305,15 @@ export class StakePosition extends Entity {
       valid: errors.length === 0,
       errors
     };
+  }
+
+  public async getCurrentValue(priceService: any): Promise<bigint> {
+    // Calculate current value based on staked amount + rewards
+    return this._stakedAmount + this._rewardsEarned;
+  }
+
+  public static generateId(): string {
+    return `stake_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
   public toJSON(): StakePositionProps {

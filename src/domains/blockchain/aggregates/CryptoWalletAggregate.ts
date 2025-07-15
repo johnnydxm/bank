@@ -91,13 +91,21 @@ export class CryptoWalletAggregate extends AggregateRoot {
 
     // Domain Event
     this.addDomainEvent(new CryptoTransferInitiatedEvent(
-      this.walletId,
-      asset,
-      amount,
-      toAddress,
-      transfer.estimatedGasFee,
-      optimalRoute,
-      new Date()
+      this.walletId.value,
+      {
+        transferId: transfer.txHash,
+        fromWalletId: this.walletId.value,
+        toAddress: toAddress.getValue(),
+        assetSymbol: asset.symbol,
+        amount: amount,
+        network: transfer.network,
+        gasPrice: BigInt(20000000000),
+        gasLimit: BigInt(21000),
+        estimatedFee: transfer.estimatedGasFee,
+        transferType: 'standard',
+        priority: 'medium',
+        initiatedBy: this.userId
+      }
     ));
 
     return transfer;
@@ -140,15 +148,19 @@ export class CryptoWalletAggregate extends AggregateRoot {
     );
 
     // Create stake position
-    const stakePosition = new StakePosition(
-      StakePosition.generateId(),
-      asset,
-      amount,
-      protocol,
-      stakeResult.apy,
-      new Date(),
-      stakeResult.lockupPeriod
-    );
+    const stakePosition = new StakePosition({
+      id: StakePosition.generateId(),
+      assetId: asset.id,
+      protocol: protocol.name,
+      network: asset.network,
+      stakedAmount: amount,
+      rewardsEarned: BigInt(0),
+      apy: stakeResult.apy,
+      startDate: new Date(),
+      lockPeriod: stakeResult.lockupPeriod,
+      status: 'active',
+      riskLevel: protocol.riskLevel
+    });
 
     this.stakePositions.set(stakePosition.id, stakePosition);
 
@@ -157,10 +169,21 @@ export class CryptoWalletAggregate extends AggregateRoot {
 
     // Domain Event
     this.addDomainEvent(new StakePositionCreatedEvent(
-      this.walletId,
-      stakePosition,
-      gasOptimizedTx.gasFee,
-      new Date()
+      this.walletId.value,
+      {
+        positionId: stakePosition.id,
+        walletId: this.walletId.value,
+        assetSymbol: asset.symbol,
+        stakedAmount: amount,
+        protocol: protocol.name,
+        network: asset.network,
+        apy: stakeResult.apy,
+        lockPeriod: stakeResult.lockupPeriod,
+        riskLevel: protocol.riskLevel,
+        autoCompound: false,
+        estimatedAnnualRewards: stakePosition.getEstimatedAnnualRewards(),
+        createdBy: this.userId
+      }
     ));
 
     return stakePosition;
@@ -208,14 +231,26 @@ export class CryptoWalletAggregate extends AggregateRoot {
 
     // Domain Event
     this.addDomainEvent(new SwapExecutedEvent(
-      this.walletId,
-      fromAsset,
-      toAsset,
-      amount,
-      swapResult.outputAmount,
-      optimalRoute,
-      swapResult.gasFee,
-      new Date()
+      this.walletId.value,
+      {
+        swapId: swapResult.txHash,
+        walletId: this.walletId.value,
+        fromAsset: fromAsset.symbol,
+        toAsset: toAsset.symbol,
+        fromAmount: amount,
+        toAmount: swapResult.outputAmount,
+        fromNetwork: fromAsset.network,
+        toNetwork: toAsset.network,
+        exchangeRate: Number(swapResult.outputAmount * BigInt(10000) / amount) / 10000,
+        priceImpact: swapResult.priceImpact,
+        gasFee: swapResult.gasFee,
+        protocolFee: BigInt(0),
+        slippage: 0.5,
+        route: [],
+        transactionHash: swapResult.txHash,
+        executedBy: this.userId,
+        executionTime: 5000
+      }
     ));
 
     return swapResult;
@@ -341,12 +376,12 @@ export class CryptoWalletAggregate extends AggregateRoot {
       totalValueUSD += currentValue;
     }
 
-    return new PortfolioValue(
+    return {
       totalValueUSD,
       assetValues,
       stakingValues,
-      new Date()
-    );
+      timestamp: new Date()
+    };
   }
 
   // Private optimization methods

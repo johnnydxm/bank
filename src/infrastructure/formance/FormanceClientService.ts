@@ -90,7 +90,7 @@ export class FormanceClientService implements IFormanceClientRepository {
       return {
         status: 'healthy',
         details: {
-          ledgers_count: ledgersResponse.v2LedgersCursorResponse?.cursor?.data?.length || 0,
+          ledgers_count: ledgersResponse.v2LedgerListResponse?.cursor?.data?.length || 0,
           api_url: this.config?.apiUrl,
           default_ledger: this.config?.defaultLedger,
           last_check: new Date().toISOString()
@@ -340,28 +340,29 @@ export class FormanceClientService implements IFormanceClientRepository {
     details: Record<string, any> = {},
     retryable: boolean = false
   ): FormanceError {
-    return {
-      code,
-      message,
-      details,
-      retryable
-    };
+    const error = new Error(message) as FormanceError;
+    error.code = code;
+    error.name = 'FormanceError';
+    error.details = details;
+    error.retryable = retryable;
+    return error;
   }
 
   private convertToFormanceError(error: Error, operation: string): FormanceError {
     // Convert SDK errors to standardized FormanceError format
     const isRetryable = this.isRetryableError(error);
     
-    return {
-      code: this.extractErrorCode(error),
-      message: `${operation} failed: ${error.message}`,
-      details: {
-        original_error: error.message,
-        operation,
-        timestamp: new Date().toISOString()
-      },
-      retryable: isRetryable
+    const formanceError = new Error(`${operation} failed: ${error.message}`) as FormanceError;
+    formanceError.code = this.extractErrorCode(error);
+    formanceError.name = 'FormanceError';
+    formanceError.details = {
+      original_error: error.message,
+      operation,
+      timestamp: new Date().toISOString()
     };
+    formanceError.retryable = isRetryable;
+    
+    return formanceError;
   }
 
   private extractErrorCode(error: Error): string {

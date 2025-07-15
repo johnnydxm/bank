@@ -55,6 +55,23 @@ export const TYPES = {
   // Compliance Domain
   ComplianceValidationService: Symbol.for('ComplianceValidationService'),
 
+  // Blockchain Services
+  EthereumGasTracker: Symbol.for('EthereumGasTracker'),
+  L2BridgeAnalyzer: Symbol.for('L2BridgeAnalyzer'),
+  MEVProtection: Symbol.for('MEVProtection'),
+  GasOptimizationEngine: Symbol.for('GasOptimizationEngine'),
+
+  // Payment Services
+  ApplePayService: Symbol.for('ApplePayService'),
+  GooglePayService: Symbol.for('GooglePayService'),
+  DirectBankAPIService: Symbol.for('DirectBankAPIService'),
+  CardTokenizationService: Symbol.for('CardTokenizationService'),
+
+  // Domain Event Infrastructure
+  DomainEventPublisher: Symbol.for('DomainEventPublisher'),
+  DomainEventHandler: Symbol.for('DomainEventHandler'),
+  DomainEventStore: Symbol.for('DomainEventStore'),
+
   // External Services
   FormanceClient: Symbol.for('FormanceClient'),
   NotificationService: Symbol.for('NotificationService'),

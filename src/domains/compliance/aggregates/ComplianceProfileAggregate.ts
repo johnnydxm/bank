@@ -34,7 +34,7 @@ export class ComplianceProfileAggregate extends AggregateRoot {
     kycStatus: KYCStatus = KYCStatus.PENDING,
     amlRiskScore: AMLRiskScore = AMLRiskScore.UNKNOWN
   ) {
-    super(`compliance:${userId.value}`);
+    super(`compliance:${userId.stringValue}`);
     this.kycStatus = kycStatus;
     this.amlRiskScore = amlRiskScore;
   }
@@ -53,8 +53,7 @@ export class ComplianceProfileAggregate extends AggregateRoot {
     }
 
     // Create identity verification request
-    this.identityVerification = new IdentityVerification(
-      IdentityVerification.generateId(),
+    this.identityVerification = IdentityVerification.create(
       personalInfo,
       identityDocument,
       new Date()
@@ -71,15 +70,14 @@ export class ComplianceProfileAggregate extends AggregateRoot {
     );
 
     // Create compliance check record
-    const complianceCheck = new ComplianceCheck(
-      ComplianceCheck.generateId(),
-      ComplianceCheckType.IDENTITY_VERIFICATION,
-      verificationResult.provider,
-      verificationResult.status,
-      verificationResult.confidence,
-      verificationResult.details,
-      new Date()
-    );
+    const complianceCheck = ComplianceCheck.create({
+      type: ComplianceCheckType.IDENTITY_VERIFICATION,
+      provider: verificationResult.provider,
+      status: verificationResult.status,
+      confidence: verificationResult.confidence,
+      details: verificationResult.details,
+      checkedAt: new Date()
+    });
 
     this.complianceChecks.set(complianceCheck.id, complianceCheck);
 
@@ -130,14 +128,26 @@ export class ComplianceProfileAggregate extends AggregateRoot {
     );
 
     // Create risk assessment record
-    const riskAssessment = new RiskAssessment(
-      RiskAssessment.generateId(),
+    const assessmentDate = new Date();
+    const riskAssessment = RiskAssessment.create(
       riskCalculation.score,
       riskCalculation.factors,
-      sanctionsResult,
-      pepResult,
-      behaviorAnalysis,
-      new Date()
+      {
+        ...sanctionsResult,
+        source: 'aml_screening_service',
+        checkedAt: assessmentDate
+      },
+      {
+        ...pepResult,
+        source: 'pep_screening_service',
+        checkedAt: assessmentDate
+      },
+      {
+        ...behaviorAnalysis,
+        analysisDetails: {},
+        analyzedAt: assessmentDate
+      },
+      assessmentDate
     );
 
     this.riskAssessments.push(riskAssessment);
@@ -183,30 +193,33 @@ export class ComplianceProfileAggregate extends AggregateRoot {
       documentData
     );
 
-    // Create compliance document record
-    const document = new ComplianceDocument(
-      ComplianceDocument.generateId(),
-      documentType,
-      documentData.filename,
-      documentData.hash,
-      verificationResult.status,
-      verificationResult.confidence,
-      verificationResult.extractedData,
-      new Date()
-    );
+    // Create compliance document record  
+    const document = ComplianceDocument.create({
+      userId: this.userId.stringValue,
+      type: documentType as any, // Convert from aggregate's DocumentType to entity's DocumentType
+      fileName: documentData.filename,
+      fileSize: 0, // Not provided in this context
+      mimeType: 'application/octet-stream', // Default value
+      metadata: {
+        extractedData: verificationResult.extractedData,
+        verificationResults: { 
+          status: verificationResult.status,
+          confidence: verificationResult.confidence
+        }
+      }
+    });
 
     this.documents.set(document.id, document);
 
     // Create compliance check for document verification
-    const complianceCheck = new ComplianceCheck(
-      ComplianceCheck.generateId(),
-      ComplianceCheckType.DOCUMENT_VERIFICATION,
-      documentService.providerName,
-      verificationResult.status,
-      verificationResult.confidence,
-      verificationResult.details,
-      new Date()
-    );
+    const complianceCheck = ComplianceCheck.create({
+      type: ComplianceCheckType.DOCUMENT_VERIFICATION,
+      provider: documentService.providerName,
+      status: verificationResult.status as any,
+      confidence: verificationResult.confidence,
+      details: verificationResult.details,
+      checkedAt: new Date()
+    });
 
     this.complianceChecks.set(complianceCheck.id, complianceCheck);
 

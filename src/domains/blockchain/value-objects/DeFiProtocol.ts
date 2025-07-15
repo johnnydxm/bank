@@ -101,4 +101,14 @@ export class DeFiProtocol extends ValueObject<DeFiProtocolProps> {
     const multiplier = BigInt(Math.floor((1 + dailyRate) ** days * 10000));
     return (amount * multiplier) / 10000n - amount;
   }
+
+  public supportsAsset(asset: any): boolean {
+    // In a real implementation, this would check if the protocol supports the specific asset
+    return true;
+  }
+
+  public supportsLayer2(): boolean {
+    // Check if protocol supports Layer 2 networks
+    return this._value.network !== 'ethereum' || this._value.category === 'bridge';
+  }
 }

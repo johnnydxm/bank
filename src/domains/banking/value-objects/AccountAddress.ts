@@ -21,6 +21,9 @@ export class AccountAddress extends ValueObject<string> {
       /^business:[a-zA-Z0-9\-_]+:card:[a-zA-Z0-9\-_]+$/,        // business:business-id:card:card-id
       /^user:[a-zA-Z0-9\-_]+$/,                                  // user:user-id
       /^user:[a-zA-Z0-9\-_]+:wallet:[a-zA-Z0-9\-_]+$/,          // user:user-id:wallet:wallet-id
+      /^users:[a-zA-Z0-9\-_]+:[a-zA-Z0-9\-_]+$/,                // users:user-id:account-type
+      /^users:[a-zA-Z0-9\-_]+:[a-zA-Z0-9\-_]+:[a-zA-Z0-9\-_]+$/,// users:user-id:crypto:crypto-type
+      /^escrow:[a-zA-Z0-9\-_]+$/,                                // escrow:transfer-id
       /^world$/,                                                 // world (for external accounts)
       /^[a-zA-Z0-9\-_:]+$/                                       // general pattern
     ];
@@ -118,5 +121,26 @@ export class AccountAddress extends ValueObject<string> {
 
   public static createWorldAccount(): AccountAddress {
     return new AccountAddress('world');
+  }
+
+  // New factory methods for payment domain compatibility
+  public static forEscrow(transferId: string): AccountAddress {
+    return new AccountAddress(`escrow:${transferId}`);
+  }
+
+  public static forUserCrypto(userId: string, cryptoType: string): AccountAddress {
+    return new AccountAddress(`users:${userId}:crypto:${cryptoType}`);
+  }
+
+  public static forUser(userId: string, accountType: string = 'wallet'): AccountAddress {
+    return new AccountAddress(`users:${userId}:${accountType}`);
+  }
+
+  public static forBusiness(businessId: string): AccountAddress {
+    return new AccountAddress(`business:${businessId}`);
+  }
+
+  public static forBusinessCard(businessId: string, cardId: string): AccountAddress {
+    return new AccountAddress(`business:${businessId}:card:${cardId}`);
   }
 }

@@ -15,6 +15,10 @@ export class BlockchainAddress extends ValueObject<BlockchainAddressProps> {
     return this._value.address;
   }
 
+  public getValue(): string {
+    return this._value.address;
+  }
+
   public get network(): string {
     return this._value.network;
   }

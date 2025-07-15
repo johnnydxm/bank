@@ -151,14 +151,14 @@ export class AuthController {
       if (!validationResult.success) {
         this.logger.warn('Authentication failed - invalid input', {
           requestId,
-          errors: validationResult.error.errors,
+          errors: validationResult.error.issues,
           email: req.body.email
         });
 
         res.status(400).json({
           success: false,
           message: 'Invalid input data',
-          errors: validationResult.error.errors,
+          errors: validationResult.error.issues,
           requestId
         });
         return;
@@ -277,14 +277,14 @@ export class AuthController {
       if (!validationResult.success) {
         this.logger.warn('Registration failed - invalid input', {
           requestId,
-          errors: validationResult.error.errors,
+          errors: validationResult.error.issues,
           email: req.body.email
         });
 
         res.status(400).json({
           success: false,
           message: 'Invalid input data',
-          errors: validationResult.error.errors,
+          errors: validationResult.error.issues,
           requestId
         });
         return;

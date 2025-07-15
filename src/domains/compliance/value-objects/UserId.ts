@@ -5,19 +5,22 @@ export interface UserIdProps {
 }
 
 export class UserId extends ValueObject<UserIdProps> {
-  get value(): string {
-    return this.props.value;
+  // Get the string value from the props
+  public get stringValue(): string {
+    return this._value.value;
   }
 
-  public static create(value: string): UserId {
-    if (!value || value.trim().length === 0) {
+  protected validate(): void {
+    if (!this._value.value || this._value.value.trim().length === 0) {
       throw new Error('UserId cannot be empty');
     }
 
-    if (value.length < 3 || value.length > 100) {
+    if (this._value.value.length < 3 || this._value.value.length > 100) {
       throw new Error('UserId must be between 3 and 100 characters');
     }
+  }
 
+  public static create(value: string): UserId {
     return new UserId({ value: value.trim() });
   }
 
@@ -31,6 +34,6 @@ export class UserId extends ValueObject<UserIdProps> {
   }
 
   public toString(): string {
-    return this.value;
+    return this.stringValue;
   }
 }

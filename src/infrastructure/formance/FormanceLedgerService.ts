@@ -12,13 +12,15 @@ import {
   FormanceAccountEntity, 
   CreateAccountRequest, 
   AccountFilter,
-  AccountStructure 
+  AccountStructure,
+  FormanceAccountMetadata
 } from '../../domains/formance/entities/FormanceAccount';
 import { 
   FormanceTransaction,
   FormanceTransactionEntity, 
   TransactionRequest, 
-  TransactionFilter 
+  TransactionFilter,
+  FormanceTransactionMetadata
 } from '../../domains/formance/entities/FormanceTransaction';
 import { FormanceClientService } from './FormanceClientService';
 import { ILogger } from '../../shared/interfaces/ILogger';
@@ -50,11 +52,9 @@ export class FormanceLedgerService implements
         ledger: config.defaultLedger,
         address: request.address,
         requestBody: {
-          metadata: {
-            ...request.metadata,
-            explicitly_created: 'true',
-            created_at: new Date().toISOString()
-          } as Record<string, any>
+          ...this.convertMetadataToStringRecord(request.metadata),
+          explicitly_created: 'true',
+          created_at: new Date().toISOString()
         }
       });
 
@@ -92,9 +92,9 @@ export class FormanceLedgerService implements
         return new FormanceAccountEntity(
           address,
           accountType,
-          accountData.metadata || {},
-          accountData.effective_volumes || {},
-          this.convertVolumesToBalances(accountData.effective_volumes || {})
+          this.convertToFormanceAccountMetadata(accountData.metadata || {}),
+          this.convertVolumeMapToBigint(accountData.effectiveVolumes || {}),
+          this.convertVolumesToBalances(accountData.effectiveVolumes || {})
         );
       } catch (error) {
         if ((error as any)?.statusCode === 404) {
@@ -118,10 +118,9 @@ export class FormanceLedgerService implements
 
       const response = await sdk.ledger.v2.listAccounts({
         ledger: config.defaultLedger,
-        address: filter?.address_pattern,
-        metadata: filter?.metadata_filter,
         pageSize: Number(filter?.limit || 100),
-        after: filter?.offset ? String(filter.offset) : undefined
+        cursor: filter?.offset ? String(filter.offset) : undefined,
+        query: this.buildQueryFilter(filter)
       });
 
       const accounts: FormanceAccount[] = [];
@@ -133,9 +132,9 @@ export class FormanceLedgerService implements
           accounts.push(new FormanceAccountEntity(
             accountData.address,
             accountType,
-            accountData.metadata || {},
-            accountData.effective_volumes || {},
-            this.convertVolumesToBalances(accountData.effective_volumes || {})
+            this.convertToFormanceAccountMetadata(accountData.metadata || {}),
+            this.convertVolumeMapToBigint(accountData.effectiveVolumes || {}),
+            this.convertVolumesToBalances(accountData.effectiveVolumes || {})
           ));
         }
       }
@@ -158,8 +157,8 @@ export class FormanceLedgerService implements
       await sdk.ledger.v2.addMetadataToAccount({
         ledger: config.defaultLedger,
         address,
-        metadata: {
-          ...metadata,
+        requestBody: {
+          ...this.convertMetadataToStringRecord(metadata),
           updated_at: new Date().toISOString()
         }
       });
@@ -194,7 +193,7 @@ export class FormanceLedgerService implements
         for (const [asset, amount] of Object.entries(response.v2AggregateBalancesResponse.data)) {
           balances.push({
             asset,
-            amount: BigInt(amount as string)
+            amount: BigInt(String(amount))
           });
         }
       }
@@ -319,13 +318,13 @@ export class FormanceLedgerService implements
       return new FormanceTransactionEntity(
         request.postings,
         request.metadata,
-        request.reference,
+        request.reference || '',
         transactionData.id,
-        transactionData.txid,
-        transactionData.timestamp,
+        transactionData.id, // Use id for txid since txid property doesn't exist
+        transactionData.timestamp.toISOString(),
         false,
-        transactionData.preCommitVolumes,
-        transactionData.postCommitVolumes
+        this.convertVolumesMapToBigint(transactionData.preCommitVolumes),
+        this.convertVolumesMapToBigint(transactionData.postCommitVolumes)
       );
     }, `createTransaction:${request.reference || 'no-ref'}`, true);
 
@@ -355,14 +354,14 @@ export class FormanceLedgerService implements
         
         return new FormanceTransactionEntity(
           tx.postings || [],
-          tx.metadata || {},
-          tx.reference,
+          this.convertToFormanceTransactionMetadata(tx.metadata || {}),
+          tx.reference || '',
           tx.id,
-          tx.txid,
-          tx.timestamp,
+          tx.id, // Use id for txid since txid property doesn't exist
+          tx.timestamp.toISOString(),
           tx.reverted || false,
-          tx.preCommitVolumes,
-          tx.postCommitVolumes
+          this.convertVolumesMapToBigint(tx.preCommitVolumes),
+          this.convertVolumesMapToBigint(tx.postCommitVolumes)
         );
       } catch (error) {
         if ((error as any)?.statusCode === 404) {
@@ -381,7 +380,7 @@ export class FormanceLedgerService implements
 
   public async getTransactionByReference(reference: string): Promise<FormanceTransaction | null> {
     const transactions = await this.listTransactions({ reference });
-    return transactions.length > 0 ? transactions[0] : null;
+    return transactions.length > 0 ? transactions[0]! : null;
   }
 
   public async listTransactions(filter?: TransactionFilter): Promise<FormanceTransaction[]> {
@@ -391,30 +390,25 @@ export class FormanceLedgerService implements
 
       const response = await sdk.ledger.v2.listTransactions({
         ledger: config.defaultLedger,
-        account: filter?.account,
-        source: filter?.source,
-        destination: filter?.destination,
-        startTime: filter?.start_time,
-        endTime: filter?.end_time,
-        metadata: filter?.metadata_filter,
         pageSize: Number(filter?.limit || 100),
-        after: filter?.offset ? String(filter.offset) : undefined
+        cursor: filter?.offset ? String(filter.offset) : undefined,
+        query: this.buildTransactionQueryFilter(filter)
       });
 
       const transactions: FormanceTransaction[] = [];
       
-      if (response.v2ListTransactionsResponse?.data) {
-        for (const tx of response.v2ListTransactionsResponse.data) {
+      if (response.v2TransactionsCursorResponse?.cursor?.data) {
+        for (const tx of response.v2TransactionsCursorResponse.cursor.data) {
           transactions.push(new FormanceTransactionEntity(
             tx.postings || [],
-            tx.metadata || {},
-            tx.reference,
+            this.convertToFormanceTransactionMetadata(tx.metadata || {}),
+            tx.reference || '',
             tx.id,
-            tx.txid,
-            tx.timestamp,
+            tx.id, // Use id for txid since txid property doesn't exist
+            tx.timestamp.toISOString(),
             tx.reverted || false,
-            tx.preCommitVolumes,
-            tx.postCommitVolumes
+            this.convertVolumesMapToBigint(tx.preCommitVolumes),
+            this.convertVolumesMapToBigint(tx.postCommitVolumes)
           ));
         }
       }
@@ -439,22 +433,22 @@ export class FormanceLedgerService implements
         id
       });
 
-      if (!response.v2RevertTransactionResponse?.data) {
+      if (!response.v2CreateTransactionResponse?.data) {
         throw new Error('No transaction data returned from revert');
       }
 
-      const tx = response.v2RevertTransactionResponse.data;
+      const tx = response.v2CreateTransactionResponse.data;
       
       return new FormanceTransactionEntity(
         tx.postings || [],
-        tx.metadata || {},
-        tx.reference,
+        this.convertToFormanceTransactionMetadata(tx.metadata || {}),
+        tx.reference || '',
         tx.id,
-        tx.txid,
-        tx.timestamp,
+        tx.id, // Use id for txid since txid property doesn't exist
+        tx.timestamp.toISOString(),
         true, // reverted
-        tx.preCommitVolumes,
-        tx.postCommitVolumes
+        this.convertVolumesMapToBigint(tx.preCommitVolumes),
+        this.convertVolumesMapToBigint(tx.postCommitVolumes)
       );
     }, `revertTransaction:${id}`);
 
@@ -592,7 +586,7 @@ export class FormanceLedgerService implements
 
       return {
         name: ledger,
-        metadata: response.v2GetLedgerInfoResponse?.data?.metadata || {}
+        metadata: {} // V2LedgerInfo doesn't have metadata, return empty object
       };
     }, `getLedgerInfo:${ledger}`);
 
@@ -609,7 +603,7 @@ export class FormanceLedgerService implements
 
       const response = await sdk.ledger.v2.listLedgers({});
       
-      return response.v2LedgersCursorResponse?.cursor?.data?.map((ledger: any) => ledger.name) || [];
+      return response.v2LedgerListResponse?.cursor?.data?.map((ledger: any) => ledger.name) || [];
     }, 'listLedgers');
 
     if (!result.success) {
@@ -645,12 +639,8 @@ export class FormanceLedgerService implements
       return {
         accounts: Number(stats?.accounts || 0),
         transactions: Number(stats?.transactions || 0),
-        assets: Object.keys(stats?.assets || {}),
-        volume: Object.fromEntries(
-          Object.entries(stats?.assets || {}).map(([asset, volume]) => 
-            [asset, BigInt(volume as string)]
-          )
-        )
+        assets: [], // V2Stats doesn't have volume/assets breakdown
+        volume: {} // V2Stats doesn't have volume/assets breakdown
       };
     }, `getLedgerStats:${ledger}`);
 
@@ -699,13 +689,133 @@ export class FormanceLedgerService implements
     const balances: Record<string, bigint> = {};
     
     for (const [asset, volume] of Object.entries(volumes)) {
-      if (typeof volume === 'object' && volume.balance) {
-        balances[asset] = BigInt(volume.balance);
+      if (typeof volume === 'object' && volume && 'balance' in volume) {
+        balances[asset] = BigInt(String(volume.balance));
       } else if (typeof volume === 'string' || typeof volume === 'number') {
-        balances[asset] = BigInt(volume);
+        balances[asset] = BigInt(String(volume));
       }
     }
     
     return balances;
+  }
+
+  private convertVolumeMapToBigint(volumes: Record<string, any>): Record<string, bigint> {
+    const result: Record<string, bigint> = {};
+    
+    for (const [asset, volume] of Object.entries(volumes)) {
+      if (typeof volume === 'object' && volume && 'balance' in volume) {
+        result[asset] = BigInt(String(volume.balance));
+      } else if (typeof volume === 'string' || typeof volume === 'number') {
+        result[asset] = BigInt(String(volume));
+      }
+    }
+    
+    return result;
+  }
+
+  private convertVolumesMapToBigint(volumes: Record<string, Record<string, any>> | undefined): Record<string, Record<string, bigint>> | undefined {
+    if (!volumes) return undefined;
+    
+    const result: Record<string, Record<string, bigint>> = {};
+    
+    for (const [account, assetVolumes] of Object.entries(volumes)) {
+      result[account] = {};
+      for (const [asset, volume] of Object.entries(assetVolumes)) {
+        if (typeof volume === 'object' && volume && 'balance' in volume) {
+          result[account][asset] = BigInt(String(volume.balance));
+        } else if (typeof volume === 'string' || typeof volume === 'number') {
+          result[account][asset] = BigInt(String(volume));
+        }
+      }
+    }
+    
+    return result;
+  }
+
+  private convertToFormanceAccountMetadata(metadata: Record<string, string>): FormanceAccountMetadata {
+    return {
+      account_type: metadata.account_type || 'user',
+      created_at: metadata.created_at || new Date().toISOString(),
+      ...metadata
+    };
+  }
+
+  private convertToFormanceTransactionMetadata(metadata: Record<string, string>): FormanceTransactionMetadata {
+    return {
+      type: (metadata.type as any) || 'deposit',
+      ...metadata
+    };
+  }
+
+  private buildQueryFilter(filter?: AccountFilter): Record<string, any> | undefined {
+    if (!filter) return undefined;
+    
+    const query: Record<string, any> = {};
+    
+    if (filter.address_pattern) {
+      query.address = filter.address_pattern;
+    }
+    
+    if (filter.metadata_filter) {
+      Object.assign(query, filter.metadata_filter);
+    }
+    
+    return Object.keys(query).length > 0 ? query : undefined;
+  }
+
+  private buildTransactionQueryFilter(filter?: TransactionFilter): Record<string, any> | undefined {
+    if (!filter) return undefined;
+    
+    const query: Record<string, any> = {};
+    
+    if (filter.account) {
+      query.account = filter.account;
+    }
+    
+    if (filter.source) {
+      query.source = filter.source;
+    }
+    
+    if (filter.destination) {
+      query.destination = filter.destination;
+    }
+    
+    if (filter.reference) {
+      query.reference = filter.reference;
+    }
+    
+    if (filter.start_time) {
+      query.start_time = filter.start_time;
+    }
+    
+    if (filter.end_time) {
+      query.end_time = filter.end_time;
+    }
+    
+    if (filter.metadata_filter) {
+      Object.assign(query, filter.metadata_filter);
+    }
+    
+    return Object.keys(query).length > 0 ? query : undefined;
+  }
+
+  private convertMetadataToStringRecord(metadata: any): Record<string, string> {
+    const result: Record<string, string> = {};
+    
+    for (const [key, value] of Object.entries(metadata)) {
+      if (value !== undefined && value !== null) {
+        if (typeof value === 'string') {
+          result[key] = value;
+        } else if (Array.isArray(value)) {
+          result[key] = JSON.stringify(value);
+        } else if (typeof value === 'object') {
+          result[key] = JSON.stringify(value);
+        } else {
+          result[key] = String(value);
+        }
+      }
+    }
+    
+    return result;
   }
 }

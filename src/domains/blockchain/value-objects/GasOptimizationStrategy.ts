@@ -131,4 +131,36 @@ export class GasOptimizationStrategy extends ValueObject<GasOptimizationStrategy
       estimatedSavings: 60
     });
   }
+
+  public static default(): GasOptimizationStrategy {
+    return this.createStandardStrategy();
+  }
+
+  public get name(): string {
+    return this._value.strategy;
+  }
+
+  public withHighCongestionSettings(): GasOptimizationStrategy {
+    return new GasOptimizationStrategy({
+      ...this._value,
+      strategy: 'fast',
+      batchingEnabled: false,
+      layer2Preferred: true,
+      mevProtection: true
+    });
+  }
+
+  public withMEVProtection(enabled: boolean): GasOptimizationStrategy {
+    return new GasOptimizationStrategy({
+      ...this._value,
+      mevProtection: enabled
+    });
+  }
+
+  public withPreferredL2(enabled: boolean): GasOptimizationStrategy {
+    return new GasOptimizationStrategy({
+      ...this._value,
+      layer2Preferred: enabled
+    });
+  }
 }

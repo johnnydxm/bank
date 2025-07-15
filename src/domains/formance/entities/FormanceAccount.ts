@@ -1,13 +1,20 @@
 export interface FormanceAccountMetadata {
   user_id?: string | undefined;
   business_id?: string | undefined;
+  email?: string | undefined;
+  firstName?: string | undefined;
+  lastName?: string | undefined;
   account_type: string;
+  accountType?: string | undefined;
   created_at: string;
+  createdAt?: string | undefined;
+  status?: 'active' | 'suspended' | 'closed' | undefined;
   kyc_status?: 'pending' | 'verified' | 'rejected' | undefined;
   compliance_level?: 'basic' | 'enhanced' | 'premium' | undefined;
   risk_score?: number | undefined;
   last_activity?: string | undefined;
   tags?: string[] | undefined;
+  [key: string]: any;
 }
 
 export interface FormanceAccount {

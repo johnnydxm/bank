@@ -29,7 +29,7 @@ export class CryptoAsset extends Entity {
   private _symbol: string;
   private _name: string;
   private _network: string;
-  private _contractAddress?: string;
+  private _contractAddress?: string | undefined;
   private _decimals: number;
   private _balance: bigint;
   private _lockedBalance: bigint;
@@ -82,6 +82,11 @@ export class CryptoAsset extends Entity {
 
   public get balance(): bigint {
     return this._balance;
+  }
+
+  public set balance(value: bigint) {
+    this._balance = value;
+    this.updateTimestamp();
   }
 
   public get lockedBalance(): bigint {
@@ -283,6 +288,10 @@ export class CryptoAsset extends Entity {
       valid: errors.length === 0,
       errors
     };
+  }
+
+  public isERC20(): boolean {
+    return !this._isNative && this._contractAddress !== undefined;
   }
 
   public toJSON(): CryptoAssetProps {
