@@ -1,0 +1,273 @@
+{
+  "timestamp": "2025-07-15T01:30:04.508Z",
+  "tests": [
+    {
+      "endpoint": "/api/health",
+      "method": "GET",
+      "status": 200,
+      "expectedStatus": 200,
+      "responseTime": 38,
+      "success": true,
+      "data": {
+        "status": "healthy",
+        "message": "DWAY Enterprise Bridge Server",
+        "timestamp": "2025-07-15T01:30:04.540Z",
+        "version": "2.0.0-bridge",
+        "architecture": "TypeScript + Formance SDK Ready",
+        "features": [
+          "Enterprise TypeScript Server",
+          "FormanceLedgerService Ready",
+          "Individual Client Focused",
+          "Production Architecture"
+        ],
+        "formance": {
+          "status": "configuring",
+          "message": "Ready for Formance SDK integration"
+        }
+      },
+      "timestamp": "2025-07-15T01:30:04.546Z"
+    },
+    {
+      "endpoint": "/api/auth/signup",
+      "method": "POST",
+      "status": 201,
+      "expectedStatus": 201,
+      "responseTime": 13,
+      "success": true,
+      "data": {
+        "success": true,
+        "message": "Enterprise account created successfully",
+        "user": {
+          "id": "users:test_individual_dway.com:main",
+          "email": "test.individual@dway.com",
+          "firstName": "Test",
+          "lastName": "Individual",
+          "accountAddress": "users:test_individual_dway.com:main",
+          "accountType": "individual",
+          "features": [
+            "Multi-currency support",
+            "P2P transfers",
+            "Family sub-accounts",
+            "DeFi integration"
+          ]
+        }
+      },
+      "timestamp": "2025-07-15T01:30:04.559Z"
+    },
+    {
+      "endpoint": "/api/auth/signin",
+      "method": "POST",
+      "status": 200,
+      "expectedStatus": 200,
+      "responseTime": 8,
+      "success": true,
+      "data": {
+        "success": true,
+        "message": "Enterprise authentication successful",
+        "user": {
+          "id": "users:test_individual_dway.com:main",
+          "email": "test.individual@dway.com",
+          "firstName": "Enterprise",
+          "lastName": "User",
+          "accountAddress": "users:test_individual_dway.com:main",
+          "accountType": "individual"
+        }
+      },
+      "timestamp": "2025-07-15T01:30:04.568Z"
+    },
+    {
+      "endpoint": "/api/transfers",
+      "method": "POST",
+      "status": 200,
+      "expectedStatus": 200,
+      "responseTime": 4,
+      "success": true,
+      "data": {
+        "success": true,
+        "message": "Enterprise transfer initiated successfully",
+        "transfer": {
+          "id": "p2p_1752543004570_dw7n8x0yk",
+          "recipient": "family.member@dway.com",
+          "amount": 150,
+          "currency": "USD",
+          "description": "Monthly family allowance",
+          "status": "completed",
+          "createdAt": "2025-07-15T01:30:04.570Z",
+          "estimatedCompletion": "2025-07-15T01:30:34.570Z",
+          "formanceTransaction": {
+            "source": "users:demo_dway_com:main",
+            "destination": "users:family_member_dway.com:main",
+            "asset": "USD",
+            "amount": "15000"
+          }
+        }
+      },
+      "timestamp": "2025-07-15T01:30:04.572Z"
+    },
+    {
+      "endpoint": "/api/transfers",
+      "method": "POST",
+      "status": 400,
+      "expectedStatus": 400,
+      "responseTime": 2,
+      "success": true,
+      "data": {
+        "success": false,
+        "error": "Recipient, amount, and currency are required"
+      },
+      "timestamp": "2025-07-15T01:30:04.574Z"
+    },
+    {
+      "endpoint": "/api/accounts",
+      "method": "GET",
+      "status": 200,
+      "expectedStatus": 200,
+      "responseTime": 9,
+      "success": true,
+      "data": [
+        {
+          "id": "users:demo_dway_com:main",
+          "name": "Main Account",
+          "balance": 5420.5,
+          "currency": "USD",
+          "type": "individual",
+          "formanceAddress": "users:demo_dway_com:main",
+          "features": [
+            "Primary account",
+            "Multi-currency",
+            "P2P transfers"
+          ]
+        },
+        {
+          "id": "users:demo_dway_com:savings",
+          "name": "Savings Account",
+          "balance": 2800,
+          "currency": "EUR",
+          "type": "savings",
+          "formanceAddress": "users:demo_dway_com:savings",
+          "features": [
+            "High yield",
+            "Goal tracking",
+            "Auto-save"
+          ]
+        },
+        {
+          "id": "users:demo_dway_com:crypto:portfolio",
+          "name": "Crypto Portfolio",
+          "balance": 0.15,
+          "currency": "BTC",
+          "type": "crypto",
+          "formanceAddress": "users:demo_dway_com:crypto:portfolio",
+          "features": [
+            "DeFi integration",
+            "Staking",
+            "Yield farming"
+          ]
+        }
+      ],
+      "timestamp": "2025-07-15T01:30:04.583Z"
+    },
+    {
+      "endpoint": "/api/exchange-rates",
+      "method": "GET",
+      "status": 200,
+      "expectedStatus": 200,
+      "responseTime": 3,
+      "success": true,
+      "data": {
+        "base": "USD",
+        "rates": {
+          "EUR": 0.85,
+          "GBP": 0.73,
+          "JPY": 110,
+          "BTC": 0.000015,
+          "ETH": 0.0005,
+          "USDC": 1,
+          "USDT": 1
+        },
+        "lastUpdated": "2025-07-15T01:30:04.585Z",
+        "source": "enterprise_exchange_service",
+        "provider": "FormanceExchangeRateService"
+      },
+      "timestamp": "2025-07-15T01:30:04.586Z"
+    },
+    {
+      "endpoint": "/api/crypto/portfolio",
+      "method": "GET",
+      "status": 200,
+      "expectedStatus": 200,
+      "responseTime": 4,
+      "success": true,
+      "data": {
+        "totalValue": 12450.75,
+        "totalValueUSD": 12450.75,
+        "assets": [
+          {
+            "symbol": "BTC",
+            "amount": 0.15,
+            "valueUSD": 6750,
+            "change24h": 2.5
+          },
+          {
+            "symbol": "ETH",
+            "amount": 2.3,
+            "valueUSD": 4600,
+            "change24h": -1.2
+          },
+          {
+            "symbol": "USDC",
+            "amount": 1100.75,
+            "valueUSD": 1100.75,
+            "change24h": 0
+          }
+        ],
+        "staking": [
+          {
+            "protocol": "Ethereum 2.0",
+            "amount": 1,
+            "apy": 4.2,
+            "rewards": 0.042
+          },
+          {
+            "protocol": "Polygon",
+            "amount": 500,
+            "apy": 8.5,
+            "rewards": 42.5
+          }
+        ],
+        "source": "enterprise_crypto_service",
+        "integrations": [
+          "FormanceLedgerService",
+          "DeFiProtocolManager"
+        ]
+      },
+      "timestamp": "2025-07-15T01:30:04.590Z"
+    }
+  ],
+  "performance": [
+    38,
+    13,
+    8,
+    4,
+    2,
+    9,
+    3,
+    4
+  ],
+  "errors": [],
+  "summary": {
+    "qualityScore": 90,
+    "individualClientScore": 100,
+    "enterpriseScore": 100,
+    "performanceMetrics": {
+      "totalTests": 8,
+      "successfulTests": 8,
+      "failedTests": 0,
+      "averageResponseTime": 10.125,
+      "maxResponseTime": 38,
+      "minResponseTime": 2,
+      "successRate": 100
+    },
+    "timestamp": "2025-07-15T01:30:04.591Z"
+  }
+}
