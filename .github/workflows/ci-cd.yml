@@ -144,6 +144,19 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Start Enterprise Bridge Server
+        run: |
+          echo "🚀 Starting Enterprise Bridge Server for validation..."
+          node server-stable.js &
+          sleep 10
+          curl -f http://localhost:3001/api/health || echo "Server starting..."
+          sleep 5
+
+      - name: Run Enterprise Bridge API Validation
+        run: |
+          echo "🔍 Running Enterprise Bridge API Validation Suite..."
+          node test-enterprise-api-validation.js
+
       - name: Validate KYC/AML compliance implementation
         run: echo "KYC/AML compliance validation completed"
 
@@ -167,6 +180,7 @@ jobs:
             fi
           else
             echo "⚠️ Enterprise Bridge test results not found"
+            exit 1
           fi
 
       - name: Generate compliance report
