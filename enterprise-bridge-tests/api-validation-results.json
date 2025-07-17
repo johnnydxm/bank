@@ -1,211 +1,350 @@
 {
-  "timestamp": "2025-07-16T14:30:47.998Z",
+  "timestamp": "2025-07-17T23:57:38.564Z",
   "tests": [
     {
       "endpoint": "/api/health",
       "method": "GET",
       "status": 200,
       "expectedStatus": 200,
-      "responseTime": 34,
+      "responseTime": 27,
       "success": true,
       "data": {
         "status": "healthy",
         "message": "DWAY Financial Freedom Platform API is running",
-        "timestamp": "2025-07-16T14:30:48.027Z",
-        "uptime": 45637.991100375,
+        "timestamp": "2025-07-17T23:57:38.588Z",
+        "uptime": 29244.67464675,
         "memory": {
-          "rss": 38371328,
-          "heapTotal": 8437760,
-          "heapUsed": 8084432,
-          "external": 2097864,
-          "arrayBuffers": 53850
+          "rss": 38633472,
+          "heapTotal": 9486336,
+          "heapUsed": 7660736,
+          "external": 2061313,
+          "arrayBuffers": 17299
         },
-        "pid": 4602
+        "pid": 40932,
+        "architecture": "Enterprise TypeScript + FormanceLedgerService",
+        "version": "2.0.1",
+        "formance": {
+          "status": "ready",
+          "version": "v4.3.0",
+          "features": [
+            "double-entry-bookkeeping",
+            "multi-currency",
+            "enterprise-accounts"
+          ]
+        },
+        "features": [
+          "FormanceLedgerService Ready",
+          "Multi-Currency Support",
+          "Enterprise Account Management",
+          "P2P Transfer System",
+          "DeFi Integration",
+          "Individual Client Focus"
+        ]
       },
-      "timestamp": "2025-07-16T14:30:48.032Z"
+      "timestamp": "2025-07-17T23:57:38.592Z"
     },
     {
       "endpoint": "/api/auth/signup",
       "method": "POST",
-      "status": 404,
+      "status": 201,
       "expectedStatus": 201,
-      "responseTime": 5,
-      "success": false,
+      "responseTime": 4,
+      "success": true,
       "data": {
-        "error": "Not found",
-        "message": "The requested resource was not found"
+        "success": true,
+        "user": {
+          "id": "user_1752796658596",
+          "email": "test.individual@dway.com",
+          "firstName": "Test",
+          "lastName": "Individual",
+          "createdAt": "2025-07-17T23:57:38.596Z",
+          "accountAddress": "users:test.individual@dway.com:main",
+          "accountType": "individual",
+          "features": [
+            "Family sub-accounts",
+            "P2P transfers",
+            "Multi-currency support",
+            "DeFi integration",
+            "Mobile payments"
+          ],
+          "formanceAccount": {
+            "address": "users:test.individual@dway.com:main",
+            "type": "individual-client",
+            "permissions": [
+              "transfer",
+              "receive",
+              "view-balance"
+            ]
+          }
+        },
+        "token": "mock_token_1752796658596",
+        "message": "Account created successfully"
       },
-      "timestamp": "2025-07-16T14:30:48.037Z"
+      "timestamp": "2025-07-17T23:57:38.597Z"
     },
     {
       "endpoint": "/api/auth/signin",
       "method": "POST",
-      "status": 404,
-      "expectedStatus": 200,
-      "responseTime": 3,
-      "success": false,
-      "data": {
-        "error": "Not found",
-        "message": "The requested resource was not found"
-      },
-      "timestamp": "2025-07-16T14:30:48.040Z"
-    },
-    {
-      "endpoint": "/api/transfers",
-      "method": "POST",
       "status": 200,
       "expectedStatus": 200,
-      "responseTime": 204,
+      "responseTime": 2,
       "success": true,
       "data": {
-        "id": "txn_1752676248243",
-        "status": "pending",
-        "message": "Transfer initiated successfully",
-        "timestamp": "2025-07-16T14:30:48.243Z"
+        "success": true,
+        "user": {
+          "id": "user_1752796658598",
+          "email": "test.individual@dway.com",
+          "firstName": "John",
+          "lastName": "Doe",
+          "accountAddress": "users:test.individual@dway.com:main",
+          "accountType": "individual",
+          "features": [
+            "Family sub-accounts",
+            "P2P transfers",
+            "Multi-currency support",
+            "DeFi integration",
+            "Mobile payments"
+          ],
+          "formanceAccount": {
+            "address": "users:test.individual@dway.com:main",
+            "type": "individual-client",
+            "permissions": [
+              "transfer",
+              "receive",
+              "view-balance"
+            ]
+          }
+        },
+        "token": "mock_token_1752796658598",
+        "message": "Signed in successfully"
       },
-      "timestamp": "2025-07-16T14:30:48.244Z"
+      "timestamp": "2025-07-17T23:57:38.599Z"
     },
     {
       "endpoint": "/api/transfers",
       "method": "POST",
       "status": 200,
-      "expectedStatus": 400,
+      "expectedStatus": 200,
       "responseTime": 203,
-      "success": false,
+      "success": true,
       "data": {
-        "id": "txn_1752676248446",
+        "id": "txn_1752796658801",
+        "recipient": "family.member@dway.com",
+        "amount": 150,
+        "currency": "USD",
+        "description": "Monthly family allowance",
         "status": "pending",
         "message": "Transfer initiated successfully",
-        "timestamp": "2025-07-16T14:30:48.446Z"
+        "timestamp": "2025-07-17T23:57:38.801Z",
+        "transfer": {
+          "id": "txn_1752796658801",
+          "recipient": "family.member@dway.com",
+          "amount": 150,
+          "currency": "USD",
+          "formanceTransaction": {
+            "source": "users:sender@dway.com:main",
+            "destination": "users:family.member@dway.com:main",
+            "asset": "USD",
+            "amount": "15000",
+            "metadata": {
+              "description": "Monthly family allowance",
+              "type": "p2p-transfer",
+              "timestamp": "2025-07-17T23:57:38.801Z"
+            }
+          }
+        }
       },
-      "timestamp": "2025-07-16T14:30:48.447Z"
+      "timestamp": "2025-07-17T23:57:38.802Z"
+    },
+    {
+      "endpoint": "/api/transfers",
+      "method": "POST",
+      "status": 400,
+      "expectedStatus": 400,
+      "responseTime": 2,
+      "success": true,
+      "data": {
+        "error": "Missing required fields",
+        "details": "Recipient, amount, and currency are required"
+      },
+      "timestamp": "2025-07-17T23:57:38.804Z"
     },
     {
       "endpoint": "/api/accounts",
       "method": "GET",
       "status": 200,
       "expectedStatus": 200,
-      "responseTime": 104,
+      "responseTime": 102,
       "success": true,
       "data": [
         {
           "id": 1,
           "name": "Main Checking",
           "balance": 5420.5,
-          "currency": "USD"
+          "currency": "USD",
+          "formanceAddress": "users:test.individual@dway.com:main",
+          "accountType": "individual",
+          "features": [
+            "p2p-transfers",
+            "multi-currency",
+            "mobile-payments"
+          ]
         },
         {
           "id": 2,
           "name": "Euro Savings",
           "balance": 2800,
-          "currency": "EUR"
+          "currency": "EUR",
+          "formanceAddress": "users:test.individual@dway.com:savings",
+          "accountType": "savings",
+          "features": [
+            "interest-earning",
+            "multi-currency"
+          ]
         },
         {
           "id": 3,
           "name": "Crypto Wallet",
           "balance": 0.15,
-          "currency": "BTC"
+          "currency": "BTC",
+          "formanceAddress": "users:test.individual@dway.com:crypto",
+          "accountType": "crypto",
+          "features": [
+            "defi-integration",
+            "staking",
+            "swapping"
+          ]
         }
       ],
-      "timestamp": "2025-07-16T14:30:48.551Z"
+      "timestamp": "2025-07-17T23:57:38.906Z"
     },
     {
       "endpoint": "/api/exchange-rates",
       "method": "GET",
-      "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON",
-      "responseTime": 3,
-      "success": false,
-      "timestamp": "2025-07-16T14:30:48.554Z"
+      "status": 200,
+      "expectedStatus": 200,
+      "responseTime": 52,
+      "success": true,
+      "data": {
+        "base": "USD",
+        "rates": {
+          "EUR": 0.85,
+          "GBP": 0.73,
+          "JPY": 110,
+          "BTC": 0.000015,
+          "ETH": 0.0005,
+          "USDC": 1,
+          "USDT": 1
+        },
+        "lastUpdated": "2025-07-17T23:57:38.958Z",
+        "source": "FormanceExchangeRateService",
+        "providers": [
+          "CoinGecko",
+          "CoinMarketCap",
+          "Binance",
+          "Kraken",
+          "ExchangeRate-API"
+        ],
+        "features": [
+          "Real-time rates",
+          "Multiple providers",
+          "Failover support",
+          "Rate history",
+          "Conversion calculator"
+        ]
+      },
+      "timestamp": "2025-07-17T23:57:38.959Z"
     },
     {
       "endpoint": "/api/crypto/portfolio",
       "method": "GET",
-      "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON",
-      "responseTime": 2,
-      "success": false,
-      "timestamp": "2025-07-16T14:30:48.556Z"
+      "status": 200,
+      "expectedStatus": 200,
+      "responseTime": 103,
+      "success": true,
+      "data": {
+        "totalValue": 12450.75,
+        "totalValueUSD": 12450.75,
+        "assets": [
+          {
+            "symbol": "BTC",
+            "amount": 0.15,
+            "valueUSD": 6750,
+            "change24h": 2.5
+          },
+          {
+            "symbol": "ETH",
+            "amount": 2.3,
+            "valueUSD": 4600,
+            "change24h": -1.2
+          },
+          {
+            "symbol": "USDC",
+            "amount": 1100.75,
+            "valueUSD": 1100.75,
+            "change24h": 0
+          }
+        ],
+        "staking": [
+          {
+            "protocol": "Ethereum 2.0",
+            "amount": 1,
+            "apy": 4.2,
+            "rewards": 0.042
+          },
+          {
+            "protocol": "Polygon",
+            "amount": 500,
+            "apy": 8.5,
+            "rewards": 42.5
+          }
+        ],
+        "source": "FormanceCryptoService",
+        "features": [
+          "DeFi integration",
+          "Staking rewards",
+          "Multi-chain support",
+          "Gas optimization",
+          "Real-time valuation"
+        ],
+        "formanceAccounts": [
+          {
+            "address": "users:test.individual@dway.com:crypto",
+            "type": "crypto-wallet"
+          },
+          {
+            "address": "users:test.individual@dway.com:staking",
+            "type": "staking-account"
+          }
+        ]
+      },
+      "timestamp": "2025-07-17T23:57:39.062Z"
     }
   ],
   "performance": [
-    34,
-    5,
-    3,
-    204,
+    27,
+    4,
+    2,
     203,
-    104
+    2,
+    102,
+    52,
+    103
   ],
-  "errors": [
-    {
-      "endpoint": "/api/auth/signup",
-      "method": "POST",
-      "status": 404,
-      "expectedStatus": 201,
-      "responseTime": 5,
-      "success": false,
-      "data": {
-        "error": "Not found",
-        "message": "The requested resource was not found"
-      },
-      "timestamp": "2025-07-16T14:30:48.037Z"
-    },
-    {
-      "endpoint": "/api/auth/signin",
-      "method": "POST",
-      "status": 404,
-      "expectedStatus": 200,
-      "responseTime": 3,
-      "success": false,
-      "data": {
-        "error": "Not found",
-        "message": "The requested resource was not found"
-      },
-      "timestamp": "2025-07-16T14:30:48.040Z"
-    },
-    {
-      "endpoint": "/api/transfers",
-      "method": "POST",
-      "status": 200,
-      "expectedStatus": 400,
-      "responseTime": 203,
-      "success": false,
-      "data": {
-        "id": "txn_1752676248446",
-        "status": "pending",
-        "message": "Transfer initiated successfully",
-        "timestamp": "2025-07-16T14:30:48.446Z"
-      },
-      "timestamp": "2025-07-16T14:30:48.447Z"
-    },
-    {
-      "endpoint": "/api/exchange-rates",
-      "method": "GET",
-      "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON",
-      "responseTime": 3,
-      "success": false,
-      "timestamp": "2025-07-16T14:30:48.554Z"
-    },
-    {
-      "endpoint": "/api/crypto/portfolio",
-      "method": "GET",
-      "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON",
-      "responseTime": 2,
-      "success": false,
-      "timestamp": "2025-07-16T14:30:48.556Z"
-    }
-  ],
+  "errors": [],
   "summary": {
-    "qualityScore": 45,
-    "individualClientScore": 25,
-    "enterpriseScore": 0,
+    "qualityScore": 90,
+    "individualClientScore": 100,
+    "enterpriseScore": 100,
     "performanceMetrics": {
       "totalTests": 8,
-      "successfulTests": 3,
-      "failedTests": 5,
-      "averageResponseTime": 92.16666666666667,
-      "maxResponseTime": 204,
-      "minResponseTime": 3,
-      "successRate": 37.5
+      "successfulTests": 8,
+      "failedTests": 0,
+      "averageResponseTime": 61.875,
+      "maxResponseTime": 203,
+      "minResponseTime": 2,
+      "successRate": 100
     },
-    "timestamp": "2025-07-16T14:30:48.557Z"
+    "timestamp": "2025-07-17T23:57:39.062Z"
   }
 }
