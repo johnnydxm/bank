@@ -34,7 +34,7 @@ services:
 
   payments-api:
     image: "ghcr.io/formancehq/payments:v3.0.1"
-    command: api server
+    command: server
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://127.0.0.1:8080/_live" ]
       interval: 10s
@@ -52,7 +52,7 @@ services:
 
   payments-connectors:
     image: "ghcr.io/formancehq/payments:v3.0.1"
-    command: connectors server
+    command: connectors
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://127.0.0.1:8080/_live" ]
       interval: 10s

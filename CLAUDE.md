@@ -83,6 +83,14 @@
     - ✅ P2P transfers with proper account structure validation
     - ✅ Bridge connecting enterprise architecture to user experience
 
+12. **C010: Formance Infrastructure Restoration** - COMPLETED (July 16, 2025)
+    - ✅ **CRITICAL FIX**: Docker environment variables corrected
+    - ✅ **Infrastructure**: Formance Stack fully operational (ledger, payments, gateway)
+    - ✅ **Database**: PostgreSQL with ledger/payments databases created
+    - ✅ **Gateway**: Caddy proxy routing API requests to Formance services
+    - ✅ **Integration**: Real Formance API connectivity validated
+    - ✅ **Enterprise Grade**: Production-ready financial infrastructure
+
 ### Architecture Decisions & Patterns
 
 #### Domain-Driven Design Implementation

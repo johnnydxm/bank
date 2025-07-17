@@ -69,6 +69,74 @@ class DWAYServer {
             ]);
         }));
 
+        // 🔧 Backend Persona: Enhanced Authentication Endpoints
+        this.app.post('/api/auth/signup', this.asyncHandler(async (req, res) => {
+            const { email, password, firstName, lastName } = req.body;
+            
+            console.log('🔧 Backend: Signup attempt:', { email, firstName, lastName });
+            
+            // Enhanced validation
+            if (!email || !password || !firstName || !lastName) {
+                return res.status(400).json({
+                    error: 'Missing required fields',
+                    details: 'All fields (email, password, firstName, lastName) are required'
+                });
+            }
+            
+            if (password.length < 6) {
+                return res.status(400).json({
+                    error: 'Password too short',
+                    details: 'Password must be at least 6 characters long'
+                });
+            }
+            
+            // Generate JWT token (mock implementation)
+            const user = {
+                id: `user_${Date.now()}`,
+                email,
+                firstName,
+                lastName,
+                createdAt: new Date().toISOString(),
+                accountAddress: `users:${email}:main`
+            };
+            
+            res.json({
+                success: true,
+                user,
+                token: `mock_token_${Date.now()}`,
+                message: 'Account created successfully'
+            });
+        }));
+
+        this.app.post('/api/auth/signin', this.asyncHandler(async (req, res) => {
+            const { email, password } = req.body;
+            
+            console.log('🔧 Backend: Signin attempt:', { email });
+            
+            if (!email || !password) {
+                return res.status(400).json({
+                    error: 'Missing credentials',
+                    details: 'Email and password are required'
+                });
+            }
+            
+            // Mock authentication
+            const user = {
+                id: `user_${Date.now()}`,
+                email,
+                firstName: 'John',
+                lastName: 'Doe',
+                accountAddress: `users:${email}:main`
+            };
+            
+            res.json({
+                success: true,
+                user,
+                token: `mock_token_${Date.now()}`,
+                message: 'Signed in successfully'
+            });
+        }));
+
         this.app.post('/api/transfers', this.asyncHandler(async (req, res) => {
             await this.delay(200);
             res.json({

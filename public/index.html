@@ -335,6 +335,16 @@
                 
                 if (!validateForm()) {
                     console.log('❌ Form validation failed', formErrors);
+                    // 🔐 Security Persona: Enhanced validation feedback
+                    const firstErrorField = Object.keys(formErrors)[0];
+                    if (firstErrorField) {
+                        const errorElement = document.querySelector(`input[type="${firstErrorField === 'email' ? 'email' : firstErrorField === 'password' ? 'password' : 'text'}"]`);
+                        if (errorElement) {
+                            errorElement.focus();
+                            errorElement.classList.add('shake');
+                            setTimeout(() => errorElement.classList.remove('shake'), 500);
+                        }
+                    }
                     return;
                 }
                 
@@ -348,8 +358,34 @@
                         await signUp(formData);
                     }
                     console.log('✅ Authentication successful');
+                    
+                    // 🔐 Security Persona: Enhanced success handling
+                    // Show success message briefly before redirect
+                    const successMessage = document.createElement('div');
+                    successMessage.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+                    successMessage.textContent = mode === 'signin' ? '🎉 Welcome back!' : '🎉 Account created successfully!';
+                    document.body.appendChild(successMessage);
+                    
+                    setTimeout(() => {
+                        if (successMessage.parentNode) {
+                            successMessage.parentNode.removeChild(successMessage);
+                        }
+                    }, 3000);
+                    
                 } catch (error) {
                     console.error('❌ Authentication failed:', error);
+                    
+                    // 🔐 Security Persona: Enhanced error handling
+                    const errorMessage = document.createElement('div');
+                    errorMessage.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+                    errorMessage.textContent = error.message || 'Authentication failed. Please try again.';
+                    document.body.appendChild(errorMessage);
+                    
+                    setTimeout(() => {
+                        if (errorMessage.parentNode) {
+                            errorMessage.parentNode.removeChild(errorMessage);
+                        }
+                    }, 5000);
                 }
             };
             
@@ -520,21 +556,76 @@
             );
         };
         
-        // Enhanced Dashboard with Magic Persona improvements
+        // ✨ Frontend Persona: Enhanced Dashboard with Real-time Data - HOOKS FIXED
         const UserDashboard = () => {
             const { user, signOut } = useAuth();
-            const [accounts] = useState([
+            
+            // 🐛 FIX: All useState hooks MUST come before any conditional returns
+            const [accounts, setAccounts] = useState([
                 { id: 1, name: 'Main Checking', balance: 5420.50, currency: 'USD', change: '+2.4%' },
                 { id: 2, name: 'Euro Savings', balance: 2800.00, currency: 'EUR', change: '+1.8%' },
                 { id: 3, name: 'Crypto Wallet', balance: 0.15, currency: 'BTC', change: '+8.2%' }
             ]);
-            
+            const [isLoading, setIsLoading] = useState(true);
+            const [error, setError] = useState(null);
+            const [activeTab, setActiveTab] = useState('overview');
             const [transactions] = useState([
                 { id: 1, description: 'Salary Deposit', amount: 2500.00, date: '2025-07-14', type: 'credit', icon: '💰' },
                 { id: 2, description: 'Grocery Store', amount: -85.50, date: '2025-07-13', type: 'debit', icon: '🛒' },
                 { id: 3, description: 'Investment Return', amount: 150.00, date: '2025-07-12', type: 'credit', icon: '📈' },
                 { id: 4, description: 'Coffee Shop', amount: -4.50, date: '2025-07-11', type: 'debit', icon: '☕' }
             ]);
+            
+            // ✨ Frontend Persona: Real-time data fetching
+            useEffect(() => {
+                const fetchUserData = async () => {
+                    try {
+                        setIsLoading(true);
+                        setError(null);
+                        
+                        // Fetch accounts from API
+                        const accountsResponse = await fetch('/api/accounts', {
+                            headers: {
+                                'Authorization': `Bearer ${localStorage.getItem('dway_token') || ''}`,
+                                'Content-Type': 'application/json'
+                            }
+                        });
+                        
+                        if (accountsResponse.ok) {
+                            const accountsData = await accountsResponse.json();
+                            setAccounts(accountsData);
+                            console.log('✨ Frontend: Accounts data loaded', accountsData);
+                        } else {
+                            console.log('✨ Frontend: Using default accounts data');
+                        }
+                        
+                    } catch (err) {
+                        console.error('✨ Frontend: Error fetching data:', err);
+                        setError('Unable to load account data. Using offline mode.');
+                    } finally {
+                        setIsLoading(false);
+                    }
+                };
+                
+                if (user) {
+                    fetchUserData();
+                } else {
+                    setIsLoading(false);
+                }
+            }, [user]);
+            
+            // ✨ Frontend Persona: Enhanced loading state - AFTER all hooks
+            if (isLoading) {
+                return (
+                    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 flex items-center justify-center">
+                        <div className="text-center">
+                            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                            <p className="text-lg text-gray-600">Loading your financial dashboard...</p>
+                            <p className="text-sm text-gray-500 mt-2">✨ Frontend Persona initializing</p>
+                        </div>
+                    </div>
+                );
+            }
             
             return (
                 <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">

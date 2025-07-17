@@ -1,0 +1,327 @@
+{
+  "timestamp": "2025-07-17T02:45:47.779Z",
+  "platform": "DWAY Financial Freedom Platform",
+  "testType": "Comprehensive Individual Client Feature Testing",
+  "summary": {
+    "totalTests": 27,
+    "passed": 5,
+    "failed": 18,
+    "pending": 4,
+    "successRate": 19,
+    "overallScore": 18
+  },
+  "categories": {
+    "authentication": {
+      "tests": [
+        {
+          "name": "Authentication Form Presence",
+          "status": "passed",
+          "details": "Login/signup form is present on page load",
+          "performance": 0,
+          "timestamp": "2025-07-17T02:45:50.387Z"
+        },
+        {
+          "name": "Authentication Form Presence",
+          "status": "failed",
+          "details": "Page load failed: png screenshots do not support 'quality'.",
+          "performance": null,
+          "timestamp": "2025-07-17T02:45:50.388Z"
+        },
+        {
+          "name": "Form Validation",
+          "status": "failed",
+          "details": "Form validation test failed: SyntaxError: Failed to execute 'querySelector' on 'Document': 'button:has-text(\"Sign Up\")' is not a valid selector.",
+          "performance": null,
+          "timestamp": "2025-07-17T02:45:50.392Z"
+        },
+        {
+          "name": "Signup Flow",
+          "status": "failed",
+          "details": "Signup flow failed: page.fill is not a function",
+          "performance": null,
+          "timestamp": "2025-07-17T02:45:50.392Z"
+        },
+        {
+          "name": "Login Flow",
+          "status": "failed",
+          "details": "Login flow failed: page.waitForTimeout is not a function",
+          "performance": null,
+          "timestamp": "2025-07-17T02:45:50.594Z"
+        }
+      ],
+      "score": 20,
+      "status": "failed"
+    },
+    "userDashboard": {
+      "tests": [
+        {
+          "name": "Dashboard Layout",
+          "status": "failed",
+          "details": "Dashboard layout not found",
+          "performance": null,
+          "timestamp": "2025-07-17T02:45:50.614Z"
+        },
+        {
+          "name": "Multi-Currency Accounts",
+          "status": "pending",
+          "details": "Multi-currency account elements not clearly identified",
+          "performance": null,
+          "timestamp": "2025-07-17T02:45:50.622Z"
+        },
+        {
+          "name": "Balance Overview",
+          "status": "passed",
+          "details": "Balance display working - 0 balance elements, 5 currency symbols",
+          "performance": null,
+          "timestamp": "2025-07-17T02:45:50.643Z"
+        },
+        {
+          "name": "Transaction History",
+          "status": "pending",
+          "details": "Transaction history section not clearly identified",
+          "performance": null,
+          "timestamp": "2025-07-17T02:45:50.647Z"
+        }
+      ],
+      "score": 25,
+      "status": "failed"
+    },
+    "banking": {
+      "tests": [
+        {
+          "name": "Account Management Interface",
+          "status": "failed",
+          "details": "Account management test failed: SyntaxError: Failed to execute 'querySelectorAll' on 'Document': 'button:has-text(\"Manage\"), button:has-text(\"Account\")' is not a valid selector.",
+          "performance": null,
+          "timestamp": "2025-07-17T02:45:50.649Z"
+        },
+        {
+          "name": "Balance Checking",
+          "status": "failed",
+          "details": "Balance checking test failed: SyntaxError: Failed to execute 'querySelectorAll' on 'Document': '[data-testid*=\"balance-check\"], .balance-check, button:has-text(\"Check Balance\")' is not a valid selector.",
+          "performance": null,
+          "timestamp": "2025-07-17T02:45:50.650Z"
+        },
+        {
+          "name": "Transaction Viewing",
+          "status": "failed",
+          "details": "Transaction viewing test failed: SyntaxError: Failed to execute 'querySelectorAll' on 'Document': 'button:has-text(\"View\"), button:has-text(\"Details\")' is not a valid selector.",
+          "performance": null,
+          "timestamp": "2025-07-17T02:45:50.652Z"
+        }
+      ],
+      "score": 0,
+      "status": "failed"
+    },
+    "p2pTransfers": {
+      "tests": [
+        {
+          "name": "Send Money Interface",
+          "status": "failed",
+          "details": "Send money interface test failed: SyntaxError: Failed to execute 'querySelectorAll' on 'Document': '[data-testid*=\"send-money\"], .send-money, button:has-text(\"Send Money\")' is not a valid selector.",
+          "performance": null,
+          "timestamp": "2025-07-17T02:45:50.653Z"
+        },
+        {
+          "name": "Transfer Form Validation",
+          "status": "failed",
+          "details": "Transfer form validation test failed: SyntaxError: Failed to execute 'querySelector' on 'Document': 'button:has-text(\"Send Money\")' is not a valid selector.",
+          "performance": null,
+          "timestamp": "2025-07-17T02:45:50.654Z"
+        }
+      ],
+      "score": 0,
+      "status": "failed"
+    },
+    "cryptoWallet": {
+      "tests": [
+        {
+          "name": "Crypto Wallet Interface",
+          "status": "failed",
+          "details": "Crypto wallet interface test failed: SyntaxError: Failed to execute 'querySelectorAll' on 'Document': '[data-testid*=\"crypto-wallet\"], .crypto-wallet, button:has-text(\"Crypto\")' is not a valid selector.",
+          "performance": null,
+          "timestamp": "2025-07-17T02:45:50.656Z"
+        },
+        {
+          "name": "DeFi Integration",
+          "status": "failed",
+          "details": "DeFi integration test failed: SyntaxError: Failed to execute 'querySelectorAll' on 'Document': '[data-testid*=\"defi\"], .defi, button:has-text(\"DeFi\")' is not a valid selector.",
+          "performance": null,
+          "timestamp": "2025-07-17T02:45:50.657Z"
+        },
+        {
+          "name": "Staking Interface",
+          "status": "failed",
+          "details": "Staking interface test failed: SyntaxError: Failed to execute 'querySelectorAll' on 'Document': 'button:has-text(\"Stake\"), button:has-text(\"Staking\")' is not a valid selector.",
+          "performance": null,
+          "timestamp": "2025-07-17T02:45:50.657Z"
+        },
+        {
+          "name": "Portfolio Management",
+          "status": "failed",
+          "details": "Portfolio management test failed: SyntaxError: Failed to execute 'querySelectorAll' on 'Document': '[data-testid*=\"portfolio\"], .portfolio, button:has-text(\"Portfolio\")' is not a valid selector.",
+          "performance": null,
+          "timestamp": "2025-07-17T02:45:50.658Z"
+        }
+      ],
+      "score": 0,
+      "status": "failed"
+    },
+    "uiUx": {
+      "tests": [
+        {
+          "name": "Responsiveness",
+          "status": "failed",
+          "details": "Responsiveness test failed: page.waitForTimeout is not a function",
+          "performance": null,
+          "timestamp": "2025-07-17T02:45:50.660Z"
+        },
+        {
+          "name": "Loading States",
+          "status": "pending",
+          "details": "Loading state elements not clearly identified",
+          "performance": null,
+          "timestamp": "2025-07-17T02:45:50.663Z"
+        },
+        {
+          "name": "Error Messages",
+          "status": "pending",
+          "details": "Error message elements not clearly identified",
+          "performance": null,
+          "timestamp": "2025-07-17T02:45:50.665Z"
+        }
+      ],
+      "score": 0,
+      "status": "failed"
+    },
+    "security": {
+      "tests": [
+        {
+          "name": "Session Management",
+          "status": "failed",
+          "details": "Session management test failed: SyntaxError: Failed to execute 'querySelectorAll' on 'Document': 'button:has-text(\"Logout\"), button:has-text(\"Sign Out\")' is not a valid selector.",
+          "performance": null,
+          "timestamp": "2025-07-17T02:45:50.667Z"
+        },
+        {
+          "name": "Authentication Persistence",
+          "status": "failed",
+          "details": "Authentication persistence test failed: page.waitForTimeout is not a function",
+          "performance": null,
+          "timestamp": "2025-07-17T02:45:50.838Z"
+        },
+        {
+          "name": "Secure Forms",
+          "status": "passed",
+          "details": "Secure form elements are properly implemented",
+          "performance": null,
+          "timestamp": "2025-07-17T02:45:50.859Z"
+        }
+      ],
+      "score": 33,
+      "status": "failed"
+    },
+    "apiIntegration": {
+      "tests": [
+        {
+          "name": "Backend Connectivity",
+          "status": "passed",
+          "details": "Backend API is responding correctly",
+          "performance": null,
+          "timestamp": "2025-07-17T02:45:50.862Z"
+        },
+        {
+          "name": "Data Fetching",
+          "status": "failed",
+          "details": "Data fetching API not responding: 404",
+          "performance": null,
+          "timestamp": "2025-07-17T02:45:50.865Z"
+        },
+        {
+          "name": "Real-time Updates",
+          "status": "passed",
+          "details": "Real-time update capabilities are available",
+          "performance": null,
+          "timestamp": "2025-07-17T02:45:50.869Z"
+        }
+      ],
+      "score": 67,
+      "status": "pending"
+    }
+  },
+  "performance": {
+    "loadTimes": [
+      {
+        "action": "initial_page_load",
+        "duration": 0,
+        "timestamp": "2025-07-17T02:45:50.371Z"
+      }
+    ],
+    "responseTimes": [],
+    "averageLoadTime": 0,
+    "averageResponseTime": 0
+  },
+  "recommendations": [
+    {
+      "category": "authentication",
+      "priority": "high",
+      "issue": "4 failed tests in authentication",
+      "recommendation": "Address failed tests: Authentication Form Presence, Form Validation, Signup Flow, Login Flow"
+    },
+    {
+      "category": "userDashboard",
+      "priority": "high",
+      "issue": "1 failed tests in userDashboard",
+      "recommendation": "Address failed tests: Dashboard Layout"
+    },
+    {
+      "category": "userDashboard",
+      "priority": "medium",
+      "issue": "2 pending tests in userDashboard",
+      "recommendation": "Complete implementation for: Multi-Currency Accounts, Transaction History"
+    },
+    {
+      "category": "banking",
+      "priority": "high",
+      "issue": "3 failed tests in banking",
+      "recommendation": "Address failed tests: Account Management Interface, Balance Checking, Transaction Viewing"
+    },
+    {
+      "category": "p2pTransfers",
+      "priority": "high",
+      "issue": "2 failed tests in p2pTransfers",
+      "recommendation": "Address failed tests: Send Money Interface, Transfer Form Validation"
+    },
+    {
+      "category": "cryptoWallet",
+      "priority": "high",
+      "issue": "4 failed tests in cryptoWallet",
+      "recommendation": "Address failed tests: Crypto Wallet Interface, DeFi Integration, Staking Interface, Portfolio Management"
+    },
+    {
+      "category": "uiUx",
+      "priority": "high",
+      "issue": "1 failed tests in uiUx",
+      "recommendation": "Address failed tests: Responsiveness"
+    },
+    {
+      "category": "uiUx",
+      "priority": "medium",
+      "issue": "2 pending tests in uiUx",
+      "recommendation": "Complete implementation for: Loading States, Error Messages"
+    },
+    {
+      "category": "security",
+      "priority": "high",
+      "issue": "2 failed tests in security",
+      "recommendation": "Address failed tests: Session Management, Authentication Persistence"
+    },
+    {
+      "category": "apiIntegration",
+      "priority": "high",
+      "issue": "1 failed tests in apiIntegration",
+      "recommendation": "Address failed tests: Data Fetching"
+    }
+  ],
+  "screenshots": []
+}

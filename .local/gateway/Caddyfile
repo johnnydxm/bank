@@ -1,0 +1,52 @@
+{
+    debug
+    auto_https off
+    admin off
+}
+
+:80 {
+    log {
+        output stdout
+        format console
+        level DEBUG
+    }
+
+    # Handle CORS
+    @cors_preflight {
+        method OPTIONS
+    }
+    header @cors_preflight {
+        Access-Control-Allow-Origin "*"
+        Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+        Access-Control-Allow-Headers "Content-Type, Authorization"
+        Access-Control-Max-Age "86400"
+    }
+    respond @cors_preflight 200
+
+    # Add CORS headers to all responses
+    header {
+        Access-Control-Allow-Origin "*"
+        Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+        Access-Control-Allow-Headers "Content-Type, Authorization"
+    }
+
+    # Ledger service routing
+    handle_path /api/ledger/* {
+        reverse_proxy ledger:3068
+    }
+
+    # Payments service routing
+    handle_path /api/payments/* {
+        reverse_proxy payments-api:8080
+    }
+
+    # Health check endpoint
+    handle /health {
+        respond "OK" 200
+    }
+
+    # Default response
+    handle {
+        respond "Formance Gateway" 200
+    }
+}
