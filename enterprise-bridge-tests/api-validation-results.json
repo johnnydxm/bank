@@ -1,26 +1,26 @@
 {
-  "timestamp": "2025-07-18T00:19:25.183Z",
+  "timestamp": "2025-07-18T17:11:12.297Z",
   "tests": [
     {
       "endpoint": "/api/health",
       "method": "GET",
       "status": 200,
       "expectedStatus": 200,
-      "responseTime": 25,
+      "responseTime": 38,
       "success": true,
       "data": {
         "status": "healthy",
         "message": "DWAY Financial Freedom Platform API is running",
-        "timestamp": "2025-07-18T00:19:25.204Z",
-        "uptime": 30551.304942292,
+        "timestamp": "2025-07-18T17:11:12.329Z",
+        "uptime": 4550.097034,
         "memory": {
-          "rss": 38387712,
-          "heapTotal": 8962048,
-          "heapUsed": 7804976,
-          "external": 2069435,
-          "arrayBuffers": 25421
+          "rss": 33554432,
+          "heapTotal": 7913472,
+          "heapUsed": 6570624,
+          "external": 2060903,
+          "arrayBuffers": 16929
         },
-        "pid": 40932,
+        "pid": 72403,
         "architecture": "Enterprise TypeScript + FormanceLedgerService",
         "version": "2.0.1",
         "formance": {
@@ -41,23 +41,23 @@
           "Individual Client Focus"
         ]
       },
-      "timestamp": "2025-07-18T00:19:25.209Z"
+      "timestamp": "2025-07-18T17:11:12.336Z"
     },
     {
       "endpoint": "/api/auth/signup",
       "method": "POST",
       "status": 201,
       "expectedStatus": 201,
-      "responseTime": 5,
+      "responseTime": 19,
       "success": true,
       "data": {
         "success": true,
         "user": {
-          "id": "user_1752797965213",
+          "id": "user_1752858672354",
           "email": "test.individual@dway.com",
           "firstName": "Test",
           "lastName": "Individual",
-          "createdAt": "2025-07-18T00:19:25.213Z",
+          "createdAt": "2025-07-18T17:11:12.354Z",
           "accountAddress": "users:test.individual@dway.com:main",
           "accountType": "individual",
           "features": [
@@ -77,22 +77,22 @@
             ]
           }
         },
-        "token": "mock_token_1752797965213",
+        "token": "mock_token_1752858672354",
         "message": "Account created successfully"
       },
-      "timestamp": "2025-07-18T00:19:25.214Z"
+      "timestamp": "2025-07-18T17:11:12.355Z"
     },
     {
       "endpoint": "/api/auth/signin",
       "method": "POST",
       "status": 200,
       "expectedStatus": 200,
-      "responseTime": 1,
+      "responseTime": 8,
       "success": true,
       "data": {
         "success": true,
         "user": {
-          "id": "user_1752797965215",
+          "id": "user_1752858672362",
           "email": "test.individual@dway.com",
           "firstName": "John",
           "lastName": "Doe",
@@ -115,29 +115,29 @@
             ]
           }
         },
-        "token": "mock_token_1752797965215",
+        "token": "mock_token_1752858672362",
         "message": "Signed in successfully"
       },
-      "timestamp": "2025-07-18T00:19:25.215Z"
+      "timestamp": "2025-07-18T17:11:12.363Z"
     },
     {
       "endpoint": "/api/transfers",
       "method": "POST",
       "status": 200,
       "expectedStatus": 200,
-      "responseTime": 203,
+      "responseTime": 204,
       "success": true,
       "data": {
-        "id": "txn_1752797965417",
+        "id": "txn_1752858672566",
         "recipient": "family.member@dway.com",
         "amount": 150,
         "currency": "USD",
         "description": "Monthly family allowance",
         "status": "pending",
         "message": "Transfer initiated successfully",
-        "timestamp": "2025-07-18T00:19:25.417Z",
+        "timestamp": "2025-07-18T17:11:12.566Z",
         "transfer": {
-          "id": "txn_1752797965417",
+          "id": "txn_1752858672566",
           "recipient": "family.member@dway.com",
           "amount": 150,
           "currency": "USD",
@@ -149,32 +149,32 @@
             "metadata": {
               "description": "Monthly family allowance",
               "type": "p2p-transfer",
-              "timestamp": "2025-07-18T00:19:25.417Z"
+              "timestamp": "2025-07-18T17:11:12.566Z"
             }
           }
         }
       },
-      "timestamp": "2025-07-18T00:19:25.418Z"
+      "timestamp": "2025-07-18T17:11:12.567Z"
     },
     {
       "endpoint": "/api/transfers",
       "method": "POST",
       "status": 400,
       "expectedStatus": 400,
-      "responseTime": 2,
+      "responseTime": 3,
       "success": true,
       "data": {
         "error": "Missing required fields",
         "details": "Recipient, amount, and currency are required"
       },
-      "timestamp": "2025-07-18T00:19:25.420Z"
+      "timestamp": "2025-07-18T17:11:12.570Z"
     },
     {
       "endpoint": "/api/accounts",
       "method": "GET",
       "status": 200,
       "expectedStatus": 200,
-      "responseTime": 102,
+      "responseTime": 103,
       "success": true,
       "data": [
         {
@@ -216,14 +216,14 @@
           ]
         }
       ],
-      "timestamp": "2025-07-18T00:19:25.522Z"
+      "timestamp": "2025-07-18T17:11:12.673Z"
     },
     {
       "endpoint": "/api/exchange-rates",
       "method": "GET",
       "status": 200,
       "expectedStatus": 200,
-      "responseTime": 52,
+      "responseTime": 53,
       "success": true,
       "data": {
         "base": "USD",
@@ -236,7 +236,7 @@
           "USDC": 1,
           "USDT": 1
         },
-        "lastUpdated": "2025-07-18T00:19:25.574Z",
+        "lastUpdated": "2025-07-18T17:11:12.725Z",
         "source": "FormanceExchangeRateService",
         "providers": [
           "CoinGecko",
@@ -253,7 +253,7 @@
           "Conversion calculator"
         ]
       },
-      "timestamp": "2025-07-18T00:19:25.575Z"
+      "timestamp": "2025-07-18T17:11:12.726Z"
     },
     {
       "endpoint": "/api/crypto/portfolio",
@@ -318,17 +318,17 @@
           }
         ]
       },
-      "timestamp": "2025-07-18T00:19:25.678Z"
+      "timestamp": "2025-07-18T17:11:12.829Z"
     }
   ],
   "performance": [
-    25,
-    5,
-    1,
-    203,
-    2,
-    102,
-    52,
+    38,
+    19,
+    8,
+    204,
+    3,
+    103,
+    53,
     103
   ],
   "errors": [],
@@ -340,11 +340,11 @@
       "totalTests": 8,
       "successfulTests": 8,
       "failedTests": 0,
-      "averageResponseTime": 61.625,
-      "maxResponseTime": 203,
-      "minResponseTime": 1,
+      "averageResponseTime": 66.375,
+      "maxResponseTime": 204,
+      "minResponseTime": 3,
       "successRate": 100
     },
-    "timestamp": "2025-07-18T00:19:25.678Z"
+    "timestamp": "2025-07-18T17:11:12.829Z"
   }
 }
