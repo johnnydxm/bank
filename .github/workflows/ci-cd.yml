@@ -170,12 +170,17 @@ jobs:
         run: |
           echo "🎯 Running Enterprise Bridge Quality Gate..."
           if [ -f "enterprise-bridge-tests/api-validation-results.json" ]; then
-            QUALITY_SCORE=$(cat enterprise-bridge-tests/api-validation-results.json | grep -o '"qualityScore":[0-9]*' | cut -d':' -f2 || echo "0")
+            # Check if jq is available, otherwise use grep with better pattern
+            if command -v jq >/dev/null 2>&1; then
+              QUALITY_SCORE=$(jq -r '.summary.qualityScore' enterprise-bridge-tests/api-validation-results.json)
+            else
+              QUALITY_SCORE=$(cat enterprise-bridge-tests/api-validation-results.json | grep -o '"qualityScore": *[0-9]*' | grep -o '[0-9]*' || echo "0")
+            fi
             echo "📊 Enterprise Bridge Quality Score: $QUALITY_SCORE/100"
-            if [ "$QUALITY_SCORE" -ge "80" ]; then
+            if [ -n "$QUALITY_SCORE" ] && [ "$QUALITY_SCORE" -ge "80" ]; then
               echo "✅ Quality Gate PASSED - Production deployment approved"
             else
-              echo "❌ Quality Gate FAILED - Quality score below 80"
+              echo "❌ Quality Gate FAILED - Quality score below 80 (Score: $QUALITY_SCORE)"
               exit 1
             fi
           else
