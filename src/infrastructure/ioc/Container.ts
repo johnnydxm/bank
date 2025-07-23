@@ -22,6 +22,9 @@ import { BankingIntegrationService } from '../../domains/banking/services/Bankin
 import { PlaidBankingProvider } from '../banking/PlaidBankingProvider';
 import { DepositWithdrawalService } from '../../domains/banking/services/DepositWithdrawalService';
 import { ComplianceValidationService } from '../../domains/compliance/services/ComplianceValidationService';
+import { EnterpriseApiServer } from '../../presentation/api/EnterpriseApiServer';
+import { JWTAuthenticationService } from '../auth/JWTAuthenticationService';
+import { AuthenticationMiddleware } from '../../presentation/middleware/AuthenticationMiddleware';
 
 export class DIContainer {
   private static instance: DIContainer;
@@ -78,6 +81,13 @@ export class DIContainer {
 
     // Compliance Services
     this.container.bind<ComplianceValidationService>(TYPES.ComplianceValidationService).to(ComplianceValidationService).inSingletonScope();
+
+    // API Layer
+    this.container.bind<EnterpriseApiServer>(TYPES.EnterpriseApiServer).to(EnterpriseApiServer).inSingletonScope();
+
+    // Authentication
+    this.container.bind<JWTAuthenticationService>(TYPES.JWTAuthenticationService).to(JWTAuthenticationService).inSingletonScope();
+    this.container.bind<AuthenticationMiddleware>(TYPES.AuthenticationMiddleware).to(AuthenticationMiddleware).inSingletonScope();
 
     // Services will be registered here as they're implemented
     // this.container.bind<IEventBus>(TYPES.EventBus).to(NATSEventBus);

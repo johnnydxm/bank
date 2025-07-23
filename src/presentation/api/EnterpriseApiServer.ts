@@ -5,6 +5,8 @@ import { TYPES } from '../../infrastructure/ioc/types';
 import { ILogger } from '../../shared/interfaces/ILogger';
 import { FormanceClientService } from '../../infrastructure/formance/FormanceClientService';
 import { FormanceLedgerService } from '../../infrastructure/formance/FormanceLedgerService';
+import { JWTAuthenticationService } from '../../infrastructure/auth/JWTAuthenticationService';
+import { AuthenticationMiddleware } from '../middleware/AuthenticationMiddleware';
 import path from 'path';
 
 @injectable()
@@ -15,7 +17,9 @@ export class EnterpriseApiServer {
   constructor(
     @inject(TYPES.Logger) private logger: ILogger,
     @inject(TYPES.FormanceClientService) private formanceClient: FormanceClientService,
-    @inject(TYPES.FormanceLedgerService) private formanceLedger: FormanceLedgerService
+    @inject(TYPES.FormanceLedgerService) private formanceLedger: FormanceLedgerService,
+    @inject(TYPES.JWTAuthenticationService) private authService: JWTAuthenticationService,
+    @inject(TYPES.AuthenticationMiddleware) private authMiddleware: AuthenticationMiddleware
   ) {
     this.app = express();
     this.container = DIContainer.getInstance();
@@ -101,7 +105,7 @@ export class EnterpriseApiServer {
   }
 
   private setupAuthenticationRoutes(): void {
-    // TODO: Implement enterprise OAuth2 authentication
+    // Enterprise JWT Authentication
     this.app.post('/api/auth/signup', async (req: Request, res: Response): Promise<void> => {
       try {
         this.logger.info('Enterprise signup attempt', { email: req.body.email });
@@ -117,8 +121,21 @@ export class EnterpriseApiServer {
           return;
         }
 
+        // Validate password strength
+        if (password.length < 8) {
+          res.status(400).json({
+            success: false,
+            error: 'Password must be at least 8 characters long',
+            code: 'WEAK_PASSWORD'
+          });
+          return;
+        }
+
         // Create Formance account structure for individual user
-        const userAccountAddress = `users:${email.replace('@', '_').replace('.', '_')}:main`;
+        const userAccountAddress = this.authService.createAccountAddress(email);
+        
+        // Hash password
+        const hashedPassword = await this.authService.hashPassword(password);
         
         const account = await this.formanceLedger.createAccount({
           address: userAccountAddress,
@@ -127,6 +144,7 @@ export class EnterpriseApiServer {
             email,
             firstName,
             lastName,
+            passwordHash: hashedPassword,
             account_type: 'individual',
             accountType: 'individual',
             created_at: new Date().toISOString(),
@@ -135,12 +153,21 @@ export class EnterpriseApiServer {
           }
         });
 
-        this.logger.info('Enterprise account created', { 
+        // Generate JWT tokens
+        const tokens = this.authService.generateTokens({
+          userId: account.address,
+          email,
+          accountAddress: userAccountAddress,
+          firstName,
+          lastName
+        });
+
+        this.logger.info('Enterprise account created with JWT authentication', { 
           address: userAccountAddress,
           email 
         });
 
-        // Return user data (enterprise pattern)
+        // Return user data with tokens (enterprise pattern)
         res.status(201).json({
           success: true,
           message: 'Account created successfully',
@@ -150,6 +177,11 @@ export class EnterpriseApiServer {
             firstName,
             lastName,
             accountAddress: userAccountAddress
+          },
+          tokens: {
+            accessToken: tokens.accessToken,
+            refreshToken: tokens.refreshToken,
+            expiresIn: tokens.expiresIn
           }
         });
 
@@ -171,24 +203,46 @@ export class EnterpriseApiServer {
         if (!email || !password) {
           res.status(400).json({
             success: false,
-            error: 'Email and password are required'
+            error: 'Email and password are required',
+            code: 'VALIDATION_ERROR'
           });
           return;
         }
 
         // Check if user account exists in Formance
-        const userAccountAddress = `users:${email.replace('@', '_').replace('.', '_')}:main`;
+        const userAccountAddress = this.authService.createAccountAddress(email);
         const account = await this.formanceLedger.getAccount(userAccountAddress);
         
-        if (!account) {
+        if (!account || !account.metadata.passwordHash) {
           res.status(401).json({
             success: false,
-            error: 'Invalid credentials'
+            error: 'Invalid credentials',
+            code: 'INVALID_CREDENTIALS'
           });
           return;
         }
 
-        this.logger.info('Enterprise signin successful', { 
+        // Verify password
+        const isValidPassword = await this.authService.verifyPassword(password, account.metadata.passwordHash);
+        if (!isValidPassword) {
+          res.status(401).json({
+            success: false,
+            error: 'Invalid credentials',
+            code: 'INVALID_CREDENTIALS'
+          });
+          return;
+        }
+
+        // Generate JWT tokens
+        const tokens = this.authService.generateTokens({
+          userId: account.address,
+          email: account.metadata.email || email,
+          accountAddress: userAccountAddress,
+          firstName: account.metadata.firstName || 'User',
+          lastName: account.metadata.lastName || 'Account'
+        });
+
+        this.logger.info('Enterprise signin successful with JWT', { 
           address: userAccountAddress,
           email 
         });
@@ -202,6 +256,11 @@ export class EnterpriseApiServer {
             firstName: account.metadata.firstName,
             lastName: account.metadata.lastName,
             accountAddress: userAccountAddress
+          },
+          tokens: {
+            accessToken: tokens.accessToken,
+            refreshToken: tokens.refreshToken,
+            expiresIn: tokens.expiresIn
           }
         });
 
@@ -214,14 +273,79 @@ export class EnterpriseApiServer {
         });
       }
     });
+
+    // Token refresh endpoint
+    this.app.post('/api/auth/refresh', async (req: Request, res: Response): Promise<void> => {
+      try {
+        const { refreshToken } = req.body;
+        if (!refreshToken) {
+          res.status(400).json({
+            success: false,
+            error: 'Refresh token required',
+            code: 'TOKEN_MISSING'
+          });
+          return;
+        }
+
+        const tokenPayload = this.authService.verifyRefreshToken(refreshToken);
+        if (!tokenPayload) {
+          res.status(401).json({
+            success: false,
+            error: 'Invalid or expired refresh token',
+            code: 'TOKEN_INVALID'
+          });
+          return;
+        }
+
+        // Get fresh user data from Formance
+        const userAccountAddress = this.authService.createAccountAddress(tokenPayload.email);
+        const account = await this.formanceLedger.getAccount(userAccountAddress);
+        
+        if (!account) {
+          res.status(401).json({
+            success: false,
+            error: 'User account not found',
+            code: 'USER_NOT_FOUND'
+          });
+          return;
+        }
+
+        // Generate new tokens
+        const newTokens = this.authService.generateTokens({
+          userId: account.address,
+          email: account.metadata.email || tokenPayload.email,
+          accountAddress: userAccountAddress,
+          firstName: account.metadata.firstName || 'Unknown',
+          lastName: account.metadata.lastName || 'User'
+        });
+
+        res.json({
+          success: true,
+          message: 'Tokens refreshed successfully',
+          tokens: {
+            accessToken: newTokens.accessToken,
+            refreshToken: newTokens.refreshToken,
+            expiresIn: newTokens.expiresIn
+          }
+        });
+
+      } catch (error) {
+        this.logger.error('Token refresh failed', error as Error);
+        res.status(500).json({
+          success: false,
+          error: 'Token refresh failed',
+          message: (error as Error).message
+        });
+      }
+    });
   }
 
   private setupAccountRoutes(): void {
-    // Account listing with FormanceLedgerService
-    this.app.get('/api/accounts', async (req: Request, res: Response): Promise<void> => {
+    // Account listing with FormanceLedgerService - JWT Protected
+    this.app.get('/api/accounts', this.authMiddleware.verifyToken, async (req: Request, res: Response): Promise<void> => {
       try {
-        // TODO: Extract user ID from JWT token
-        const userEmail = 'demo@dway.com'; // Placeholder
+        // Extract user from JWT token
+        const userEmail = req.user!.email;
         const userAccountPattern = `users:${userEmail.replace('@', '_').replace('.', '_')}:*`;
         
         const accounts = await this.formanceLedger.listAccounts({
@@ -248,8 +372,8 @@ export class EnterpriseApiServer {
       }
     });
 
-    // Account balance - enterprise precision
-    this.app.get('/api/accounts/:address/balance', async (req: Request, res: Response): Promise<void> => {
+    // Account balance - enterprise precision - JWT Protected
+    this.app.get('/api/accounts/:address/balance', this.authMiddleware.verifyToken, this.authMiddleware.requireAccountAccess, async (req: Request, res: Response): Promise<void> => {
       try {
         const { address } = req.params;
         const balances = await this.formanceLedger.getAccountBalance(address!);
@@ -277,8 +401,8 @@ export class EnterpriseApiServer {
   }
 
   private setupTransactionRoutes(): void {
-    // Enterprise transaction creation
-    this.app.post('/api/transfers', async (req: Request, res: Response): Promise<void> => {
+    // Enterprise transaction creation - JWT Protected
+    this.app.post('/api/transfers', this.authMiddleware.verifyToken, this.authMiddleware.rateLimitByUser(50, 15 * 60 * 1000), async (req: Request, res: Response): Promise<void> => {
       try {
         const { recipient, amount, currency, description } = req.body;
         
@@ -292,7 +416,7 @@ export class EnterpriseApiServer {
         }
 
         // Create enterprise transaction request
-        const senderAddress = `users:demo_dway_com:main`; // TODO: Extract from JWT
+        const senderAddress = req.user!.accountAddress;
         const recipientAddress = `users:${recipient.replace('@', '_').replace('.', '_')}:main`;
         
         const transactionRequest = {
@@ -359,10 +483,11 @@ export class EnterpriseApiServer {
       }
     });
 
-    // Transaction history with enterprise data
-    this.app.get('/api/transactions', async (req: Request, res: Response): Promise<void> => {
+    // Transaction history with enterprise data - JWT Protected
+    this.app.get('/api/transactions', this.authMiddleware.verifyToken, async (req: Request, res: Response): Promise<void> => {
       try {
-        const userAccountPattern = 'users:demo_dway_com:*'; // TODO: Extract from JWT
+        const userEmail = req.user!.email;
+        const userAccountPattern = `users:${userEmail.replace('@', '_').replace('.', '_')}:*`;
         
         const transactions = await this.formanceLedger.listTransactions({
           account: userAccountPattern,

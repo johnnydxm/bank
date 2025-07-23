@@ -75,5 +75,12 @@ export const TYPES = {
   // External Services
   FormanceClient: Symbol.for('FormanceClient'),
   NotificationService: Symbol.for('NotificationService'),
-  ExchangeRateService: Symbol.for('ExchangeRateService')
+  ExchangeRateService: Symbol.for('ExchangeRateService'),
+
+  // API Layer
+  EnterpriseApiServer: Symbol.for('EnterpriseApiServer'),
+
+  // Authentication
+  JWTAuthenticationService: Symbol.for('JWTAuthenticationService'),
+  AuthenticationMiddleware: Symbol.for('AuthenticationMiddleware')
 };

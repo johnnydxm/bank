@@ -104,6 +104,25 @@
       "optional": false,
       "timeout": 30000,
       "retryAttempts": 3
+    },
+    "serena": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/oraios/serena",
+        "serena-mcp-server",
+        "--context",
+        "ide-assistant",
+        "--project",
+        "/Users/aubk/Documents/Projects/bank/my-formance-stack"
+      ],
+      "description": "Serena: IDE assistant and development support",
+      "env": {
+        "LOG_LEVEL": "info"
+      },
+      "optional": true,
+      "timeout": 60000,
+      "retryAttempts": 3
     }
   },
   "clientConfig": {

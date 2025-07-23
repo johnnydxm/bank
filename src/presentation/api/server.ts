@@ -36,12 +36,8 @@ async function startEnterpriseServer(): Promise<void> {
       ]
     });
 
-    // Create enterprise API server
-    const apiServer = new EnterpriseApiServer(
-      logger,
-      formanceClient,
-      formanceLedger
-    );
+    // Create enterprise API server with DI container
+    const apiServer = container.get<EnterpriseApiServer>(TYPES.EnterpriseApiServer);
 
     // Start server
     const port = parseInt(process.env.PORT || '3001');
